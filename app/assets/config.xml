@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <friends_feed>http://google.com</friends_feed>
+    <whats_close>http://tut.by</whats_close>
+    <recently_viewed>http://mail.ru</recently_viewed>
+    <whats_hot>http://yandex.ru</whats_hot>
+    <pictures>http://rambler.ru</pictures>
+    <recommended>http://bing.com</recommended>
+</config>
