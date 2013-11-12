@@ -23,6 +23,7 @@
     <string name="about_content">
         Nebel.TV
         \n\nVersion: %1$s
+        \nRelease date: %2$s
         \nhttp://www.nebel.tv/
     </string>
     <string name="unknown_version">unknown</string>

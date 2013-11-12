@@ -3,6 +3,7 @@ package com.nebel_tv.activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -14,14 +15,15 @@ import android.widget.ListView;
 
 import com.nebel_tv.R;
 import com.nebel_tv.storage.LocalStorage;
-import com.nebel_tv.ui.fragment.WebViewFragment;
+import com.nebel_tv.ui.fragment.TopViewPagerFragment;
 
-public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener  {
+public class MainActivity extends ActionBarActivity 
+					implements ListView.OnItemClickListener, OnPageChangeListener  {
 	
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
-    private WebViewFragment webViewFragment;
+    private TopViewPagerFragment topViewPagerFragment;
     
 	private String[] menuTitles;
     private CharSequence currentTitle;
@@ -51,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 ) {
 
             public void onDrawerClosed(View view) {
-            	getSupportActionBar().setTitle(currentTitle);
+            	updateCurrentTitle();
             }
 
             public void onDrawerOpened(View drawerView) {
@@ -64,11 +66,15 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle(currentTitle);
         
-        webViewFragment = new WebViewFragment();
+        topViewPagerFragment = new TopViewPagerFragment();
 		getSupportFragmentManager()
 			.beginTransaction()
-			.replace(R.id.content_frame, webViewFragment)
+			.replace(R.id.content_frame, topViewPagerFragment)
 			.commit();
+	}
+	
+	private void updateCurrentTitle() {
+		getSupportActionBar().setTitle(currentTitle);
 	}
 	
 	@Override
@@ -112,9 +118,26 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 		currentPosition = position;
 		currentTitle = menuTitles[position];
 		drawerLayout.closeDrawer(drawerList);
-		if(webViewFragment!=null) {
-			webViewFragment.setCurrentTopView(position);
+		if(topViewPagerFragment!=null) {
+			topViewPagerFragment.setCurrentTopView(position);
 		}
+	}
+	
+	@Override
+	public void onPageSelected(int position) {
+		currentPosition = position;
+		currentTitle = menuTitles[position];
+		getSupportActionBar().setTitle(currentTitle);
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		//empty implementation
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		//empty implementation
 	}
 
 }

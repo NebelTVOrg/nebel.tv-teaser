@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 
 import com.nebel_tv.R;
 import com.nebel_tv.model.TopView;
-import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.utils.ConfigHelper;
 
 public class WebViewFragment extends Fragment {
@@ -26,10 +25,13 @@ public class WebViewFragment extends Fragment {
 	private WebView webView;
 	private ProgressBar progressBar;
 	
-	private LocalStorage localStorage;
-	private TopView currentTopView;
+	private TopView topView;
 	
 	private HashMap<TopView, String> configUrls;
+	
+	public WebViewFragment(TopView topView) {
+		this.topView = topView;
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,28 +48,15 @@ public class WebViewFragment extends Fragment {
 	}
 	
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		localStorage = LocalStorage.from(getActivity());
-	}
-	
-	@Override
 	public void onStart() {
 		super.onStart();
 		switchUIState(UIState.LOADING);
 		configUrls = ConfigHelper.getInstance().getConfigUrls();
-		loadCurrentTopView(localStorage.getLastScreen());
+		loadTopView();
 	}
 	
-	public void setCurrentTopView(int position) {
-		TopView topView = TopView.values()[position];
-		localStorage.setLastScreen(topView);
-		loadCurrentTopView(topView);
-	}
-	
-	private void loadCurrentTopView(TopView topView) {
-		currentTopView = topView;
-		String url = configUrls.get(currentTopView);
+	private void loadTopView() {
+		String url = configUrls.get(topView);
 		if(url!=null) {
 			webView.loadUrl(url);
 		}
