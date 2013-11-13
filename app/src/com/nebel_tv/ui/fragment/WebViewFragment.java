@@ -21,6 +21,8 @@ public class WebViewFragment extends Fragment {
     public static enum UIState {
         LOADING, SHOWING_DATA
     }
+    
+    private static final String EXTRA_TOP_VIEW_KEY = "EXTRA_TOP_VIEW_KEY";
 	
 	private WebView webView;
 	private ProgressBar progressBar;
@@ -29,8 +31,14 @@ public class WebViewFragment extends Fragment {
 	
 	private HashMap<TopView, String> configUrls;
 	
-	public WebViewFragment(TopView topView) {
-		this.topView = topView;
+	public static WebViewFragment newInstance(TopView topView) {
+		WebViewFragment f = new WebViewFragment();
+		
+		Bundle args = new Bundle();
+        args.putInt(EXTRA_TOP_VIEW_KEY, topView.ordinal());
+        f.setArguments(args);
+        
+		return f;
 	}
 	
 	@Override
@@ -43,6 +51,13 @@ public class WebViewFragment extends Fragment {
 		
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setWebViewClient(new NebelTVWebChromeClient());
+		
+		Bundle args = getArguments();
+		if(args!=null) {
+			topView = TopView.values()[args.getInt(EXTRA_TOP_VIEW_KEY, 0)];
+		} else {
+			topView = TopView.FRIENDS_FEED;
+		}
 		
 		return view;
 	}

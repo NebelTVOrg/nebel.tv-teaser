@@ -67,7 +67,7 @@ public class TopViewPagerFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return new WebViewFragment(topViewValues[position]);
+        	return WebViewFragment.newInstance(topViewValues[position]);
         }
 
         @Override
