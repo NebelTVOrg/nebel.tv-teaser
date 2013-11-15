@@ -66,11 +66,16 @@ public class MainActivity extends ActionBarActivity
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle(currentTitle);
         
-        topViewPagerFragment = new TopViewPagerFragment();
-		getSupportFragmentManager()
+        
+        if (savedInstanceState != null) {
+        	topViewPagerFragment = (TopViewPagerFragment) getSupportFragmentManager().findFragmentByTag("customtag");
+        } else {
+        	topViewPagerFragment = new TopViewPagerFragment();
+    		getSupportFragmentManager()
 			.beginTransaction()
-			.replace(R.id.content_frame, topViewPagerFragment)
+			.add(R.id.content_frame, topViewPagerFragment, "customtag")
 			.commit();
+        }
 	}
 	
 	private void updateCurrentTitle() {

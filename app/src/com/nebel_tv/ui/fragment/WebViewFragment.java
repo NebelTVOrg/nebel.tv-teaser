@@ -26,10 +26,11 @@ public class WebViewFragment extends Fragment {
 	
 	private WebView webView;
 	private ProgressBar progressBar;
+	private ViewGroup webViewContainer;
 	
 	private TopView topView;
-	
 	private HashMap<TopView, String> configUrls;
+	private Bundle savedInstanceState;
 	
 	public static WebViewFragment newInstance(TopView topView) {
 		WebViewFragment f = new WebViewFragment();
@@ -42,15 +43,24 @@ public class WebViewFragment extends Fragment {
 	}
 	
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_webview, container, false);
-		
-		webView = (WebView) view.findViewById(R.id.webview);
 		progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-		
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.setWebViewClient(new NebelTVWebChromeClient());
+		webViewContainer = (ViewGroup) view.findViewById(R.id.container_webview);
+	
+		return view;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setRetainInstance(true);
 		
 		Bundle args = getArguments();
 		if(args!=null) {
@@ -58,16 +68,45 @@ public class WebViewFragment extends Fragment {
 		} else {
 			topView = TopView.FRIENDS_FEED;
 		}
+
+		if(webView==null) {
+			webView = new WebView(getActivity());
+			
+			webView.getSettings().setJavaScriptEnabled(true);
+			webView.setWebViewClient(new NebelTVWebChromeClient());
+		}
 		
-		return view;
+		this.savedInstanceState = savedInstanceState;
+		if(savedInstanceState!=null) {
+			webView.restoreState(savedInstanceState);
+		}
+		
+		webViewContainer.addView(webView);
+		
 	}
 	
 	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		webView.saveState(outState);
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
-		switchUIState(UIState.LOADING);
-		configUrls = ConfigHelper.getInstance().getConfigUrls();
-		loadTopView();
+		if(savedInstanceState==null) {
+			switchUIState(UIState.LOADING);
+			configUrls = ConfigHelper.getInstance().getConfigUrls();
+			loadTopView();
+		} else {
+			savedInstanceState = null;
+		}
+	}
+	
+	@Override
+	public void onDetach() {
+		webViewContainer.removeView(webView);
+		super.onDetach();
 	}
 	
 	private void loadTopView() {

@@ -47,6 +47,7 @@ public class TopViewPagerFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		setRetainInstance(true);
 		localStorage = LocalStorage.from(getActivity());
 		topViewPager.setCurrentItem(localStorage.getLastScreen().ordinal());
 		topViewPager.setOnPageChangeListener(onTopViewChangeListener);
