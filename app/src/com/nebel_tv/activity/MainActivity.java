@@ -3,6 +3,7 @@ package com.nebel_tv.activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 
 import com.nebel_tv.R;
 import com.nebel_tv.storage.LocalStorage;
+import com.nebel_tv.ui.fragment.CategoryFragment;
 import com.nebel_tv.ui.fragment.TopViewPagerFragment;
 
 public class MainActivity extends ActionBarActivity 
@@ -112,6 +114,14 @@ public class MainActivity extends ActionBarActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	public void showFragment(Fragment fragment) {
+		getSupportFragmentManager()
+			.beginTransaction()
+			.addToBackStack(null)
+			.replace(R.id.content_frame, fragment)
+			.commit();
 	}
 
 	@Override

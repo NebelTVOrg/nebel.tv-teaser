@@ -38,7 +38,7 @@ public class TopViewPagerFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		topViewPager = (ViewPager) inflater.inflate(R.layout.fragment_top_view_pager, container, false);
-		topViewPagerAdapter = new TopViewPagerAdapter(getFragmentManager());
+		topViewPagerAdapter = new TopViewPagerAdapter(getChildFragmentManager());
 		topViewPager.setAdapter(topViewPagerAdapter);
 		
 		return topViewPager;
@@ -47,7 +47,6 @@ public class TopViewPagerFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setRetainInstance(true);
 		localStorage = LocalStorage.from(getActivity());
 		topViewPager.setCurrentItem(localStorage.getLastScreen().ordinal());
 		topViewPager.setOnPageChangeListener(onTopViewChangeListener);
@@ -68,7 +67,7 @@ public class TopViewPagerFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-        	return WebViewFragment.newInstance(topViewValues[position]);
+        	return TopViewFragment.newInstance(topViewValues[position]);
         }
 
         @Override
