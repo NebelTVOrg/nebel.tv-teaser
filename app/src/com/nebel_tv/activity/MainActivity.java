@@ -16,7 +16,6 @@ import android.widget.ListView;
 
 import com.nebel_tv.R;
 import com.nebel_tv.storage.LocalStorage;
-import com.nebel_tv.ui.fragment.CategoryFragment;
 import com.nebel_tv.ui.fragment.TopViewPagerFragment;
 
 public class MainActivity extends ActionBarActivity 
