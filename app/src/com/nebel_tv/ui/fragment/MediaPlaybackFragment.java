@@ -11,7 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.nebel_tv.R;
-import com.nebel_tv.activity.MainActivity;
+import com.nebel_tv.activity.base.BaseActivity;
 
 public class MediaPlaybackFragment extends Fragment {
 	
@@ -21,15 +21,15 @@ public class MediaPlaybackFragment extends Fragment {
 		return f;
 	}
 	
-	private MainActivity getMainActivity() {
-		return (MainActivity) getActivity();
+	private BaseActivity getParentActivity() {
+		return (BaseActivity) getActivity();
 	}
 	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		updateFullscreenStatus(true);
-		getMainActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		getParentActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 	}
 	
 	@Override
@@ -48,20 +48,20 @@ public class MediaPlaybackFragment extends Fragment {
 	public void onDetach() {
 		super.onDetach();
 		updateFullscreenStatus(false);
-		getMainActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		getParentActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 	}
 	
 	private void updateFullscreenStatus(boolean useFullscreen) {  
-		Window window = getMainActivity().getWindow();
+		Window window = getParentActivity().getWindow();
 		if(useFullscreen) {
-			getMainActivity().getSupportActionBar().hide();
+			getParentActivity().getSupportActionBar().hide();
 			window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	    }
 		else {
 			window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 			window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			getMainActivity().getSupportActionBar().show();
+			getParentActivity().getSupportActionBar().show();
 	    }
 	}
 

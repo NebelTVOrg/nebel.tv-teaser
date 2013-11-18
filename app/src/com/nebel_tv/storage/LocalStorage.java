@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.nebel_tv.model.Mood;
 import com.nebel_tv.model.TopView;
 
 public class LocalStorage {
     private static final String KEY_LAST_SCREEN = "KEY_LAST_SCREEN";
+    private static final String KEY_LAST_MOOD = "KEY_LAST_MOOD";
 
     private final SharedPreferences mSharedPreferences;
     private static LocalStorage sInstance;
@@ -29,6 +31,14 @@ public class LocalStorage {
     
     public void setLastScreen(TopView lastScreen) {
     	mSharedPreferences.edit().putInt(KEY_LAST_SCREEN, lastScreen.ordinal()).commit();
+    }
+    
+    public Mood getLastMood() {
+    	return Mood.values()[mSharedPreferences.getInt(KEY_LAST_MOOD, 0)];
+    }
+    
+    public void setLastMood(Mood lastMood) {
+    	mSharedPreferences.edit().putInt(KEY_LAST_MOOD, lastMood.ordinal()).commit();
     }
 
 }

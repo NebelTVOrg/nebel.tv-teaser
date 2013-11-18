@@ -4,6 +4,5 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:textColor="@color/drawer_item_text_color"
-	android:paddingLeft="32dp"
-	android:paddingTop="16dp"
-	android:paddingBottom="16dp"/>
+	android:textStyle="bold"
+	android:padding="16dp"/>

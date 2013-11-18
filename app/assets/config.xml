@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-    <friends_feed>file:///android_asset/html/friends_feed.html</friends_feed>
-    <whats_close>file:///android_asset/html/whats_close.html</whats_close>
-    <recently_viewed>file:///android_asset/html/recently_viewed.html</recently_viewed>
-    <whats_hot>file:///android_asset/html/whats_hot.html</whats_hot>
-    <pictures>file:///android_asset/html/pictures.html</pictures>
-    <recommended>file:///android_asset/html/recommended.html</recommended>
+    <mood name="family">
+    	<friends_feed>file:///android_asset/html/friends_feed.html</friends_feed>
+    	<whats_close>file:///android_asset/html/whats_close.html</whats_close>
+    	<recently_viewed>file:///android_asset/html/recently_viewed.html</recently_viewed>
+    	<whats_hot>file:///android_asset/html/whats_hot.html</whats_hot>
+    	<pictures>file:///android_asset/html/pictures.html</pictures>
+    	<recommended>file:///android_asset/html/recommended.html</recommended>
+    </mood>
+    <mood name="kids">
+    	<friends_feed>file:///android_asset/html/friends_feed.html</friends_feed>
+    	<whats_close>file:///android_asset/html/whats_close.html</whats_close>
+    	<recently_viewed>file:///android_asset/html/recently_viewed.html</recently_viewed>
+    	<whats_hot>file:///android_asset/html/whats_hot.html</whats_hot>
+    	<pictures>file:///android_asset/html/pictures.html</pictures>
+    	<recommended>file:///android_asset/html/recommended.html</recommended>
+    </mood>
+    <mood name="romance">
+    	<friends_feed>file:///android_asset/html/friends_feed.html</friends_feed>
+    	<whats_close>file:///android_asset/html/whats_close.html</whats_close>
+    	<recently_viewed>file:///android_asset/html/recently_viewed.html</recently_viewed>
+    	<whats_hot>file:///android_asset/html/whats_hot.html</whats_hot>
+    	<pictures>file:///android_asset/html/pictures.html</pictures>
+    	<recommended>file:///android_asset/html/recommended.html</recommended>
+    </mood>
 </config>

@@ -30,6 +30,11 @@
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/menu_about"/>
+        
+        <activity
+            android:name=".activity.CategoryActivity"
+            android:label="@string/category_title"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
     </application>
 
 </manifest>

@@ -9,7 +9,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.nebel_tv.R;
@@ -59,17 +58,6 @@ public class AboutActivity extends ActionBarActivity {
 	private void fillAboutContent(String version, String releaseDate) {
 		contentText.setText(String.format(
 				getString(R.string.about_content), version, releaseDate));
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case android.R.id.home:
-	    	onBackPressed();
-	        return true;
-	    default:
-		    return super.onOptionsItemSelected(item);
-	    }
 	}
 	
 	private String getBuildVersionName() {

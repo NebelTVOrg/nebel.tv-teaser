@@ -4,7 +4,10 @@ import java.util.HashMap;
 
 import android.os.Bundle;
 
+import com.nebel_tv.activity.CategoryActivity;
+import com.nebel_tv.model.Mood;
 import com.nebel_tv.model.TopView;
+import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.fragment.base.BaseWebViewFragment;
 import com.nebel_tv.utils.ConfigHelper;
 
@@ -41,7 +44,8 @@ public class TopViewFragment extends BaseWebViewFragment {
 	public void onStart() {
 		super.onStart();
 		switchUIState(UIState.LOADING);
-		configUrls = ConfigHelper.getInstance().getConfigUrls();
+		Mood lastMood = LocalStorage.from(getActivity()).getLastMood();
+		configUrls = ConfigHelper.getInstance().getConfigUrls().get(lastMood);
 		loadTopView();
 	}
 	
@@ -57,7 +61,7 @@ public class TopViewFragment extends BaseWebViewFragment {
 		if(depth==0) {
 			return false;
 		} else {
-    		getMainActivity().showFragment(CategoryFragment.newInstance(url));
+    		CategoryActivity.launch(getActivity(), url);
 			return true;
 		}
 	}

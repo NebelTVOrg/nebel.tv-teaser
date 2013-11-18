@@ -1,31 +1,35 @@
 package com.nebel_tv.activity;
 
+import java.util.HashMap;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 
 import com.nebel_tv.R;
+import com.nebel_tv.activity.base.BaseActivity;
+import com.nebel_tv.adapter.NavigationDrawerAdapter;
+import com.nebel_tv.adapter.NavigationDrawerAdapter.GroupType;
+import com.nebel_tv.model.Mood;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.fragment.TopViewPagerFragment;
 
-public class MainActivity extends ActionBarActivity 
-					implements ListView.OnItemClickListener, OnPageChangeListener  {
+public class MainActivity extends BaseActivity 
+					implements OnChildClickListener, OnPageChangeListener  {
 	
     private DrawerLayout drawerLayout;
-    private ListView drawerList;
+    private ExpandableListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
     private TopViewPagerFragment topViewPagerFragment;
     
+    private LocalStorage localStorage;
 	private String[] menuTitles;
     private CharSequence currentTitle;
     private int currentPosition;
@@ -36,14 +40,17 @@ public class MainActivity extends ActionBarActivity
 		setContentView(R.layout.main);
 		
 		menuTitles = getResources().getStringArray(R.array.menu_items);
-		currentPosition = LocalStorage.from(this).getLastScreen().ordinal();
+		localStorage = LocalStorage.from(this);
+		currentPosition = localStorage.getLastScreen().ordinal();
 		currentTitle = menuTitles[currentPosition];
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		drawerList = (ListView) findViewById(R.id.left_drawer);
+		drawerList = (ExpandableListView) findViewById(R.id.left_drawer);
 		
-		drawerList.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_list_item, menuTitles));
-		drawerList.setOnItemClickListener(this);
+		HashMap<GroupType, String[]> drawerData = new HashMap<GroupType, String[]>();
+		drawerData.put(GroupType.MOOD, getResources().getStringArray(R.array.mood_items));
+		drawerData.put(GroupType.TOP_CATEGORIES, menuTitles);
+		drawerList.setAdapter(new NavigationDrawerAdapter(this, drawerData));
+		drawerList.setOnChildClickListener(this);
 		
 		drawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -114,27 +121,35 @@ public class MainActivity extends ActionBarActivity
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
-	public void showFragment(Fragment fragment) {
-		getSupportFragmentManager()
-			.beginTransaction()
-			.addToBackStack(null)
-			.replace(R.id.content_frame, fragment)
-			.commit();
-	}
 
+	
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		if(currentPosition==position) {
+	public boolean onChildClick(ExpandableListView parent, View v,
+			int groupPosition, int childPosition, long id) {
+		
+		GroupType type = GroupType.values()[groupPosition];
+		if(type==GroupType.MOOD) {
+			Mood mood = Mood.values()[childPosition];
+			if(localStorage.getLastMood()==mood) {
+				drawerLayout.closeDrawer(drawerList);
+				return true;
+			}
+			localStorage.setLastMood(mood);
 			drawerLayout.closeDrawer(drawerList);
-			return;
+			topViewPagerFragment.notifyMoodChanged();
+		} else if(type==GroupType.TOP_CATEGORIES) {
+			if(currentPosition==childPosition) {
+				drawerLayout.closeDrawer(drawerList);
+				return true;
+			}
+			currentPosition = childPosition;
+			currentTitle = menuTitles[childPosition];
+			drawerLayout.closeDrawer(drawerList);
+			if(topViewPagerFragment!=null) {
+				topViewPagerFragment.setCurrentTopView(childPosition);
+			}
 		}
-		currentPosition = position;
-		currentTitle = menuTitles[position];
-		drawerLayout.closeDrawer(drawerList);
-		if(topViewPagerFragment!=null) {
-			topViewPagerFragment.setCurrentTopView(position);
-		}
+		return true;
 	}
 	
 	@Override

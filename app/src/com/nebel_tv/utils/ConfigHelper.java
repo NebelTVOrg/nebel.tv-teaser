@@ -10,13 +10,14 @@ import java.util.HashMap;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Xml;
 
 import com.nebel_tv.NebelTVApp;
 import com.nebel_tv.R;
+import com.nebel_tv.model.Mood;
 import com.nebel_tv.model.TopView;
 
 public class ConfigHelper {
@@ -26,12 +27,12 @@ public class ConfigHelper {
 	
     private static ConfigHelper instance;
 	
-	private HashMap<TopView, String> configUrls;
+	private HashMap<Mood, HashMap<TopView, String>> configUrls;
 	private Context context;
 
     private ConfigHelper(Context context) {
     	this.context = context;
-    	configUrls = new HashMap<TopView, String>();
+    	configUrls = new HashMap<Mood, HashMap<TopView, String>>();
     }
 
     public static synchronized ConfigHelper getInstance() {
@@ -41,7 +42,7 @@ public class ConfigHelper {
         return instance;
     }
 	
-	public HashMap<TopView, String> getConfigUrls() {
+	public HashMap<Mood, HashMap<TopView, String>> getConfigUrls() {
 	   try {
 		   configUrls = parseConfig(getConfigFileStream());
 	   } catch (IOException e) {
@@ -107,11 +108,11 @@ public class ConfigHelper {
 	    }
 	}
 	
-	private HashMap<TopView, String> parseConfig(InputStream in) throws IOException {
+	private HashMap<Mood, HashMap<TopView, String>> parseConfig(InputStream in) throws IOException {
         try {
-            XmlPullParser parser = Xml.newPullParser();
+        	XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = factory.newPullParser();
             parser.setInput(in, null);
-            parser.nextTag();
             return readConfig(parser);
         } catch(Exception e) {
         	e.printStackTrace();
@@ -122,48 +123,63 @@ public class ConfigHelper {
         }
     }
 	
-	private HashMap<TopView, String> readConfig(XmlPullParser parser) 
+	private HashMap<Mood, HashMap<TopView, String>> readConfig(XmlPullParser parser) 
 										throws XmlPullParserException, IOException {
-	    HashMap<TopView, String> configMap = new HashMap<TopView, String>();
-
-	    parser.require(XmlPullParser.START_TAG, null, "config");
-	    while (parser.next() != XmlPullParser.END_TAG) {
-	        if (parser.getEventType() != XmlPullParser.START_TAG) {
-	            continue;
-	        }
-	        String name = parser.getName();
-	        TopView topView = null;
-	        if("friends_feed".equals(name)) {
-	        	topView = TopView.FRIENDS_FEED;
-	        } else if("whats_close".equals(name)) {
-	        	topView = TopView.WHATS_CLOSE;
-	        } else if("recently_viewed".equals(name)) {
-	        	topView = TopView.RECENTLY_VIEWED;
-	        } else if("whats_hot".equals(name)) {
-	        	topView = TopView.WHATS_HOT;
-	        } else if("pictures".equals(name)) {
-	        	topView = TopView.PICTURES;
-	        } else if("recommended".equals(name)) {
-	        	topView = TopView.RECOMMENDED;
-	        } else {
-	        	//invalid config file
-	        	throw new XmlPullParserException("");
-	        }
-	        if(topView!=null) {
-	        	configMap.put(topView, readText(parser));
-	        }
-	    }  
-	    return configMap;
-	}
-	
-	private String readText(XmlPullParser parser) 
-										throws IOException, XmlPullParserException {
-	    String result = "";
-	    if (parser.next() == XmlPullParser.TEXT) {
-	        result = parser.getText();
-	        parser.nextTag();
-	    }
-	    return result;
+		HashMap<Mood, HashMap<TopView, String>> configMap = new HashMap<Mood, HashMap<TopView,String>>();
+	    HashMap<TopView, String> topViewMap = new HashMap<TopView, String>();
+	    Mood currentMood = null;
+		TopView topView = null;
+		int eventType = parser.getEventType();
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+        	if(eventType == XmlPullParser.START_TAG) {
+        		String name = parser.getName();
+        		if("mood".equals(name)) {
+        			String moodType = parser.getAttributeValue(null, "name");
+    	        	if("family".equals(moodType)) {
+    	        		currentMood = Mood.FAMILY;
+    	        	} else if("kids".equals(moodType)) {
+    	        		currentMood = Mood.KIDS;
+    	        	} else if("romance".equals(moodType)) {
+    	        		currentMood = Mood.ROMANCE;
+    	        	} else {
+    	        		//invalid config file
+    	        		throw new XmlPullParserException("");
+    	        	}
+        		} else if("friends_feed".equals(name)) {
+    	        	topView = TopView.FRIENDS_FEED;
+        	    } else if("whats_close".equals(name)) {
+        	        topView = TopView.WHATS_CLOSE;
+        	    } else if("recently_viewed".equals(name)) {
+        	        topView = TopView.RECENTLY_VIEWED;
+        	    } else if("whats_hot".equals(name)) {
+        	        topView = TopView.WHATS_HOT;
+        	    } else if("pictures".equals(name)) {
+        	        topView = TopView.PICTURES;
+        	    } else if("recommended".equals(name)) {
+        	        topView = TopView.RECOMMENDED;
+        	    } else if("config".equals(name)) {
+        	    	//do nothing
+        	    } else {
+        	        	//invalid config file
+        	        	throw new XmlPullParserException("");
+        	    }
+        	} else if(eventType == XmlPullParser.END_TAG) {
+        		if("mood".equals(parser.getName())) {
+        			if(currentMood!=null) {
+        				configMap.put(currentMood, topViewMap);
+        				currentMood = null;
+        				topViewMap = new HashMap<TopView, String>();
+        			}
+        		}
+        	} else if(eventType == XmlPullParser.TEXT) {
+        		if(topView!=null) {
+        			topViewMap.put(topView, parser.getText());
+        			topView = null;
+        		}
+        	}
+        	eventType = parser.next();
+        }
+        return configMap;
 	}
 
 }

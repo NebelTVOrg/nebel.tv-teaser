@@ -6,7 +6,7 @@ import com.nebel_tv.ui.fragment.base.BaseWebViewFragment;
 
 public class CategoryFragment extends BaseWebViewFragment {
 	
-    private static final String EXTRA_CATEGORY_URL_KEY = "EXTRA_CATEGORY_URL_KEY";
+    public static final String EXTRA_CATEGORY_URL_KEY = "EXTRA_CATEGORY_URL_KEY";
     
     private String url;
 	
@@ -39,7 +39,7 @@ public class CategoryFragment extends BaseWebViewFragment {
 		if(depth==0) {
 			return false;
 		} else {
-    		getMainActivity().showFragment(MediaPlaybackFragment.newInstance());
+			getParentActivity().showFragment(MediaPlaybackFragment.newInstance());
 			return true;
 		}
 	}

@@ -56,6 +56,12 @@ public class TopViewPagerFragment extends Fragment {
 		topViewPager.setCurrentItem(position);
 	}
 	
+	public void notifyMoodChanged() {
+		topViewPagerAdapter = new TopViewPagerAdapter(getChildFragmentManager());
+		topViewPager.setAdapter(topViewPagerAdapter);
+		topViewPager.setCurrentItem(localStorage.getLastScreen().ordinal());
+	}
+	
 	private class TopViewPagerAdapter extends FragmentStatePagerAdapter {
 		
 		private TopView[] topViewValues;
