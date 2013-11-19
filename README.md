@@ -4,6 +4,12 @@ nebel.tv-teaser
 Nebel.TV teaser app has config file to have the ability to change URLs for each Top Level View.
 At first start app creates folder NebelTV in the root of external storage(sdcard) of the device. That is where config file is created under the name config.xml
 
+-------WARNING--------
+
+Before updating to a new version of the app is is recommended to erase config file from external storage(sd-card) in order to avoid bugs regarding structural config changes.
+
+---------END----------
+
 Config file looks like this:
 ```xml
 <config>
