@@ -3,7 +3,6 @@ package com.nebel_tv.ui.fragment.base;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.nebel_tv.R;
-import com.nebel_tv.activity.MainActivity;
 import com.nebel_tv.activity.base.BaseActivity;
 import com.nebel_tv.utils.UIUtils;
 
@@ -68,7 +66,11 @@ public abstract class BaseWebViewFragment extends Fragment {
     	
     	@Override
     	public boolean shouldOverrideUrlLoading(WebView view, String url) {
-    		return BaseWebViewFragment.this.shouldOverrideUrlLoading(url, counter);
+    		boolean ret =  BaseWebViewFragment.this.shouldOverrideUrlLoading(url, counter);
+    		if(ret=true) {
+    			counter=0;
+    		}
+    		return ret;
     	}
     	
     	@Override
