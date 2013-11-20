@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.nebel_tv.adapter.NavigationDrawerAdapter.GroupType;
 import com.nebel_tv.model.Mood;
 import com.nebel_tv.model.TopView;
 
@@ -39,6 +40,14 @@ public class LocalStorage {
     
     public void setLastMood(Mood lastMood) {
     	mSharedPreferences.edit().putInt(KEY_LAST_MOOD, lastMood.ordinal()).commit();
+    }
+    
+    public boolean getNavigationGroupState(GroupType groupType) {
+    	return mSharedPreferences.getBoolean(groupType.toString(), true);
+    }
+    
+    public void setNavigationGroupState(GroupType groupType, boolean expanded) {
+    	mSharedPreferences.edit().putBoolean(groupType.toString(), expanded).commit();
     }
 
 }

@@ -11,12 +11,13 @@ import android.widget.TextView;
 
 import com.nebel_tv.NebelTVApp;
 import com.nebel_tv.R;
+import com.nebel_tv.storage.LocalStorage;
 
 public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 	
 	public enum GroupType {
-		MOOD(R.string.mood_title), 
-		TOP_CATEGORIES(R.string.categories_title);
+		TOP_CATEGORIES(R.string.categories_title),
+		MOOD(R.string.mood_title);
 		
 		private int resId;
 		
@@ -31,10 +32,12 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 	
 	private HashMap<GroupType, String[]> data;
 	private LayoutInflater inflater;
+	private LocalStorage localStorage;
 	
 	public NavigationDrawerAdapter(Context context, HashMap<GroupType, String[]> data) {
 		this.data = data;
 		inflater = LayoutInflater.from(context);
+		localStorage = LocalStorage.from(context);
 	}
 
 	@Override
@@ -54,7 +57,14 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 			convertView = inflater.inflate(R.layout.drawer_list_item, parent, false);
 		}
 		
+		
 		((TextView)convertView).setText(getChild(groupPosition, childPosition));
+		if(getGroupEnum(groupPosition)==GroupType.MOOD && 
+				localStorage.getLastMood().ordinal()==childPosition) {
+			convertView.setBackgroundResource(R.color.drawer_item_selected_color);
+		} else {
+			convertView.setBackgroundResource(android.R.color.transparent);
+		}
 		
 		return convertView;
 	}
@@ -66,7 +76,11 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public String[] getGroup(int groupPosition) {
-		return data.get(GroupType.values()[groupPosition]);
+		return data.get(getGroupEnum(groupPosition));
+	}
+	
+	public GroupType getGroupEnum(int groupPosition) {
+		return GroupType.values()[groupPosition];
 	}
 
 	@Override
@@ -86,7 +100,7 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 			convertView = inflater.inflate(R.layout.drawer_header_item, parent, false);
 		}
 		
-		GroupType type = GroupType.values()[groupPosition];
+		GroupType type = getGroupEnum(groupPosition);
 		String value = NebelTVApp.getContext().getString(type.getResId());
 		((TextView)convertView).setText(value.toUpperCase());
 		

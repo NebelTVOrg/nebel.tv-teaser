@@ -1,6 +1,7 @@
 package com.nebel_tv.activity;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupCollapseListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 
 import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
@@ -22,10 +25,11 @@ import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.fragment.TopViewPagerFragment;
 
 public class MainActivity extends BaseActivity 
-					implements OnChildClickListener, OnPageChangeListener  {
+					implements OnChildClickListener, OnGroupCollapseListener, OnGroupExpandListener, OnPageChangeListener  {
 	
     private DrawerLayout drawerLayout;
     private ExpandableListView drawerList;
+    private NavigationDrawerAdapter drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
     private TopViewPagerFragment topViewPagerFragment;
     
@@ -47,10 +51,21 @@ public class MainActivity extends BaseActivity
 		drawerList = (ExpandableListView) findViewById(R.id.left_drawer);
 		
 		HashMap<GroupType, String[]> drawerData = new HashMap<GroupType, String[]>();
-		drawerData.put(GroupType.MOOD, getResources().getStringArray(R.array.mood_items));
 		drawerData.put(GroupType.TOP_CATEGORIES, menuTitles);
-		drawerList.setAdapter(new NavigationDrawerAdapter(this, drawerData));
+		drawerData.put(GroupType.MOOD, getResources().getStringArray(R.array.mood_items));
+		drawerAdapter = new NavigationDrawerAdapter(this, drawerData);
+		drawerList.setAdapter(drawerAdapter);
 		drawerList.setOnChildClickListener(this);
+		drawerList.setOnGroupCollapseListener(this);
+		drawerList.setOnGroupExpandListener(this);
+		Iterator<GroupType> it = drawerData.keySet().iterator();
+		int i=0;
+		while(it.hasNext()) {
+			if(localStorage.getNavigationGroupState(it.next())) {
+				drawerList.expandGroup(i);
+			}
+			i++;
+		}
 		
 		drawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -126,7 +141,6 @@ public class MainActivity extends BaseActivity
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
-		
 		GroupType type = GroupType.values()[groupPosition];
 		if(type==GroupType.MOOD) {
 			Mood mood = Mood.values()[childPosition];
@@ -136,6 +150,7 @@ public class MainActivity extends BaseActivity
 			}
 			localStorage.setLastMood(mood);
 			drawerLayout.closeDrawer(drawerList);
+			drawerAdapter.notifyDataSetChanged();
 			topViewPagerFragment.notifyMoodChanged();
 		} else if(type==GroupType.TOP_CATEGORIES) {
 			if(currentPosition==childPosition) {
@@ -150,6 +165,16 @@ public class MainActivity extends BaseActivity
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	public void onGroupExpand(int groupPosition) {
+		localStorage.setNavigationGroupState(drawerAdapter.getGroupEnum(groupPosition), true);
+	}
+
+	@Override
+	public void onGroupCollapse(int groupPosition) {
+		localStorage.setNavigationGroupState(drawerAdapter.getGroupEnum(groupPosition), false);
 	}
 	
 	@Override
