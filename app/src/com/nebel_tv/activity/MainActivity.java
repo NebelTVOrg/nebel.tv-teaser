@@ -27,7 +27,9 @@ import com.nebel_tv.ui.fragment.TopViewPagerFragment;
 public class MainActivity extends BaseActivity 
 					implements OnChildClickListener, OnGroupCollapseListener, OnGroupExpandListener, OnPageChangeListener  {
 	
-    private DrawerLayout drawerLayout;
+	private static final String TOP_VIEW_PAGER_FRAGMENT_TAG = "top_view_pager_fragment";
+	
+	private DrawerLayout drawerLayout;
     private ExpandableListView drawerList;
     private NavigationDrawerAdapter drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
@@ -47,12 +49,12 @@ public class MainActivity extends BaseActivity
 		localStorage = LocalStorage.from(this);
 		currentPosition = localStorage.getLastScreen().ordinal();
 		currentTitle = menuTitles[currentPosition];
-		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		drawerList = (ExpandableListView) findViewById(R.id.left_drawer);
-		
 		HashMap<GroupType, String[]> drawerData = new HashMap<GroupType, String[]>();
 		drawerData.put(GroupType.TOP_CATEGORIES, menuTitles);
 		drawerData.put(GroupType.MOOD, getResources().getStringArray(R.array.mood_items));
+		
+		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		drawerList = (ExpandableListView) findViewById(R.id.left_drawer);
 		drawerAdapter = new NavigationDrawerAdapter(this, drawerData);
 		drawerList.setAdapter(drawerAdapter);
 		drawerList.setOnChildClickListener(this);
@@ -91,13 +93,14 @@ public class MainActivity extends BaseActivity
         
         
         if (savedInstanceState != null) {
-        	topViewPagerFragment = (TopViewPagerFragment) getSupportFragmentManager().findFragmentByTag("customtag");
+        	topViewPagerFragment = (TopViewPagerFragment) 
+        		getSupportFragmentManager().findFragmentByTag(TOP_VIEW_PAGER_FRAGMENT_TAG);
         } else {
         	topViewPagerFragment = new TopViewPagerFragment();
     		getSupportFragmentManager()
-			.beginTransaction()
-			.add(R.id.content_frame, topViewPagerFragment, "customtag")
-			.commit();
+				.beginTransaction()
+				.add(R.id.content_frame, topViewPagerFragment, TOP_VIEW_PAGER_FRAGMENT_TAG)
+				.commit();
         }
 	}
 	
@@ -141,7 +144,7 @@ public class MainActivity extends BaseActivity
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
-		GroupType type = GroupType.values()[groupPosition];
+		GroupType type = drawerAdapter.getGroupEnum(groupPosition);
 		if(type==GroupType.MOOD) {
 			Mood mood = Mood.values()[childPosition];
 			if(localStorage.getLastMood()==mood) {

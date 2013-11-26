@@ -3,7 +3,6 @@ package com.nebel_tv.ui.fragment;
 import android.os.Bundle;
 
 import com.nebel_tv.ui.fragment.base.BaseWebViewFragment;
-import com.nebel_tv.utils.UIUtils;
 
 public class CategoryFragment extends BaseWebViewFragment {
 	

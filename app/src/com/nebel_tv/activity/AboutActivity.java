@@ -12,12 +12,12 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.widget.TextView;
 
 import com.nebel_tv.R;
+import com.nebel_tv.activity.base.BaseActivity;
 
-public class AboutActivity extends ActionBarActivity {
+public class AboutActivity extends BaseActivity {
 	
 	public static void launch(Context c) {
 		Intent intent = new Intent(c, AboutActivity.class);
