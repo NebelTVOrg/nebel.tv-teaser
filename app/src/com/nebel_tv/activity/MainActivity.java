@@ -141,6 +141,9 @@ public class MainActivity extends BaseActivity
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
+		
+		// [SB] TODO possible ArrayIndexOutofBoundsException in next line and some others below
+		// You can do such thing if 100% sure that nothing wrong can come as parameter 
 		GroupType type = GroupType.values()[groupPosition];
 		if(type==GroupType.MOOD) {
 			Mood mood = Mood.values()[childPosition];
@@ -151,6 +154,8 @@ public class MainActivity extends BaseActivity
 			localStorage.setLastMood(mood);
 			drawerLayout.closeDrawer(drawerList);
 			drawerAdapter.notifyDataSetChanged();
+			// [SB] TODO Similar case below contain null pointer check, here it isn't checked. Should be similar
+			// If you sure, that topViewPagerFragment never become null - remove the check. Otherwise add check here.
 			topViewPagerFragment.notifyMoodChanged();
 		} else if(type==GroupType.TOP_CATEGORIES) {
 			if(currentPosition==childPosition) {

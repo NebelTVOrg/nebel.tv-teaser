@@ -123,6 +123,8 @@ public class ConfigHelper {
         }
     }
 	
+	// [SB] TODO Replace hardcoded strings with constants. Formatting should be improved. 
+	// More spaces and empty lines should make the code better to understand
 	private HashMap<Mood, HashMap<TopView, String>> readConfig(XmlPullParser parser) 
 										throws XmlPullParserException, IOException {
 		HashMap<Mood, HashMap<TopView, String>> configMap = new HashMap<Mood, HashMap<TopView,String>>();
