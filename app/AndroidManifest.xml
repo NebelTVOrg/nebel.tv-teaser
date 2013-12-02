@@ -41,7 +41,37 @@
         <activity 
             android:name=".activity.MediaPlaybackActivity"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape">
+            <intent-filter>
+	            <action android:name="android.intent.action.VIEW" />
+			    <category android:name="android.intent.category.DEFAULT" />
+			    <category android:name="android.intent.category.BROWSABLE" />
+			    <data android:mimeType="video/*"  />
+			    <data android:mimeType="application/x-quicktimeplayer*" />
+			    <data android:mimeType="application/x-mpeg" />
+			    <data android:mimeType="application/mp4*" />
+			    <data android:mimeType="application/mpeg*" />
+			
+			    <data android:pathPattern=".*mkv" />
+			    <data android:pathPattern=".*MKV" />
+			
+			    <data android:pathPattern=".*mov" />
+			    <data android:pathPattern=".*MOV" />
+			
+			    <data android:pathPattern=".*mpg" />
+			    <data android:pathPattern=".*MPG" />
+			
+			    <data android:pathPattern=".*mpeg" />
+			    <data android:pathPattern=".*MPEG" />
+			
+			    <data android:pathPattern=".*avi" />
+			    <data android:pathPattern=".*AVI" />   
+			
+			    <data android:pathPattern=".*h264" />
+			    <data android:pathPattern=".*H264" />
+
+		    </intent-filter>
+        </activity>
     </application>
 
 </manifest>

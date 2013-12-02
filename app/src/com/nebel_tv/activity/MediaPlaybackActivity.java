@@ -1,5 +1,7 @@
 package com.nebel_tv.activity;
 
+import java.io.File;
+import java.net.URI;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -128,7 +130,12 @@ public class MediaPlaybackActivity extends Activity
 		videoQualityWheel = (WheelView) findViewById(R.id.quality_content);
 		durationText = (TextView) findViewById(R.id.txt_duration);
 		
+
 		videoUrls = getIntent().getStringArrayExtra(KEY_VIDEO_URLS);
+		if(videoUrls==null) {
+			String data = getIntent().getDataString();
+			videoUrls = new String[] {new File(URI.create(data)).getAbsolutePath()};
+		}
 		timer = new Timer();
 		
 		if(isOpenGL2ES20supported()){
