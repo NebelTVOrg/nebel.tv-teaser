@@ -47,6 +47,7 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public long getChildId(int groupPosition, int childPosition) {
+		// [SB] TODO hardcoded value
 		return groupPosition*100 + childPosition;
 	}
 
