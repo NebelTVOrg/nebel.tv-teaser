@@ -14,10 +14,13 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
 
 public class AboutActivity extends BaseActivity {
+	
+	private static final String TAG = AboutActivity.class.getName();
 	
 	public static void launch(Context c) {
 		Intent intent = new Intent(c, AboutActivity.class);
@@ -59,6 +62,7 @@ public class AboutActivity extends BaseActivity {
 	    	versionName = info.versionName;
     	} catch(NameNotFoundException e) {
     		e.printStackTrace();
+    		FlurryAgent.onError(TAG, e.getMessage(), e);
     		versionName = null;
     	}
     	return versionName;
@@ -75,6 +79,7 @@ public class AboutActivity extends BaseActivity {
 
 		}catch(Exception e){
 			e.printStackTrace();
+			FlurryAgent.onError(TAG, e.getMessage(), e);
 			return null;
 		}
 	}

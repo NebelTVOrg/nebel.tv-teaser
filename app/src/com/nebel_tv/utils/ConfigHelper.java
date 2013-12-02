@@ -15,6 +15,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import android.content.Context;
 import android.os.Environment;
 
+import com.flurry.android.FlurryAgent;
 import com.nebel_tv.NebelTVApp;
 import com.nebel_tv.R;
 import com.nebel_tv.model.Mood;
@@ -22,17 +23,23 @@ import com.nebel_tv.model.TopView;
 
 public class ConfigHelper {
 	
+	public static final String TAG = ConfigHelper.class.getName();
 	public static final String CONFIG_FOLDER_NAME = "NebelTV";
 	private static final String CONFIG_FILE_NAME = "config.xml"; 
+	private static final String INVALID_CONFIG_MSG = "Invalid config";
 	
     private static ConfigHelper instance;
 	
 	private HashMap<Mood, HashMap<TopView, String>> configUrls;
+	private int jumpAheadSecValue; 
+	private int jumpBackSecValue;
 	private Context context;
 
     private ConfigHelper(Context context) {
     	this.context = context;
     	configUrls = new HashMap<Mood, HashMap<TopView, String>>();
+    	jumpAheadSecValue = 0;
+    	jumpBackSecValue = 0;
     }
 
     public static synchronized ConfigHelper getInstance() {
@@ -43,12 +50,31 @@ public class ConfigHelper {
     }
 	
 	public HashMap<Mood, HashMap<TopView, String>> getConfigUrls() {
-	   try {
-		   configUrls = parseConfig(getConfigFileStream());
-	   } catch (IOException e) {
-		   e.printStackTrace();
-	   }
-	   return configUrls;
+		parseConfig();
+		return configUrls;
+	}
+	
+	public int getJumpAheadSecValue() {
+		if(jumpAheadSecValue==0) {
+			parseConfig();
+		}
+		return jumpAheadSecValue;
+	}
+	
+	public int getJumpBackSecValue() {
+		if(jumpBackSecValue==0) {
+			parseConfig();
+		}
+		return jumpBackSecValue;
+	}
+	
+	private void parseConfig() {
+		try {
+			configUrls = parseConfig(getConfigFileStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+			FlurryAgent.onError(TAG, e.getMessage(), e);
+		}
 	}
 	
 	private InputStream getConfigFileStream() throws IOException {
@@ -78,6 +104,7 @@ public class ConfigHelper {
 			return context.getAssets().open(CONFIG_FILE_NAME);
 		}catch (IOException e) {
 			e.printStackTrace();
+			FlurryAgent.onError(TAG, e.getMessage(), e);
 			return null;
 		}
 		
@@ -97,6 +124,7 @@ public class ConfigHelper {
             out = null;
           } catch(IOException e) {
               e.printStackTrace();
+              FlurryAgent.onError(TAG, e.getMessage(), e);
           }       
 	}
 	
@@ -116,6 +144,7 @@ public class ConfigHelper {
             return readConfig(parser);
         } catch(Exception e) {
         	e.printStackTrace();
+        	FlurryAgent.onError(TAG, e.getMessage(), e);
         	UIUtils.showMessage(R.string.invalid_extenal_config);
         	return parseConfig(getDefaultConfigFileStream());
         } finally {
@@ -143,7 +172,7 @@ public class ConfigHelper {
     	        		currentMood = Mood.ROMANCE;
     	        	} else {
     	        		//invalid config file
-    	        		throw new XmlPullParserException("");
+    	        		throw new XmlPullParserException(INVALID_CONFIG_MSG);
     	        	}
         		} else if("friends_feed".equals(name)) {
     	        	topView = TopView.FRIENDS_FEED;
@@ -159,9 +188,12 @@ public class ConfigHelper {
         	        topView = TopView.RECOMMENDED;
         	    } else if("config".equals(name)) {
         	    	//do nothing
+        	    } else if("video_options".equals(name)) {
+        	    	jumpAheadSecValue = Integer.valueOf(parser.getAttributeValue(null, "jump_ahead_sec"));
+        	    	jumpBackSecValue = Integer.valueOf(parser.getAttributeValue(null, "jump_back_sec"));   	    	
         	    } else {
         	        	//invalid config file
-        	        	throw new XmlPullParserException("");
+        	        	throw new XmlPullParserException(INVALID_CONFIG_MSG);
         	    }
         	} else if(eventType == XmlPullParser.END_TAG) {
         		if("mood".equals(parser.getName())) {

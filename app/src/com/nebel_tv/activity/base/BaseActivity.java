@@ -1,10 +1,12 @@
 package com.nebel_tv.activity.base;
 
-import com.nebel_tv.R;
-
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+
+import com.flurry.android.FlurryAgent;
+import com.nebel_tv.NebelTVApp;
+import com.nebel_tv.R;
 
 public abstract class BaseActivity extends ActionBarActivity {
 	
@@ -17,6 +19,18 @@ public abstract class BaseActivity extends ActionBarActivity {
 	    default:
 		    return super.onOptionsItemSelected(item);
 	    }
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		FlurryAgent.onStartSession(this, NebelTVApp.FLURRY_API_KEY);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();		
+		FlurryAgent.onEndSession(this);
 	}
 
 	public void showFragment(Fragment fragment) {

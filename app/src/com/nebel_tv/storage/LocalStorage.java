@@ -12,6 +12,7 @@ public class LocalStorage {
     private static final String KEY_LAST_SCREEN = "KEY_LAST_SCREEN";
     private static final String KEY_LAST_MOOD = "KEY_LAST_MOOD";
     private static final String KEY_FIRST_RUN = "KEY_FIRST_RUN";
+    private static final String KEY_SHOW_TIME_REMAINING = "KEY_SHOW_TIME_REMAINING";    
 
     private final SharedPreferences mSharedPreferences;
     private static LocalStorage sInstance;
@@ -57,6 +58,14 @@ public class LocalStorage {
     
     public void setFirstRun() {
     	mSharedPreferences.edit().putBoolean(KEY_FIRST_RUN, false).commit();
+    }
+    
+    public boolean isShowTimeRemaining() {
+    	return mSharedPreferences.getBoolean(KEY_SHOW_TIME_REMAINING, false);
+    }
+    
+    public void setShowTimeRemaining(boolean value) {
+    	mSharedPreferences.edit().putBoolean(KEY_SHOW_TIME_REMAINING, value).commit();
     }
 
 }

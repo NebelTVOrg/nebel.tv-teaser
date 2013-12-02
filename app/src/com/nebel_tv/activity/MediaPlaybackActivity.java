@@ -20,7 +20,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -29,10 +29,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
+import com.nebel_tv.NebelTVApp;
 import com.nebel_tv.R;
+import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.view.VerticalSeekBar;
 import com.nebel_tv.ui.view.VideoSeekBar;
+import com.nebel_tv.utils.ConfigHelper;
 import com.nebel_tv.utils.DateTimeUtils;
 import com.vayavision.MediaCore.MediaCore;
 import com.vayavision.MediaCore.OpenGLES20Renderer;
@@ -45,7 +50,6 @@ public class MediaPlaybackActivity extends Activity
 	private static final String TAG = MediaPlaybackActivity.class.getName();
 	private static final String KEY_VIDEO_URLS = "KEY_VIDEO_URLS";
 	
-	private static final int DEFAULT_SEEK_VALUE = 10; //10 sec
 	private static final int DEFAULT_CONTROLS_VISIBILITY_TIME = 3000; //3 sec
 	private static final int AUDIO_WHEEL_VISIBLE_ITEMS_NUM = 5;
 	private static final int SUBTITLE_WHEEL_VISIBLE_ITEMS_NUM = AUDIO_WHEEL_VISIBLE_ITEMS_NUM;
@@ -77,11 +81,15 @@ public class MediaPlaybackActivity extends Activity
 	private WheelView audiotrackWheel;
 	private WheelView subtitleWheel;
 	private WheelView videoQualityWheel;
+	private TextView durationText;
 
 	private String[] videoUrls;
 	private int maxStreamVolume;
+	private int seekBackValueInSec;
+	private int seekAheadValueInSec;
 	private Timer timer;
 	private ControlVisibilityTimerTask controlVisibilityTimerTask;
+	private LocalStorage localStorage;
 	
 	private int mState;
 	private long mPositionInSeconds;
@@ -90,6 +98,7 @@ public class MediaPlaybackActivity extends Activity
 	private int mSubtitleTrackCount;
 	private int mActiveAudioTrack;
 	private int mActiveSubtitleTrack;
+	private boolean showTimeRemaining;
 	
 	private Animation animFadeOut;
 	private Animation animFadeIn;
@@ -97,12 +106,17 @@ public class MediaPlaybackActivity extends Activity
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.mediaplay);
+		setContentView(R.layout.mediaplayback);
 		
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(DEFAULT_AUDIO_STREAM);
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		maxStreamVolume = audioManager.getStreamMaxVolume(DEFAULT_AUDIO_STREAM);
+		ConfigHelper configHelper = ConfigHelper.getInstance();
+		seekBackValueInSec = configHelper.getJumpBackSecValue();
+		seekAheadValueInSec = configHelper.getJumpAheadSecValue();
+		localStorage = LocalStorage.from(this);
+		showTimeRemaining = localStorage.isShowTimeRemaining();
 		
 		videoViewContainer = (ViewGroup) findViewById(R.id.container_video);
 		controlContainer = (ViewGroup) findViewById(R.id.container_control);
@@ -112,6 +126,7 @@ public class MediaPlaybackActivity extends Activity
 		audiotrackWheel = (WheelView) findViewById(R.id.audiotrack_content);
 		subtitleWheel = (WheelView) findViewById(R.id.subtitle_content);
 		videoQualityWheel = (WheelView) findViewById(R.id.quality_content);
+		durationText = (TextView) findViewById(R.id.txt_duration);
 		
 		videoUrls = getIntent().getStringArrayExtra(KEY_VIDEO_URLS);
 		timer = new Timer();
@@ -207,7 +222,6 @@ public class MediaPlaybackActivity extends Activity
     	volumeSeekBar.setOnSeekBarChangeListener(this);  	
     	brightnessSeekBar.setOnSeekBarChangeListener(this);
     	
-
     	audiotrackWheel.setCenterDrawableRes(R.drawable.panel_left_selected_item_bg, CenterImageAlignType.ALIGN_LEFT);
     	audiotrackWheel.setVisibleItems(AUDIO_WHEEL_VISIBLE_ITEMS_NUM);
     	audiotrackWheel.addChangingListener(this);
@@ -221,38 +235,58 @@ public class MediaPlaybackActivity extends Activity
     	updateVideoQualityValues();
         
         playBtn = (ImageButton) findViewById(R.id.btn_play);
-        playBtn.setOnClickListener(new OnClickListener() {
-        	 public void onClick(View v) {
-           		 if(mState == PlayerCore2.STATE_PLAYING){
-        			 mCore2.pause();
-        		 }else{
-       				 mCore2.play();
-        		 }
-        	 }
-		});
-            
-        seekBackBtn = (ImageButton) findViewById(R.id.btn_back);
-        seekBackBtn.setOnClickListener(new OnClickListener() {				
-			public void onClick(View v) {
-				mCore2.setPosition(
-						DateTimeUtils.getSecValueInMicros(mPositionInSeconds - DEFAULT_SEEK_VALUE),
-						0,
-						DateTimeUtils.getSecValueInMicros(mPositionInSeconds));
-				mCore2.play();
-			}
-		});	        
-        
+        seekBackBtn = (ImageButton) findViewById(R.id.btn_back);     
         seekAheadBtn = (ImageButton) findViewById(R.id.btn_ahead);
-        seekAheadBtn.setOnClickListener(new OnClickListener() {				
-			public void onClick(View v) {
-				mCore2.setPosition(
-						DateTimeUtils.getSecValueInMicros(mPositionInSeconds + DEFAULT_SEEK_VALUE),
-						0,
-						DateTimeUtils.getSecValueInMicros(mDurationInSeconds));
-				mCore2.play();
+ 
+        //TODO remove this
+        //harcoded crash event to test Flurry crash reports
+        playBtn.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				throw new RuntimeException("harcoded runtime crash to test Flurry Crash reporting");
 			}
 		});
- 
+    }
+    
+    public void onPlayClick(View v) {
+    	if(mState == PlayerCore2.STATE_PLAYING){
+			 mCore2.pause();
+		 }else{
+				 mCore2.play();
+		 }
+    }
+    
+    public void onSeekBackClick(View v) {
+    	mCore2.setPosition(
+				DateTimeUtils.getSecValueInMicros(mPositionInSeconds - seekBackValueInSec),
+				0,
+				DateTimeUtils.getSecValueInMicros(mPositionInSeconds));
+		mCore2.play();
+    }
+    
+    public void onSeekForwardClick(View v) {
+    	mCore2.setPosition(
+				DateTimeUtils.getSecValueInMicros(mPositionInSeconds + seekAheadValueInSec),
+				0,
+				DateTimeUtils.getSecValueInMicros(mDurationInSeconds));
+		mCore2.play();
+    }
+    
+    public void onDurationClick(View v) {
+    	showTimeRemaining = !showTimeRemaining;
+    	localStorage.setShowTimeRemaining(showTimeRemaining);
+    	updateDurationText();
+    }
+    
+    private void updateDurationText() {
+    	long  value;
+    	if(!showTimeRemaining) {
+	    	value = mDurationInSeconds;
+    	} else {
+    		value = mDurationInSeconds-mPositionInSeconds;
+    	}
+    	durationText.setText(DateTimeUtils.getDefaultTimeFormatter().print(DateTimeUtils.getSecValueInMillis(value)));
     }
     
     private void updateAudioTrackCount() {
@@ -324,6 +358,18 @@ public class MediaPlaybackActivity extends Activity
         super.onPause();
 	}
     
+	@Override
+	protected void onStart() {
+		super.onStart();
+		FlurryAgent.onStartSession(this, NebelTVApp.FLURRY_API_KEY);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();		
+		FlurryAgent.onEndSession(this);
+	}
+    
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) || 
@@ -356,6 +402,14 @@ public class MediaPlaybackActivity extends Activity
     		resetTimer();
     	}
     	return super.dispatchTouchEvent(ev);
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+    	if(event.getAction()==MotionEvent.ACTION_UP) {
+    		onPlayClick(playBtn);
+    	}
+    	return super.onTouchEvent(event);
     }
     
     public void onGetConfigurationComplete(int status, Configuration configuration) {
@@ -405,6 +459,7 @@ public class MediaPlaybackActivity extends Activity
 			@Override
 			public void run() {
 				videoSeekBar.setMax((int)mDurationInSeconds);
+				updateDurationText();
 			}
 		});
 	}
@@ -510,6 +565,9 @@ public class MediaPlaybackActivity extends Activity
 			@Override
 			public void run() {
 				videoSeekBar.setProgress((int)mPositionInSeconds);
+				if(showTimeRemaining) {
+					updateDurationText();
+				}
 			}
 		});
 	}

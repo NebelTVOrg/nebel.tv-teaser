@@ -8,6 +8,8 @@ import com.nebel_tv.utils.DownloadManagerHelper;
 
 public class NebelTVApp extends Application {
 	
+	public static final String FLURRY_API_KEY = "MBPCG7WZGRPXP5DHGMCH";
+	
 	private static Context context;
 	
 	@Override

@@ -24,4 +24,5 @@
     	<pictures>file:///android_asset/html/pictures.html</pictures>
     	<recommended>file:///android_asset/html/recommended.html</recommended>
     </mood>
+    <video_options jump_ahead_sec="10" jump_back_sec="10"/>
 </config>

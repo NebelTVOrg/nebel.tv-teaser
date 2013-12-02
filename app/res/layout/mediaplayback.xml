@@ -1,73 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/applicationLayout" xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="0dp">
+<FrameLayout 
+    android:id="@+id/container_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+   	xmlns:my="http://schemas.android.com/apk/res/com.nebel_tv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <FrameLayout 
+        android:id="@+id/container_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
     
     <RelativeLayout 
-            android:id="@+id/statusLayout"
-            android:layout_width="fill_parent"
+        android:id="@+id/container_control"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <com.nebel_tv.ui.view.VerticalSeekBar 
+            android:id="@+id/seekbar_volume"
+            android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:padding="0dp">
-
-		  <TextView
-		      android:id="@+id/txtFilePath"
-		      android:layout_width="wrap_content"
-		      android:layout_height="wrap_content"
-		      android:layout_alignParentLeft="true"
-		      android:layout_alignParentBottom="true" />
-
-		  <TextView
-		      android:id="@+id/txtFilePosition"
-		      android:layout_width="wrap_content"
-		      android:layout_height="wrap_content"
-		      android:layout_alignParentRight="true"
-		      android:layout_alignParentBottom="true" />
-	</RelativeLayout>
-	
-    <LinearLayout android:id="@+id/controlLayout"
-            android:orientation="horizontal"
+            android:max="100"
+            android:minHeight="@dimen/seek_bar_height"
+            android:maxHeight="@dimen/seek_bar_height"
+            android:progress="0"
+            android:progressDrawable="@drawable/seekbar_video"
+            android:thumb="@drawable/seekbar_volume_thumb"
+            android:paddingLeft="@dimen/vertical_seek_bar_padding_bottom"
+            android:paddingRight="@dimen/vertical_seek_bar_padding_top"
+            android:layout_marginLeft="@dimen/vertical_seek_bar_margin_side"/>
+        
+        <com.nebel_tv.ui.view.VideoSeekBar 
+            android:id="@+id/seekbar_video"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_width="fill_parent">		  
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/video_seek_bar_padding_bottom"
+            android:minHeight="@dimen/seek_bar_height"
+            android:maxHeight="@dimen/seek_bar_height"
+            android:paddingTop="@dimen/video_seek_bar_padding_top"
+            android:paddingLeft="@dimen/video_seek_bar_padding_side"
+            android:paddingRight="@dimen/video_seek_bar_padding_side"
+            android:layout_alignParentBottom="true"
+            android:progressDrawable="@drawable/seekbar_video"
+            android:thumb="@drawable/seekbar_video_thumb"
+            android:thumbOffset="@dimen/video_seek_bar_thumboffset"
+            android:max="100"
+            android:progress="0"/>
+        
+        <TextView
+            android:id="@+id/txt_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            android:clickable="true"
+            android:layout_alignRight="@+id/seekbar_video"
+            android:layout_above="@+id/seekbar_video"
+            android:paddingRight="@dimen/video_seek_bar_padding_side"
+            android:onClick="onDurationClick"/>
+        
+       <com.nebel_tv.ui.view.VerticalSeekBar
+           android:id="@+id/seekbar_brightness" 
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:max="100"
+            android:minHeight="@dimen/seek_bar_height"
+            android:maxHeight="@dimen/seek_bar_height"
+            android:progress="0"
+            android:progressDrawable="@drawable/seekbar_video"
+            android:thumb="@drawable/seekbar_brightness_thumb"
+            android:paddingLeft="@dimen/vertical_seek_bar_padding_bottom"
+            android:paddingRight="@dimen/vertical_seek_bar_padding_top"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/vertical_seek_bar_margin_side"/>
+        
+        <LinearLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/seekbar_video"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/playback_margin_bottom"
+            android:background="@drawable/playback_blur"
+            android:gravity="center">
             
-        <Button android:id="@+id/btnLoadUnload"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                     
-                     android:text="@string/btn_load"/>
+            <RelativeLayout 
+                android:layout_width="@dimen/playback_width"
+                android:layout_height="@dimen/playback_height"
+                android:background="@drawable/playback_bg">
                 
-        <Button android:id="@+id/btnPlayPause"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="@string/btn_play"/>
-
-        <Button android:id="@+id/btnStop"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="@string/btn_stop"/>
-        
-        <Button android:id="@+id/btnSeekLeft"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="@string/btn_seek_backward"/>
+                <ImageButton
+                    android:id="@+id/btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/playback_btn_back"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="@dimen/playback_btn_margin"
+                    android:onClick="onSeekBackClick"/>
                 
-        <Button android:id="@+id/btnSeekRight"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                  
-                     android:text="@string/btn_seek_forward"/>
+                <ImageButton
+                    android:id="@+id/btn_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/playback_btn_play"
+                    android:layout_centerInParent="true"
+                    android:onClick="onPlayClick"/>
+                
+                <ImageButton 
+                    android:id="@+id/btn_ahead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/playback_btn_ahead"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/playback_btn_margin"
+                    android:onClick="onSeekForwardClick"/>
+                
+            </RelativeLayout>
+            
+        </LinearLayout>
         
-        <Button android:id="@+id/btnToggleAudio"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                  
-                     android:text="@string/btn_toggle_audio"/>
+        <it.sephiroth.slider.widget.MultiDirectionSlidingDrawer
+		android:id="@+id/drawer_audiotrack"
+		my:direction="leftToRight"
+		android:layout_width="@dimen/side_sliding_width"
+		android:layout_height="@dimen/side_sliding_height"
+		android:layout_alignParentBottom="true"
+		android:layout_marginBottom="@dimen/side_sliding_margin_bottom"
+		my:handle="@+id/handle"
+		my:content="@+id/audiotrack_content">
+	  	<kankan.wheel.widget.WheelView 
+	  	    android:id="@+id/audiotrack_content"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:background="@drawable/panel_left_content"/>
+		<ImageView
+			android:id="@id/handle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/panel_left_control" />
+		</it.sephiroth.slider.widget.MultiDirectionSlidingDrawer>
+		
+        <it.sephiroth.slider.widget.MultiDirectionSlidingDrawer
+		android:id="@+id/drawer_subtitle"
+		my:direction="rightToLeft"
+		android:layout_width="@dimen/side_sliding_width"
+		android:layout_height="@dimen/side_sliding_height"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentBottom="true"
+		android:layout_marginBottom="@dimen/side_sliding_margin_bottom"
+		my:handle="@+id/handle"
+		my:content="@+id/subtitle_content">
+	  	<kankan.wheel.widget.WheelView 
+	  	    android:id="@+id/subtitle_content"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:background="@drawable/panel_right_content"/>
+		<ImageView
+			android:id="@id/handle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/panel_right_control" />
+		</it.sephiroth.slider.widget.MultiDirectionSlidingDrawer>
+		
+        <it.sephiroth.slider.widget.MultiDirectionSlidingDrawer
+		android:id="@+id/drawer_quality"
+		my:direction="topToBottom"
+		android:layout_width="@dimen/top_siding_width"
+		android:layout_height="@dimen/top_siding_height"
+		android:layout_centerHorizontal="true"
+		my:handle="@+id/handle"
+		my:content="@+id/quality_content">
+	  	<kankan.wheel.widget.WheelView 
+	  	    android:id="@+id/quality_content"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:background="@drawable/panel_top_content"/>
+		<ImageView
+			android:id="@id/handle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/panel_top_control" />
+		</it.sephiroth.slider.widget.MultiDirectionSlidingDrawer>
         
-        <Button android:id="@+id/btnToggleVideo"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                  
-                     android:text="@string/btn_toggle_video"/>
+    </RelativeLayout>
 
-        <Button android:id="@+id/btnToggleSubtitle"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                  
-                     android:text="@string/btn_toggle_subtitle"/>
-    </LinearLayout>
-</RelativeLayout>
+</FrameLayout>
