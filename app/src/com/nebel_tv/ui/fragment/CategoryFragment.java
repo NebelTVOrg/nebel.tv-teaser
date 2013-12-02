@@ -2,7 +2,11 @@ package com.nebel_tv.ui.fragment;
 
 import android.os.Bundle;
 
+import com.nebel_tv.R;
+import com.nebel_tv.activity.MediaPlaybackActivity;
 import com.nebel_tv.ui.fragment.base.BaseWebViewFragment;
+import com.nebel_tv.utils.DownloadManagerHelper;
+import com.nebel_tv.utils.UIUtils;
 
 public class CategoryFragment extends BaseWebViewFragment {
 	
@@ -39,7 +43,12 @@ public class CategoryFragment extends BaseWebViewFragment {
 		if(depth==0) {
 			return false;
 		} else {
-			getParentActivity().showFragment(MediaPlaybackFragment.newInstance());
+			String[] videoUrls = /*new String[]{""};//*/ DownloadManagerHelper.getVideoFiles(getActivity());
+			if(videoUrls!=null) {
+				MediaPlaybackActivity.launch(getActivity(), videoUrls);
+			} else {
+				UIUtils.showMessage(R.string.videos_are_not_downloaded);
+			}
 			return true;
 		}
 	}

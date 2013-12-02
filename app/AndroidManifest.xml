@@ -2,14 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nebel_tv"
     android:versionCode="101020"
-    android:versionName="1.1.2.0" >
+    android:versionName="1.1.3.0.1" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="10"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
      
     <application
         android:allowBackup="true"
@@ -35,6 +36,11 @@
             android:name=".activity.CategoryActivity"
             android:label="@string/category_title"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
+        
+        <activity 
+            android:name=".activity.MediaPlaybackActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

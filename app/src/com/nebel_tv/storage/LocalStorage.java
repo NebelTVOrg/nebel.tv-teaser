@@ -11,6 +11,7 @@ import com.nebel_tv.model.TopView;
 public class LocalStorage {
     private static final String KEY_LAST_SCREEN = "KEY_LAST_SCREEN";
     private static final String KEY_LAST_MOOD = "KEY_LAST_MOOD";
+    private static final String KEY_FIRST_RUN = "KEY_FIRST_RUN";
 
     private final SharedPreferences mSharedPreferences;
     private static LocalStorage sInstance;
@@ -48,6 +49,14 @@ public class LocalStorage {
     
     public void setNavigationGroupState(GroupType groupType, boolean expanded) {
     	mSharedPreferences.edit().putBoolean(groupType.toString(), expanded).commit();
+    }
+    
+    public boolean isFirstRun() {
+    	return mSharedPreferences.getBoolean(KEY_FIRST_RUN, true);
+    }
+    
+    public void setFirstRun() {
+    	mSharedPreferences.edit().putBoolean(KEY_FIRST_RUN, false).commit();
     }
 
 }

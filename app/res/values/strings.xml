@@ -41,4 +41,18 @@
 	<string name="mood_title">Mood</string>
 	<string name="categories_title">Categories</string>
     <string name="category_title">Category view</string>
+    
+    <string name="videos_are_not_downloaded">Video files are not downloaded yet. Please wait</string>
+    
+    <string name="btn_browse">Browse</string>    
+    <string name="btn_load">Load</string>
+    <string name="btn_unload">Unload</string>    
+    <string name="btn_play">Play</string>
+    <string name="btn_pause">Pause</string>    
+    <string name="btn_stop">Stop</string>    
+    <string name="btn_seek_backward">Seek -</string>
+    <string name="btn_seek_forward">Seek +</string>
+    <string name="btn_toggle_audio">A+</string>
+    <string name="btn_toggle_video">V+</string>
+    <string name="btn_toggle_subtitle">S+</string>
 </resources>

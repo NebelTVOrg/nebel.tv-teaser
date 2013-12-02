@@ -22,7 +22,7 @@ import com.nebel_tv.model.TopView;
 
 public class ConfigHelper {
 	
-	private static final String CONFIG_FOLDER_NAME = "NebelTV";
+	public static final String CONFIG_FOLDER_NAME = "NebelTV";
 	private static final String CONFIG_FILE_NAME = "config.xml"; 
 	
     private static ConfigHelper instance;
