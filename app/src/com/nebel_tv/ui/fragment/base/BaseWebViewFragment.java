@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -41,7 +42,8 @@ public abstract class BaseWebViewFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		webView.getSettings().setJavaScriptEnabled(true);
-		webView.setWebViewClient(new NebelTVWebChromeClient());
+		webView.setWebViewClient(new NebelTVWebViewClient());
+		webView.setWebChromeClient(new WebChromeClient());
 	}
 	
     protected void switchUIState(UIState state) {
@@ -60,7 +62,7 @@ public abstract class BaseWebViewFragment extends Fragment {
     
     protected abstract boolean shouldOverrideUrlLoading(String url, int depth);
     
-    private class NebelTVWebChromeClient extends WebViewClient {
+    private class NebelTVWebViewClient extends WebViewClient {
     	
     	int counter = 0;
     	
@@ -68,7 +70,7 @@ public abstract class BaseWebViewFragment extends Fragment {
     	public boolean shouldOverrideUrlLoading(WebView view, String url) {
     		boolean ret =  BaseWebViewFragment.this.shouldOverrideUrlLoading(url, counter);
     		if(ret=true) {
-    			counter=0;
+//    			counter=0;
     		}
     		return ret;
     	}
