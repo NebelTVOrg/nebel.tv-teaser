@@ -44,7 +44,6 @@
             android:layout_alignParentBottom="true"
             android:progressDrawable="@drawable/seekbar_video"
             android:thumb="@drawable/seekbar_video_thumb"
-            android:thumbOffset="@dimen/video_seek_bar_thumboffset"
             android:max="100"
             android:progress="0"/>
         
@@ -75,51 +74,48 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/vertical_seek_bar_margin_side"/>
         
-        <LinearLayout 
+        <RelativeLayout 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/seekbar_video"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/playback_margin_bottom"
-            android:background="@drawable/playback_blur"
-            android:gravity="center">
+            android:layout_marginBottom="@dimen/playback_margin_bottom">
             
-            <RelativeLayout 
-                android:layout_width="@dimen/playback_width"
-                android:layout_height="@dimen/playback_height"
-                android:background="@drawable/playback_bg">
+            <FrameLayout 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/playback_blur"/>
                 
-                <ImageButton
-                    android:id="@+id/btn_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/playback_btn_back"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="@dimen/playback_btn_margin"
-                    android:onClick="onSeekBackClick"/>
+            <ImageButton
+            	android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/playback_btn_back"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btn_play"
+                android:layout_marginRight="@dimen/playback_btn_margin"
+                android:onClick="onSeekBackClick"/>
                 
-                <ImageButton
-                    android:id="@+id/btn_play"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/playback_btn_play"
-                    android:layout_centerInParent="true"
-                    android:onClick="onPlayClick"/>
+            <ImageButton
+                android:id="@+id/btn_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/playback_btn_play"
+                android:layout_centerInParent="true"
+                android:onClick="onPlayClick"/>
                 
-                <ImageButton 
-                    android:id="@+id/btn_ahead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/playback_btn_ahead"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/playback_btn_margin"
-                    android:onClick="onSeekForwardClick"/>
-                
-            </RelativeLayout>
+            <ImageButton 
+                android:id="@+id/btn_ahead"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/playback_btn_ahead"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/btn_play"
+                android:layout_marginLeft="@dimen/playback_btn_margin"
+                android:onClick="onSeekForwardClick"/>
             
-        </LinearLayout>
+        </RelativeLayout>
         
         <it.sephiroth.slider.widget.MultiDirectionSlidingDrawer
 		android:id="@+id/drawer_audiotrack"

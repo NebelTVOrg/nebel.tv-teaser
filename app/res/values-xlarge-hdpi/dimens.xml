@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="seek_bar_height">17dp</dimen>
+    <dimen name="vertical_seek_bar_padding_top">30dp</dimen>
+    <dimen name="vertical_seek_bar_padding_bottom">130dp</dimen>
+    <dimen name="vertical_seek_bar_margin_side">30dp</dimen>
+    <dimen name="video_seek_bar_padding_side">125dp</dimen>
+    <dimen name="video_seek_bar_padding_top">26dp</dimen>
+    <dimen name="video_seek_bar_padding_bottom">22dp</dimen>
+    <dimen name="playback_margin_bottom">45dp</dimen>
+    <dimen name="playback_btn_margin">30dp</dimen>
+    
+    <dimen name="side_sliding_width">360dp</dimen>
+    <dimen name="side_sliding_height">240dp</dimen>
+    <dimen name="side_sliding_margin_bottom">90dp</dimen>
+    <dimen name="top_siding_width">280dp</dimen>
+    <dimen name="top_siding_height">330dp</dimen>
+</resources>

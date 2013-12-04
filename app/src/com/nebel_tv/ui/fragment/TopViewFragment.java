@@ -10,6 +10,7 @@ import com.nebel_tv.model.TopView;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.fragment.base.BaseWebViewFragment;
 import com.nebel_tv.utils.ConfigHelper;
+import com.nebel_tv.utils.IVAHelper;
 
 public class TopViewFragment extends BaseWebViewFragment {
     
@@ -58,6 +59,9 @@ public class TopViewFragment extends BaseWebViewFragment {
 
 	@Override
 	protected boolean shouldOverrideUrlLoading(String url, int depth) {
+		if(url!=null && url.startsWith(IVAHelper.INTERTCEPT_URL)) {
+			
+		}
 		if(depth==0) {
 			return false;
 		} else {
