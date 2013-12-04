@@ -1,5 +1,7 @@
 package com.nebel_tv.activity;
 
+import it.sephiroth.slider.widget.MultiDirectionSlidingDrawer;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Timer;
@@ -52,6 +54,7 @@ public class MediaPlaybackActivity extends Activity
 	private static final String TAG = MediaPlaybackActivity.class.getName();
 	private static final String KEY_VIDEO_URLS = "KEY_VIDEO_URLS";
 	
+	private static final int MAX_SETTINGS_BRIGHTNESS_VALUE = 255;
 	private static final int DEFAULT_CONTROLS_VISIBILITY_TIME = 3000; //3 sec
 	private static final int AUDIO_WHEEL_VISIBLE_ITEMS_NUM = 5;
 	private static final int SUBTITLE_WHEEL_VISIBLE_ITEMS_NUM = AUDIO_WHEEL_VISIBLE_ITEMS_NUM;
@@ -83,6 +86,8 @@ public class MediaPlaybackActivity extends Activity
 	private WheelView audiotrackWheel;
 	private WheelView subtitleWheel;
 	private WheelView videoQualityWheel;
+	private MultiDirectionSlidingDrawer audioTrackSliding;
+	private MultiDirectionSlidingDrawer subtitleSliding;
 	private TextView durationText;
 
 	private String[] videoUrls;
@@ -127,6 +132,8 @@ public class MediaPlaybackActivity extends Activity
 		brightnessSeekBar = (VerticalSeekBar) findViewById(R.id.seekbar_brightness);
 		audiotrackWheel = (WheelView) findViewById(R.id.audiotrack_content);
 		subtitleWheel = (WheelView) findViewById(R.id.subtitle_content);
+		audioTrackSliding = (MultiDirectionSlidingDrawer) findViewById(R.id.drawer_audiotrack);
+		subtitleSliding = (MultiDirectionSlidingDrawer) findViewById(R.id.drawer_subtitle);
 		videoQualityWheel = (WheelView) findViewById(R.id.quality_content);
 		durationText = (TextView) findViewById(R.id.txt_duration);
 		
@@ -241,7 +248,7 @@ public class MediaPlaybackActivity extends Activity
     	videoQualityWheel.setVisibleItems(QUALITY_WHEEL_VISIBLE_ITEMS_NUM);
     	updateVideoQualityValues();
         
-        playBtn = (ImageButton) findViewById(R.id.btn_play);
+        playBtn = (ImageButton) findViewById(R.id.btn_play_pause);
         seekBackBtn = (ImageButton) findViewById(R.id.btn_back);     
         seekAheadBtn = (ImageButton) findViewById(R.id.btn_ahead);
  
@@ -259,8 +266,10 @@ public class MediaPlaybackActivity extends Activity
     public void onPlayClick(View v) {
     	if(mState == PlayerCore2.STATE_PLAYING){
 			 mCore2.pause();
+			 playBtn.setBackgroundResource(R.drawable.playback_btn_play);
 		 }else{
-				 mCore2.play();
+			 mCore2.play();
+			 playBtn.setBackgroundResource(R.drawable.playback_btn_pause);
 		 }
     }
     
@@ -299,31 +308,33 @@ public class MediaPlaybackActivity extends Activity
     private void updateAudioTrackCount() {
     	//TODO implement real audiotrack names as far as it will be implemented on video player
     	//hardcoded names used until then
-    	String[] items = new String[mAudioTrackCount];
-    	for(int i=0; i<mAudioTrackCount; i++) {
-    		items[i]="track "+i;
-    	}
-    	if(mAudioTrackCount>0) {
+    	if(mAudioTrackCount>1) {
+        	String[] items = new String[mAudioTrackCount];
+        	for(int i=0; i<mAudioTrackCount; i++) {
+        		items[i]="track "+i;
+        	}
 	    	ArrayWheelAdapter<String> audiotrackWheelAdapter = new ArrayWheelAdapter<String>(this, items);
 	    	audiotrackWheelAdapter.setItemResource(R.layout.wheel_text_item);
 	    	audiotrackWheel.setViewAdapter(audiotrackWheelAdapter);
 	    	audiotrackWheel.setCurrentItem(mActiveAudioTrack);
     	}
+    	audioTrackSliding.setVisibility(mAudioTrackCount>1?View.VISIBLE:View.GONE);
     }
     
     private void updateSubtitleCount() {
     	//TODO implement real subtitle names as far as it will be implemented on video player
     	//hardcoded names used until then
-    	String[] items = new String[mSubtitleTrackCount];
-    	for(int i=0; i<mSubtitleTrackCount; i++) {
-    		items[i]="subtitle "+i;
-    	}
-    	if(mSubtitleTrackCount>0) {
+    	if(mSubtitleTrackCount>1) {
+        	String[] items = new String[mSubtitleTrackCount];
+        	for(int i=0; i<mSubtitleTrackCount; i++) {
+        		items[i]="subtitle "+i;
+        	}
         	ArrayWheelAdapter<String> subtitleWheelAdapter = new ArrayWheelAdapter<String>(this, items);
         	subtitleWheelAdapter.setItemResource(R.layout.wheel_text_item);
         	subtitleWheel.setViewAdapter(subtitleWheelAdapter);
         	subtitleWheel.setCurrentItem(mActiveSubtitleTrack);
     	}
+    	subtitleSliding.setVisibility(mSubtitleTrackCount>1?View.VISIBLE:View.GONE);
     }
     
     private void updateVideoQualityValues() {
@@ -337,9 +348,10 @@ public class MediaPlaybackActivity extends Activity
     }
     
     private void setCurrentSeekbarValues() {
-    	volumeSeekBar.setProgressAndThumb(audioManager.getStreamVolume(DEFAULT_AUDIO_STREAM));
-    	int brightness = (int)(Math.abs(getWindow().getAttributes().screenBrightness)*100);
-    	brightnessSeekBar.setProgressAndThumb(brightness);
+    	volumeSeekBar.setProgressAndThumb(
+    			getProgressFromStreamVolume(
+    					audioManager.getStreamVolume(DEFAULT_AUDIO_STREAM)));
+    	brightnessSeekBar.setProgressAndThumb(getBrigtnessPercentage());
     }
     
     @Override
@@ -392,7 +404,7 @@ public class MediaPlaybackActivity extends Activity
         	} else if(currentStreamVolume>maxStreamVolume) {
         		currentStreamVolume = maxStreamVolume;
         	}
-            volumeSeekBar.setProgressAndThumb(currentStreamVolume*volumeSeekBar.getMax()/maxStreamVolume);
+            volumeSeekBar.setProgressAndThumb(getProgressFromStreamVolume(currentStreamVolume));
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -440,6 +452,15 @@ public class MediaPlaybackActivity extends Activity
 
 	public void onLoadComplete(int status) {
 		Log.d(TAG, getMethodName(1) + ": " + status);
+		if(status==PlayerCore2.STATUS_OK) {
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					onPlayClick(playBtn);
+				}
+			});
+		}
 	}
 
 	public void onUnloadComplete(int status) {
@@ -592,7 +613,7 @@ public class MediaPlaybackActivity extends Activity
 			if(!fromUser) {
 				return;
 			}
-			int volume = (int) Math.ceil(progress*maxStreamVolume/(float)seekBar.getMax())-1;
+			int volume = getStreamVolumeFromProgress(progress);
 			if(audioManager.getStreamVolume(DEFAULT_AUDIO_STREAM)!=volume) {
 				audioManager.setStreamVolume(DEFAULT_AUDIO_STREAM, volume, 0);
 			}
@@ -600,10 +621,7 @@ public class MediaPlaybackActivity extends Activity
 			if(!fromUser) {
 				return;
 			}
-			float brightness = (float)(progress)/100f*255f;
-			android.provider.Settings.System.putInt(getContentResolver(),
-				     android.provider.Settings.System.SCREEN_BRIGHTNESS,
-				     (int)brightness);
+			setBrightnessPecentage(progress);
 		}
 	}
 
@@ -653,6 +671,28 @@ public class MediaPlaybackActivity extends Activity
 		}
 		timer = new Timer();
 		controlVisibilityTimerTask  = new ControlVisibilityTimerTask();
+	}
+	
+	private int getStreamVolumeFromProgress(int progress) {
+		return (int) Math.ceil(progress*maxStreamVolume/(float)volumeSeekBar.getMax())-1;
+	}
+	
+	private int  getProgressFromStreamVolume(int volume) {
+		return volume*volumeSeekBar.getMax()/maxStreamVolume;
+	}
+	
+	private int getBrigtnessPercentage() {
+		float floatPercentValue =  (float)android.provider.Settings.System.getInt(getContentResolver(),
+			     android.provider.Settings.System.SCREEN_BRIGHTNESS,
+			     MAX_SETTINGS_BRIGHTNESS_VALUE)/(float)MAX_SETTINGS_BRIGHTNESS_VALUE;
+		return (int)(floatPercentValue*100);
+	}
+	
+	private void setBrightnessPecentage(int percentage) {
+		float floatPercentValue = (float)percentage/100f;
+		android.provider.Settings.System.putInt(getContentResolver(),
+			     android.provider.Settings.System.SCREEN_BRIGHTNESS,
+			     (int)(floatPercentValue*MAX_SETTINGS_BRIGHTNESS_VALUE));
 	}
 	
 	private boolean isOpenGL2ES20supported() {

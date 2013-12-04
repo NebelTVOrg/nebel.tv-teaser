@@ -33,6 +33,11 @@ public class CategoryFragment extends BaseWebViewFragment {
 			url = args.getString(EXTRA_CATEGORY_URL_KEY);
 		}
 		
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 		if(url!=null) {
 			webView.loadUrl(url);
 		}
