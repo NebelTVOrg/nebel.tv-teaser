@@ -11,6 +11,7 @@ import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.WheelView.CenterImageAlignType;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
 import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -41,6 +43,7 @@ import com.nebel_tv.R;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.view.VerticalSeekBar;
 import com.nebel_tv.ui.view.VideoSeekBar;
+import com.nebel_tv.ui.view.VerticalSeekBar.ThumbOrientation;
 import com.nebel_tv.utils.ConfigHelper;
 import com.nebel_tv.utils.DateTimeUtils;
 import com.vayavision.MediaCore.MediaCore;
@@ -54,6 +57,7 @@ public class MediaPlaybackActivity extends Activity
 	private static final String TAG = MediaPlaybackActivity.class.getName();
 	private static final String KEY_VIDEO_URLS = "KEY_VIDEO_URLS";
 	
+	private static final int ICS_VERSION_NUM = 14;
 	private static final int MAX_SETTINGS_BRIGHTNESS_VALUE = 255;
 	private static final int DEFAULT_CONTROLS_VISIBILITY_TIME = 3000; //3 sec
 	private static final int AUDIO_WHEEL_VISIBLE_ITEMS_NUM = 5;
@@ -233,6 +237,8 @@ public class MediaPlaybackActivity extends Activity
     
     protected void initPlayerControlListeners(){
     	
+    	volumeSeekBar.setThumbOrientation(ThumbOrientation.LEFT);
+    	brightnessSeekBar.setThumbOrientation(ThumbOrientation.RIGHT);
     	volumeSeekBar.setOnSeekBarChangeListener(this);  	
     	brightnessSeekBar.setOnSeekBarChangeListener(this);
     	
@@ -354,9 +360,18 @@ public class MediaPlaybackActivity extends Activity
     	brightnessSeekBar.setProgressAndThumb(getBrigtnessPercentage());
     }
     
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	private void setSoftNavigationBarVisibility(boolean visible) {
+    	if (android.os.Build.VERSION.SDK_INT >= ICS_VERSION_NUM) {
+    		int visibilityParam = visible?View.SYSTEM_UI_FLAG_VISIBLE:View.SYSTEM_UI_FLAG_LOW_PROFILE;
+        	getWindow().getDecorView().setSystemUiVisibility(visibilityParam);
+    	}
+    }
+    
     @Override
     protected void onResume() {
         super.onResume();
+        setSoftNavigationBarVisibility(false);
         setCurrentSeekbarValues();
         if(mGlView != null){
         	mGlView.onResume();
@@ -368,6 +383,7 @@ public class MediaPlaybackActivity extends Activity
 
     @Override
     protected void onPause() {
+    	setSoftNavigationBarVisibility(true);
     	if(mCore2 != null && mState == PlayerCore2.STATE_PLAYING){
     		mCore2.pause();
        	}
@@ -685,14 +701,14 @@ public class MediaPlaybackActivity extends Activity
 		float floatPercentValue =  (float)android.provider.Settings.System.getInt(getContentResolver(),
 			     android.provider.Settings.System.SCREEN_BRIGHTNESS,
 			     MAX_SETTINGS_BRIGHTNESS_VALUE)/(float)MAX_SETTINGS_BRIGHTNESS_VALUE;
-		return (int)(floatPercentValue*100);
+		return Math.round(floatPercentValue*100);
 	}
 	
 	private void setBrightnessPecentage(int percentage) {
 		float floatPercentValue = (float)percentage/100f;
 		android.provider.Settings.System.putInt(getContentResolver(),
 			     android.provider.Settings.System.SCREEN_BRIGHTNESS,
-			     (int)(floatPercentValue*MAX_SETTINGS_BRIGHTNESS_VALUE));
+			     Math.round(floatPercentValue*MAX_SETTINGS_BRIGHTNESS_VALUE));
 	}
 	
 	private boolean isOpenGL2ES20supported() {

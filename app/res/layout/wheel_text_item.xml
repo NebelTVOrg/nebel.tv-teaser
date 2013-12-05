@@ -4,4 +4,5 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:paddingTop="4dp"
-    android:paddingBottom="4dp"/>
+    android:paddingBottom="4dp"
+    android:textSize="@dimen/sliding_wheel_text_item_size"/>

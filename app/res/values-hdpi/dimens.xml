@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="seek_bar_height">8dp</dimen>
-    <dimen name="vertical_seek_bar_padding_top">12dp</dimen>
-    <dimen name="vertical_seek_bar_padding_bottom">54dp</dimen>
+    <dimen name="vertical_seek_bar_padding_side">12dp</dimen>
+    <dimen name="vertical_seek_bar_margin_bottom">41dp</dimen>
     <dimen name="vertical_seek_bar_margin_side">12dp</dimen>
-    <dimen name="video_seek_bar_padding_side">52dp</dimen>
+    <dimen name="vertical_seek_bar__thumb_text_padding">4dp</dimen>
+    <dimen name="video_seek_bar_padding_side">11dp</dimen>
+    <dimen name="video_seek_bar_margin_side">41dp</dimen>
     <dimen name="video_seek_bar_padding_top">11dp</dimen>
-    <dimen name="video_seek_bar_padding_bottom">9dp</dimen>
+    <dimen name="duration_text_padding_right">13dp</dimen>   
+    <dimen name="seek_bal_labels_size">8sp</dimen>
     <dimen name="playback_margin_bottom">19dp</dimen>
     <dimen name="playback_btn_margin">12dp</dimen>
     
@@ -15,4 +18,5 @@
     <dimen name="side_sliding_margin_bottom">37dp</dimen>
     <dimen name="top_siding_width">117dp</dimen>
     <dimen name="top_siding_height">137dp</dimen>
+    <dimen name="sliding_wheel_text_item_size">12sp</dimen>    
 </resources>

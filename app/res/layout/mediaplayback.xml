@@ -26,38 +26,49 @@
             android:progress="0"
             android:progressDrawable="@drawable/seekbar_video"
             android:thumb="@drawable/seekbar_volume_thumb"
-            android:paddingLeft="@dimen/vertical_seek_bar_padding_bottom"
-            android:paddingRight="@dimen/vertical_seek_bar_padding_top"
-            android:layout_marginLeft="@dimen/vertical_seek_bar_margin_side"/>
+            android:paddingLeft="@dimen/vertical_seek_bar_padding_side"
+            android:paddingRight="@dimen/vertical_seek_bar_padding_side"
+            android:layout_marginBottom="@dimen/vertical_seek_bar_margin_bottom"
+            android:layout_marginRight="@dimen/vertical_seek_bar_margin_side"/>
         
-        <com.nebel_tv.ui.view.VideoSeekBar 
-            android:id="@+id/seekbar_video"
+        <RelativeLayout
+            android:id="@+id/container_seekbar_video"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/video_seek_bar_padding_bottom"
-            android:minHeight="@dimen/seek_bar_height"
-            android:maxHeight="@dimen/seek_bar_height"
-            android:paddingTop="@dimen/video_seek_bar_padding_top"
-            android:paddingLeft="@dimen/video_seek_bar_padding_side"
-            android:paddingRight="@dimen/video_seek_bar_padding_side"
-            android:layout_alignParentBottom="true"
-            android:progressDrawable="@drawable/seekbar_video"
-            android:thumb="@drawable/seekbar_video_thumb"
-            android:max="100"
-            android:progress="0"/>
+            android:layout_alignParentBottom="true">
+            
+            <com.nebel_tv.ui.view.VideoSeekBar 
+	            android:id="@+id/seekbar_video"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_centerHorizontal="true"
+	            android:minHeight="@dimen/seek_bar_height"
+	            android:maxHeight="@dimen/seek_bar_height"
+	            android:paddingTop="@dimen/video_seek_bar_padding_top"
+	            android:paddingBottom="@dimen/video_seek_bar_padding_top"
+	            android:paddingLeft="@dimen/video_seek_bar_padding_side"
+	            android:paddingRight="@dimen/video_seek_bar_padding_side"
+	            android:layout_marginLeft="@dimen/video_seek_bar_margin_side"
+	            android:layout_marginRight="@dimen/video_seek_bar_margin_side"
+	            android:progressDrawable="@drawable/seekbar_video"
+	            android:thumb="@drawable/seekbar_video_thumb"
+	            android:max="100"
+	            android:progress="0"/>
+            
+            <TextView
+	            android:id="@+id/txt_duration"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textColor="@android:color/white"
+	            android:textSize="@dimen/seek_bal_labels_size"
+	            android:clickable="true"
+	            android:layout_centerVertical="true"
+	            android:layout_alignParentRight="true"
+	            android:paddingRight="@dimen/duration_text_padding_right"
+	            android:onClick="onDurationClick"/>
+            
+        </RelativeLayout>
         
-        <TextView
-            android:id="@+id/txt_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="10sp"
-            android:clickable="true"
-            android:layout_alignRight="@+id/seekbar_video"
-            android:layout_above="@+id/seekbar_video"
-            android:paddingRight="@dimen/video_seek_bar_padding_side"
-            android:onClick="onDurationClick"/>
         
        <com.nebel_tv.ui.view.VerticalSeekBar
            android:id="@+id/seekbar_brightness" 
@@ -69,15 +80,16 @@
             android:progress="0"
             android:progressDrawable="@drawable/seekbar_video"
             android:thumb="@drawable/seekbar_brightness_thumb"
-            android:paddingLeft="@dimen/vertical_seek_bar_padding_bottom"
-            android:paddingRight="@dimen/vertical_seek_bar_padding_top"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/vertical_seek_bar_margin_side"/>
+            android:paddingLeft="@dimen/vertical_seek_bar_padding_side"
+            android:paddingRight="@dimen/vertical_seek_bar_padding_side"
+            android:layout_marginBottom="@dimen/vertical_seek_bar_margin_bottom"
+            android:layout_marginRight="@dimen/vertical_seek_bar_margin_side"
+            android:layout_alignParentRight="true"/>
         
         <RelativeLayout 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/seekbar_video"
+            android:layout_above="@+id/container_seekbar_video"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/playback_margin_bottom">
             

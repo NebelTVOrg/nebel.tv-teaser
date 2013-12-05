@@ -1,5 +1,8 @@
 package com.nebel_tv.ui.view.base;
 
+import com.nebel_tv.NebelTVApp;
+import com.nebel_tv.R;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,6 +12,9 @@ import android.util.AttributeSet;
 import android.widget.SeekBar;
 
 public abstract class SeekBarWithText extends SeekBar {
+	
+	private static final int THUMB_TEXT_SIZE = 
+		NebelTVApp.getContext().getResources().getDimensionPixelSize(R.dimen.seek_bal_labels_size);
 	
 	protected String currentText;
 	protected boolean autoChangeTimeText;
@@ -32,7 +38,7 @@ public abstract class SeekBarWithText extends SeekBar {
 	protected void init() {
 	    textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	    textPaint.setColor(Color.WHITE);
-	    textPaint.setTextSize(18);
+	    textPaint.setTextSize(THUMB_TEXT_SIZE);
 	    textPaint.setTextAlign(Align.CENTER);
 	    autoChangeTimeText = true;
 	    currentText = getText();

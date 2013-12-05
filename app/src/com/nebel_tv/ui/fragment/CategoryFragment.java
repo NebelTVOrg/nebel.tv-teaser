@@ -48,7 +48,7 @@ public class CategoryFragment extends BaseWebViewFragment {
 		if(depth==0) {
 			return false;
 		} else {
-			String[] videoUrls = /*new String[]{""};//*/ DownloadManagerHelper.getVideoFiles(getActivity());
+			String[] videoUrls = DownloadManagerHelper.getVideoFiles(getActivity());
 			if(videoUrls!=null) {
 				MediaPlaybackActivity.launch(getActivity(), videoUrls);
 			} else {
