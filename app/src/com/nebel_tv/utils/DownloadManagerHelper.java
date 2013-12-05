@@ -15,7 +15,7 @@ import android.os.Environment;
 public class DownloadManagerHelper {
 	
 	private static final String[] VIDEO_URLS = new String[] {
-//		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_h264.mov",
+		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_h264.mov",
 //		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov"
 	};
 	
@@ -34,30 +34,30 @@ public class DownloadManagerHelper {
 	}
 	
 	public static String[] getVideoFiles(Context context) {
-		return new String[] {""};
-//		DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-//		Cursor cursor = dm.query(new Query());
-//		int videoUrlsSize = VIDEO_URLS.length;
-//		ArrayList<String> videoFiles = new ArrayList<String>();
-//		if(cursor.moveToFirst()) {
-//			int uriColumn = cursor.getColumnIndex(DownloadManager.COLUMN_URI);
-//			int statusColumn = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-//			int localUriColumn = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-//			do {
-//				String uri = cursor.getString(uriColumn);
-//				int status = cursor.getInt(statusColumn); 
-//				String localUri = cursor.getString(localUriColumn);
-//				for(int i=0; i<videoUrlsSize; i++) {
-//					if(VIDEO_URLS[i].equals(uri) && status==DownloadManager.STATUS_SUCCESSFUL) {
-//						videoFiles.add( new File(URI.create(localUri)).getAbsolutePath());
-//					}
-//				}
-//				if(videoFiles.size()>=videoUrlsSize) {
-//					break;
-//				}
-//			} while(cursor.moveToNext());
-//		}
-//		return videoFiles.size()>=videoUrlsSize?videoFiles.toArray(new String[videoFiles.size()]):null;
+//		return new String[] {""};
+		DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+		Cursor cursor = dm.query(new Query());
+		int videoUrlsSize = VIDEO_URLS.length;
+		ArrayList<String> videoFiles = new ArrayList<String>();
+		if(cursor.moveToFirst()) {
+			int uriColumn = cursor.getColumnIndex(DownloadManager.COLUMN_URI);
+			int statusColumn = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+			int localUriColumn = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+			do {
+				String uri = cursor.getString(uriColumn);
+				int status = cursor.getInt(statusColumn); 
+				String localUri = cursor.getString(localUriColumn);
+				for(int i=0; i<videoUrlsSize; i++) {
+					if(VIDEO_URLS[i].equals(uri) && status==DownloadManager.STATUS_SUCCESSFUL) {
+						videoFiles.add( new File(URI.create(localUri)).getAbsolutePath());
+					}
+				}
+				if(videoFiles.size()>=videoUrlsSize) {
+					break;
+				}
+			} while(cursor.moveToNext());
+		}
+		return videoFiles.size()>=videoUrlsSize?videoFiles.toArray(new String[videoFiles.size()]):null;
 	}
 	
 }

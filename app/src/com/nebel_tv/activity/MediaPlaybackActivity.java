@@ -3,7 +3,9 @@ package com.nebel_tv.activity;
 import it.sephiroth.slider.widget.MultiDirectionSlidingDrawer;
 
 import java.io.File;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,7 +23,6 @@ import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -42,9 +43,10 @@ import com.nebel_tv.NebelTVApp;
 import com.nebel_tv.R;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.view.VerticalSeekBar;
-import com.nebel_tv.ui.view.VideoSeekBar;
 import com.nebel_tv.ui.view.VerticalSeekBar.ThumbOrientation;
+import com.nebel_tv.ui.view.VideoSeekBar;
 import com.nebel_tv.utils.ConfigHelper;
+import com.nebel_tv.utils.D;
 import com.nebel_tv.utils.DateTimeUtils;
 import com.vayavision.MediaCore.MediaCore;
 import com.vayavision.MediaCore.OpenGLES20Renderer;
@@ -52,7 +54,8 @@ import com.vayavision.MediaCore.PlayerCore2;
 import com.vayavision.MediaCore.PlayerCore2.Configuration;
 
 public class MediaPlaybackActivity extends Activity 
-					implements PlayerCore2.OnEventListener, OnSeekBarChangeListener, OnWheelChangedListener {
+					implements PlayerCore2.OnEventListener, OnSeekBarChangeListener, 
+					OnWheelChangedListener, UncaughtExceptionHandler {
 	
 	private static final String TAG = MediaPlaybackActivity.class.getName();
 	private static final String KEY_VIDEO_URLS = "KEY_VIDEO_URLS";
@@ -119,6 +122,9 @@ public class MediaPlaybackActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mediaplayback);
 		
+        D.enableLocalLog();
+        D.clearLocalLogBuffer();
+        NebelTVApp.setCurrentHandler(this);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(DEFAULT_AUDIO_STREAM);
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -170,6 +176,7 @@ public class MediaPlaybackActivity extends Activity
         videoSeekBar.setOnSeekBarChangeListener(this);
 	        
         updateState(PlayerCore2.STATE_IDLE);
+        D.d("Try to load video urls: "+Arrays.toString(videoUrls));
         mCore2.load(videoUrls);
         
         animFadeOut = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
@@ -228,7 +235,7 @@ public class MediaPlaybackActivity extends Activity
 			videoQualityWheel.setEnabled(true);
 			break;
 		default:
-			Log.e(TAG, "Unknown state " + state);
+			D.e("Unknown state " + state);
 			return;
 		}
 		
@@ -271,15 +278,18 @@ public class MediaPlaybackActivity extends Activity
     
     public void onPlayClick(View v) {
     	if(mState == PlayerCore2.STATE_PLAYING){
+			 D.d(getMethodName(1)+" : "+"pause request");
 			 mCore2.pause();
 			 playBtn.setBackgroundResource(R.drawable.playback_btn_play);
 		 }else{
+			 D.d(getMethodName(1)+" : "+"play request");
 			 mCore2.play();
 			 playBtn.setBackgroundResource(R.drawable.playback_btn_pause);
 		 }
     }
     
     public void onSeekBackClick(View v) {
+		D.d(getMethodName(1)+" : "+"seek back request to pos:  "+(mPositionInSeconds - seekBackValueInSec)+" s");
     	mCore2.setPosition(
 				DateTimeUtils.getSecValueInMicros(mPositionInSeconds - seekBackValueInSec),
 				0,
@@ -288,6 +298,7 @@ public class MediaPlaybackActivity extends Activity
     }
     
     public void onSeekForwardClick(View v) {
+    	D.d(getMethodName(1)+" : "+"seek forward request to pos: "+(mPositionInSeconds + seekAheadValueInSec)+" s");
     	mCore2.setPosition(
 				DateTimeUtils.getSecValueInMicros(mPositionInSeconds + seekAheadValueInSec),
 				0,
@@ -384,6 +395,9 @@ public class MediaPlaybackActivity extends Activity
     @Override
     protected void onPause() {
     	setSoftNavigationBarVisibility(true);
+    	D.disableLocalLog();
+    	D.clearLocalLogBuffer();
+        NebelTVApp.setCurrentHandler(null);
     	if(mCore2 != null && mState == PlayerCore2.STATE_PLAYING){
     		mCore2.pause();
        	}
@@ -448,15 +462,15 @@ public class MediaPlaybackActivity extends Activity
     }
     
     public void onGetConfigurationComplete(int status, Configuration configuration) {
-		Log.d(TAG, getMethodName(1) + ": " + status);
+		D.d(getMethodName(1) + ": " + status);
 	}
 	
 	public void onSetConfigurationComplete(int status) {
-		Log.d(TAG, getMethodName(1) + ": " + status);
+		D.d(getMethodName(1) + ": " + status);
 	}
 	
 	public void onGetStateComplete(final int state) {
-		Log.d(TAG, getMethodName(1) + ": " + state);
+		D.d(getMethodName(1) + ": " + state);
 		runOnUiThread(new Runnable() {
 			
 			@Override
@@ -467,7 +481,7 @@ public class MediaPlaybackActivity extends Activity
 	}
 
 	public void onLoadComplete(int status) {
-		Log.d(TAG, getMethodName(1) + ": " + status);
+		D.d(getMethodName(1) + ": " + status);
 		if(status==PlayerCore2.STATUS_OK) {
 			runOnUiThread(new Runnable() {
 				
@@ -480,23 +494,23 @@ public class MediaPlaybackActivity extends Activity
 	}
 
 	public void onUnloadComplete(int status) {
-		Log.d(TAG, getMethodName(1) + ": " + status);
+		D.d(getMethodName(1) + ": " + status);
 	}
 
 	public void onPlayComplete(int status) {
-		Log.d(TAG, getMethodName(1) + ": " + status);
+		D.d(getMethodName(1) + ": " + status);
 	}
 
 	public void onPauseComplete(int status) {
-		Log.d(TAG, getMethodName(1) + ": " + status);
+		D.d(getMethodName(1) + ": " + status);
 	}
 
 	public void onStopComplete(int status) {
-		Log.d(TAG, getMethodName(1) + ": " + status);
+		D.d(getMethodName(1) + ": " + status);
 	}
 
 	public void onGetDurationComplete(int status, long duration) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + duration);
+		D.d(getMethodName(1) + ": " + status + " " + duration);
 		mDurationInSeconds = DateTimeUtils.getSecValueInMicros(duration, true);
 		runOnUiThread(new Runnable() {
 			
@@ -509,31 +523,31 @@ public class MediaPlaybackActivity extends Activity
 	}
 
 	public void onGetPositionComplete(int status, long position) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + position);
+		D.d(getMethodName(1) + ": " + status + " " + position, false);
 	}
 
 	public void onSetPositionComplete(int status, long newPosition) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + newPosition);
+		D.d(getMethodName(1) + ": " + status + " " + newPosition, false);
 	}
 
 	public void onGetVolumeComplete(int status, float volume) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + volume);
+		D.d(getMethodName(1) + ": " + status + " " + volume);
 	}
 
 	public void onSetVolumeComplete(int status, float newVolume) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + newVolume);
+		D.d(getMethodName(1) + ": " + status + " " + newVolume);
 	}
 
 	public void onGetSubtitleStateComplete(int status, boolean state) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + state);
+		D.d(getMethodName(1) + ": " + status + " " + state);
 	}
 
 	public void onSetSubtitleStateComplete(int status, boolean newState) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + newState);
+		D.d(getMethodName(1) + ": " + status + " " + newState);
 	}
 
 	public void onGetTrackCountComplete(int status, int type, int trackCount) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + type + " " + trackCount);
+		D.d(getMethodName(1) + ": " + status + " " + type + " " + trackCount);
 		switch (type) {
 		case PlayerCore2.TRACK_TYPE_AUDIO:
 			mAudioTrackCount = trackCount;
@@ -548,7 +562,7 @@ public class MediaPlaybackActivity extends Activity
 	}
 
 	public void onGetActiveTrackComplete(int status, int type, int track) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + type + " " + track);
+		D.d(getMethodName(1) + ": " + status + " " + type + " " + track);
 		switch (type) {
 		case PlayerCore2.TRACK_TYPE_AUDIO:
 			mActiveAudioTrack = track;
@@ -577,7 +591,7 @@ public class MediaPlaybackActivity extends Activity
 	}
 
 	public void onActivateTrackComplete(int status, int type, int newTrack) {
-		Log.d(TAG, getMethodName(1) + ": " + status + " " + type + " " + newTrack);
+		D.d(getMethodName(1) + ": " + status + " " + type + " " + newTrack);
 		switch (type) {
 		case PlayerCore2.TRACK_TYPE_AUDIO:
 			mActiveAudioTrack = newTrack;
@@ -592,7 +606,7 @@ public class MediaPlaybackActivity extends Activity
 	}
 
 	public void onStateChange(final int newState, int oldState) {
-		Log.d(TAG, getMethodName(1) + ": " + oldState + " => " + newState);
+		D.d(getMethodName(1) + ": " + oldState + " => " + newState);
 		runOnUiThread(new Runnable() {
 			
 			@Override
@@ -722,6 +736,14 @@ public class MediaPlaybackActivity extends Activity
 	private String getMethodName(final int depth) {
 	  final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
 	  return ste[ste.length - 1 - depth].getMethodName();
+	}
+	
+
+	//used to pass video info data to flurry when uncaught exception occured
+	@Override
+	public void uncaughtException(Thread thread, Throwable ex) {
+		String logMessageStack = D.getMessageLocalBuffer(true);
+		FlurryAgent.onError(TAG, logMessageStack!=null?logMessageStack:ex.getMessage(), ex);
 	}
 	
 	private class ControlVisibilityTimerTask extends TimerTask {

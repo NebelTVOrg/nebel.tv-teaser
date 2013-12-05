@@ -72,7 +72,7 @@ public class ConfigHelper {
 		try {
 			configUrls = parseConfig(getConfigFileStream());
 		} catch (IOException e) {
-			e.printStackTrace();
+			D.e(e,false);
 			FlurryAgent.onError(TAG, e.getMessage(), e);
 		}
 	}
@@ -103,7 +103,7 @@ public class ConfigHelper {
 		try {
 			return context.getAssets().open(CONFIG_FILE_NAME);
 		}catch (IOException e) {
-			e.printStackTrace();
+			D.e(e,false);
 			FlurryAgent.onError(TAG, e.getMessage(), e);
 			return null;
 		}
@@ -123,7 +123,7 @@ public class ConfigHelper {
             out.close();
             out = null;
           } catch(IOException e) {
-              e.printStackTrace();
+        	  D.e(e,false);
               FlurryAgent.onError(TAG, e.getMessage(), e);
           }       
 	}
@@ -143,7 +143,7 @@ public class ConfigHelper {
             parser.setInput(in, null);
             return readConfig(parser);
         } catch(Exception e) {
-        	e.printStackTrace();
+        	D.e(e,false);
         	FlurryAgent.onError(TAG, e.getMessage(), e);
         	UIUtils.showMessage(R.string.invalid_extenal_config);
         	return parseConfig(getDefaultConfigFileStream());
