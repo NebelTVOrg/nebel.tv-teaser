@@ -28,6 +28,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -183,6 +184,7 @@ public class MediaPlaybackActivity extends Activity
         animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
         animFadeOut.setAnimationListener(controlsFadeOutAnimationListener);
         animFadeIn.setAnimationListener(controlsFadeInAnimationListener);
+        setOnSystemUIVisibilityChangeListener();
         showControls();
         
     }
@@ -374,15 +376,31 @@ public class MediaPlaybackActivity extends Activity
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	private void setSoftNavigationBarVisibility(boolean visible) {
     	if (android.os.Build.VERSION.SDK_INT >= ICS_VERSION_NUM) {
-    		int visibilityParam = visible?View.SYSTEM_UI_FLAG_VISIBLE:View.SYSTEM_UI_FLAG_LOW_PROFILE;
+    		int visibilityParam = visible?View.SYSTEM_UI_FLAG_VISIBLE:View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         	getWindow().getDecorView().setSystemUiVisibility(visibilityParam);
+        	
+        	
+    	}
+    }
+    
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void setOnSystemUIVisibilityChangeListener() {
+    	if (android.os.Build.VERSION.SDK_INT >= ICS_VERSION_NUM) {
+    		videoViewContainer.setOnSystemUiVisibilityChangeListener(new OnSystemUiVisibilityChangeListener() {
+				
+				@Override
+				public void onSystemUiVisibilityChange(int visibility) {
+					if(visibility==View.SYSTEM_UI_FLAG_VISIBLE) {
+						showControls();
+					}
+				}
+			});
     	}
     }
     
     @Override
     protected void onResume() {
         super.onResume();
-        setSoftNavigationBarVisibility(false);
         setCurrentSeekbarValues();
         if(mGlView != null){
         	mGlView.onResume();
@@ -394,7 +412,6 @@ public class MediaPlaybackActivity extends Activity
 
     @Override
     protected void onPause() {
-    	setSoftNavigationBarVisibility(true);
     	D.disableLocalLog();
     	D.clearLocalLogBuffer();
         NebelTVApp.setCurrentHandler(null);
@@ -775,6 +792,7 @@ public class MediaPlaybackActivity extends Activity
 		@Override
 		public void onAnimationEnd(Animation animation) {
 			controlContainer.setVisibility(View.GONE);
+			setSoftNavigationBarVisibility(false);
 		}
 	};
 	
