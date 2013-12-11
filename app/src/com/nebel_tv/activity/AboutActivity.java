@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.flurry.android.FlurryAgent;
 import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
+import com.nebel_tv.utils.D;
 
 public class AboutActivity extends BaseActivity {
 	
@@ -61,7 +62,7 @@ public class AboutActivity extends BaseActivity {
 	    									getPackageInfo(getPackageName(), 0);
 	    	versionName = info.versionName;
     	} catch(NameNotFoundException e) {
-    		e.printStackTrace();
+    		D.e(e);
     		FlurryAgent.onError(TAG, e.getMessage(), e);
     		versionName = null;
     	}
@@ -78,7 +79,7 @@ public class AboutActivity extends BaseActivity {
 		    return DateTimeFormat.mediumDate().print(new DateTime(time));
 
 		}catch(Exception e){
-			e.printStackTrace();
+			D.e(e);
 			FlurryAgent.onError(TAG, e.getMessage(), e);
 			return null;
 		}

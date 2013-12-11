@@ -26,6 +26,23 @@ public class ConfigHelper {
 	public static final String TAG = ConfigHelper.class.getName();
 	public static final String CONFIG_FOLDER_NAME = "NebelTV";
 	private static final String CONFIG_FILE_NAME = "config.xml"; 
+	
+	private static final String MOOD_TAG = "mood";
+	private static final String MOOD_NAME_ATTRIBUTE = "name";
+	private static final String FAMILY_MOOD_TAG = "family";
+	private static final String KIDS_MOOD_TAG = "kids";
+	private static final String ROMANCE_MOOD_TAG = "romance";
+	private static final String CONFIG_TAG = "config";
+	private static final String VIDEO_OPTIONS_TAG = "video_options";	
+	private static final String JUMP_AHEAD_TAG = "jump_ahead_sec";
+	private static final String JUMP_BACK_TAG = "jump_back_sec";
+	private static final String FRIENDS_FEED_TAG = "friends_feed";
+	private static final String WHATS_CLOSE_TAG = "whats_close";
+	private static final String RECENTLY_VIEWED_TAG = "recently_viewed";
+	private static final String WHATS_HOT_TAG = "whats_hot";
+	private static final String PICTURES_TAG = "pictures";
+	private static final String RECOMMENDED_TAG = "recommended";
+	
 	private static final String INVALID_CONFIG_MSG = "Invalid config";
 	
     private static ConfigHelper instance;
@@ -152,64 +169,77 @@ public class ConfigHelper {
         }
     }
 	
-	// [SB] TODO Replace hardcoded strings with constants. Formatting should be improved. 
-	// More spaces and empty lines should make the code better to understand
 	private HashMap<Mood, HashMap<TopView, String>> readConfig(XmlPullParser parser) 
-										throws XmlPullParserException, IOException {
+													throws XmlPullParserException, IOException {
+		
 		HashMap<Mood, HashMap<TopView, String>> configMap = new HashMap<Mood, HashMap<TopView,String>>();
 	    HashMap<TopView, String> topViewMap = new HashMap<TopView, String>();
 	    Mood currentMood = null;
-		TopView topView = null;
+		TopView currentTopView = null;
+		
 		int eventType = parser.getEventType();
         while (eventType != XmlPullParser.END_DOCUMENT) {
-        	if(eventType == XmlPullParser.START_TAG) {
+        	if(eventType == XmlPullParser.START_TAG) {		
         		String name = parser.getName();
-        		if("mood".equals(name)) {
-        			String moodType = parser.getAttributeValue(null, "name");
-    	        	if("family".equals(moodType)) {
+        		if(MOOD_TAG.equals(name)) {        			
+        			String moodType = parser.getAttributeValue(null, MOOD_NAME_ATTRIBUTE);
+    	        	if(FAMILY_MOOD_TAG.equals(moodType)) {
     	        		currentMood = Mood.FAMILY;
-    	        	} else if("kids".equals(moodType)) {
+    	        		
+    	        	} else if(KIDS_MOOD_TAG.equals(moodType)) {
     	        		currentMood = Mood.KIDS;
-    	        	} else if("romance".equals(moodType)) {
+    	        		
+    	        	} else if(ROMANCE_MOOD_TAG.equals(moodType)) {
     	        		currentMood = Mood.ROMANCE;
+    	        		
     	        	} else {
     	        		//invalid config file
     	        		throw new XmlPullParserException(INVALID_CONFIG_MSG);
     	        	}
-        		} else if("friends_feed".equals(name)) {
-    	        	topView = TopView.FRIENDS_FEED;
-        	    } else if("whats_close".equals(name)) {
-        	        topView = TopView.WHATS_CLOSE;
-        	    } else if("recently_viewed".equals(name)) {
-        	        topView = TopView.RECENTLY_VIEWED;
-        	    } else if("whats_hot".equals(name)) {
-        	        topView = TopView.WHATS_HOT;
-        	    } else if("pictures".equals(name)) {
-        	        topView = TopView.PICTURES;
-        	    } else if("recommended".equals(name)) {
-        	        topView = TopView.RECOMMENDED;
-        	    } else if("config".equals(name)) {
+        		} else if(FRIENDS_FEED_TAG.equals(name)) {
+    	        	currentTopView = TopView.FRIENDS_FEED;
+    	        	
+        	    } else if(WHATS_CLOSE_TAG.equals(name)) {
+        	        currentTopView = TopView.WHATS_CLOSE;
+        	        
+        	    } else if(RECENTLY_VIEWED_TAG.equals(name)) {
+        	        currentTopView = TopView.RECENTLY_VIEWED;
+        	        
+        	    } else if(WHATS_HOT_TAG.equals(name)) {
+        	        currentTopView = TopView.WHATS_HOT;
+        	        
+        	    } else if(PICTURES_TAG.equals(name)) {
+        	        currentTopView = TopView.PICTURES;
+        	        
+        	    } else if(RECOMMENDED_TAG.equals(name)) {
+        	        currentTopView = TopView.RECOMMENDED;
+        	        
+        	    } else if(CONFIG_TAG.equals(name)) {
         	    	//do nothing
-        	    } else if("video_options".equals(name)) {
-        	    	jumpAheadSecValue = Integer.valueOf(parser.getAttributeValue(null, "jump_ahead_sec"));
-        	    	jumpBackSecValue = Integer.valueOf(parser.getAttributeValue(null, "jump_back_sec"));   	    	
+        	    	
+        	    } else if(VIDEO_OPTIONS_TAG.equals(name)) {
+        	    	jumpAheadSecValue = Integer.valueOf(parser.getAttributeValue(null, JUMP_AHEAD_TAG));
+        	    	jumpBackSecValue = Integer.valueOf(parser.getAttributeValue(null, JUMP_BACK_TAG));   
+        	    	
         	    } else {
         	        	//invalid config file
         	        	throw new XmlPullParserException(INVALID_CONFIG_MSG);
         	    }
         	} else if(eventType == XmlPullParser.END_TAG) {
-        		if("mood".equals(parser.getName())) {
+        		if(MOOD_TAG.equals(parser.getName())) {
         			if(currentMood!=null) {
         				configMap.put(currentMood, topViewMap);
         				currentMood = null;
         				topViewMap = new HashMap<TopView, String>();
         			}
         		}
+        		
         	} else if(eventType == XmlPullParser.TEXT) {
-        		if(topView!=null) {
-        			topViewMap.put(topView, parser.getText());
-        			topView = null;
+        		if(currentTopView!=null) {
+        			topViewMap.put(currentTopView, parser.getText());
+        			currentTopView = null;
         		}
+        		
         	}
         	eventType = parser.next();
         }

@@ -154,9 +154,9 @@ public class MainActivity extends BaseActivity
 			localStorage.setLastMood(mood);
 			drawerLayout.closeDrawer(drawerList);
 			drawerAdapter.notifyDataSetChanged();
-			// [SB] TODO Similar case below contain null pointer check, here it isn't checked. Should be similar
-			// If you sure, that topViewPagerFragment never become null - remove the check. Otherwise add check here.
-			topViewPagerFragment.notifyMoodChanged();
+			if(topViewPagerFragment!=null) {
+				topViewPagerFragment.notifyMoodChanged();
+			}
 		} else if(type==GroupType.TOP_CATEGORIES) {
 			if(currentPosition==childPosition) {
 				drawerLayout.closeDrawer(drawerList);

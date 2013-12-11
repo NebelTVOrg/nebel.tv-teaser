@@ -86,7 +86,7 @@ public class IVAHelper {
 			jsonMediaItem.put(DATE_PARAM, dateFormatter.print(mediaItem.getDate()));
 			jsonMediaItem.put(DESCRIPTION_PARAM, mediaItem.getDescription());
 		} catch(JSONException e) {
-			e.printStackTrace();
+			D.e(e);
 		}
 		return jsonMediaItem;
 	}

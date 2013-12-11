@@ -30,6 +30,8 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 		}
 	}
 	
+	private static final int CHILD_ID_PARAMETER = 100;
+	
 	private HashMap<GroupType, String[]> data;
 	private LayoutInflater inflater;
 	private LocalStorage localStorage;
@@ -47,8 +49,7 @@ public class NavigationDrawerAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public long getChildId(int groupPosition, int childPosition) {
-		// [SB] TODO hardcoded value
-		return groupPosition*100 + childPosition;
+		return groupPosition*CHILD_ID_PARAMETER + childPosition;
 	}
 
 	@Override
