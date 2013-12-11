@@ -25,4 +25,6 @@
     	<recommended>file:///android_asset/html/recommended.html</recommended>
     </mood>
     <video_options jump_ahead_sec="10" jump_back_sec="10"/>
+    <nebel_tv_homepage>http://www.nebel.tv/</nebel_tv_homepage>
+    <frontend_download_link>https://github.com/NebelTVOrg/nebel.tv-teaser/archive/master.zip</frontend_download_link>
 </config>

@@ -6,13 +6,12 @@ import android.app.Application;
 import android.content.Context;
 
 import com.flurry.android.FlurryAgent;
-import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.utils.D;
-import com.nebel_tv.utils.DownloadManagerHelper;
 
 public class NebelTVApp extends Application {
 	
 	public static final String FLURRY_API_KEY = "MBPCG7WZGRPXP5DHGMCH";
+	public final static boolean FRONTEND_DEBUG_MODE = true; 
 	
 	private static Context context;
 	private static NebelTVUncaughtExceptionHandler exceptionHandler;
@@ -22,11 +21,6 @@ public class NebelTVApp extends Application {
 		super.onCreate();
 		context = this;
 		D.enableDebug();
-		final LocalStorage localStorage = LocalStorage.from(context);
-		if(localStorage.isFirstRun()) {
-			localStorage.setFirstRun();
-			DownloadManagerHelper.startVideoDownload(context);
-		}
 		FlurryAgent.setCaptureUncaughtExceptions(false);
 		exceptionHandler = new NebelTVUncaughtExceptionHandler();
 		Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);

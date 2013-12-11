@@ -11,8 +11,6 @@ import com.nebel_tv.ui.fragment.CategoryFragment;
 
 public class CategoryActivity extends BaseActivity {
 
-	private static final String CATEGORY_FRAGMENT_TAG = "category_fragment";
-
 	public static void launch(Context c, String url) {
 		Intent intent = new Intent(c, CategoryActivity.class);
 		intent.putExtra(CategoryFragment.EXTRA_CATEGORY_URL_KEY, url);
@@ -31,13 +29,13 @@ public class CategoryActivity extends BaseActivity {
         
         if (savedInstanceState != null) {
         	categoryFragment = (CategoryFragment) 
-        		getSupportFragmentManager().findFragmentByTag(CATEGORY_FRAGMENT_TAG);
+        		getSupportFragmentManager().findFragmentByTag(CategoryFragment.TAG);
         } else {
         	categoryFragment = CategoryFragment.newInstance(
         			getIntent().getStringExtra(CategoryFragment.EXTRA_CATEGORY_URL_KEY));
     		getSupportFragmentManager()
 				.beginTransaction()
-				.add(R.id.content_frame, categoryFragment, CATEGORY_FRAGMENT_TAG)
+				.add(R.id.content_frame, categoryFragment, CategoryFragment.TAG)
 				.commit();
         }
 	}

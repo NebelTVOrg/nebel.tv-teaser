@@ -7,6 +7,7 @@
     <string name="menu_product_tour">Product Tour</string>
     <string name="menu_about">About</string>
     <string name="menu_donate">Donate</string>
+    <string name="menu_update_frontend">Update Front-End</string>
     
     <string-array name="menu_items">
         <item>Friends feed</item>
@@ -44,15 +45,7 @@
     
     <string name="videos_are_not_downloaded">Video files are not downloaded yet. Please wait</string>
     
-    <string name="btn_browse">Browse</string>    
-    <string name="btn_load">Load</string>
-    <string name="btn_unload">Unload</string>    
-    <string name="btn_play">Play</string>
-    <string name="btn_pause">Pause</string>    
-    <string name="btn_stop">Stop</string>    
-    <string name="btn_seek_backward">Seek -</string>
-    <string name="btn_seek_forward">Seek +</string>
-    <string name="btn_toggle_audio">A+</string>
-    <string name="btn_toggle_video">V+</string>
-    <string name="btn_toggle_subtitle">S+</string>
+    <string name="policy_title">Nebel.TV Teaser Policy</string>
+    <string name="policy_btn_accept">Accept</string>
+    <string name="policy_btn_decline">Decline</string>
 </resources>

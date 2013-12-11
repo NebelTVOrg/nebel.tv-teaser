@@ -11,6 +11,7 @@ import com.nebel_tv.utils.UIUtils;
 
 public class CategoryFragment extends BaseWebViewFragment {
 	
+	public static final String TAG = CategoryFragment.class.getName(); 
     public static final String EXTRA_CATEGORY_URL_KEY = "EXTRA_CATEGORY_URL_KEY";
     
     private String url;

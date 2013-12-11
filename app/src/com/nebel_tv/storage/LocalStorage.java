@@ -13,6 +13,7 @@ public class LocalStorage {
     private static final String KEY_LAST_MOOD = "KEY_LAST_MOOD";
     private static final String KEY_FIRST_RUN = "KEY_FIRST_RUN";
     private static final String KEY_SHOW_TIME_REMAINING = "KEY_SHOW_TIME_REMAINING";    
+    private static final String KEY_POLICY_ACCEPTED = "KEY_POLICY_ACCEPTED";
 
     private final SharedPreferences mSharedPreferences;
     private static LocalStorage sInstance;
@@ -68,4 +69,11 @@ public class LocalStorage {
     	mSharedPreferences.edit().putBoolean(KEY_SHOW_TIME_REMAINING, value).commit();
     }
 
+    public boolean isPolicyAccepted() {
+    	return mSharedPreferences.getBoolean(KEY_POLICY_ACCEPTED, false);
+    }
+    
+    public void setPolicyAccepted() {
+    	mSharedPreferences.edit().putBoolean(KEY_POLICY_ACCEPTED, true).commit();
+    }
 }

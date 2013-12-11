@@ -9,6 +9,7 @@ import com.nebel_tv.model.Mood;
 import com.nebel_tv.model.TopView;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.fragment.base.BaseWebViewFragment;
+import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
 import com.nebel_tv.utils.ConfigHelper;
 import com.nebel_tv.utils.IVAHelper;
 
@@ -44,7 +45,7 @@ public class TopViewFragment extends BaseWebViewFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		switchUIState(UIState.LOADING);
+		webViewUILoaderHelper.switchUIState(UIState.LOADING);
 		Mood lastMood = LocalStorage.from(getActivity()).getLastMood();
 		configUrls = ConfigHelper.getInstance().getConfigUrls().get(lastMood);
 		loadTopView();

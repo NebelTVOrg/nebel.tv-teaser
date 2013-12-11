@@ -18,6 +18,8 @@ import com.nebel_tv.storage.LocalStorage;
 
 public class TopViewPagerFragment extends Fragment {
 	
+	public static final String TAG = TopViewPagerFragment.class.getName();
+	
 	private LocalStorage localStorage;
 	
 	private ViewPager topViewPager;

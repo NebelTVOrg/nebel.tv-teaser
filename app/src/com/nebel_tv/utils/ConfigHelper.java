@@ -2,10 +2,8 @@ package com.nebel_tv.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -23,9 +21,13 @@ import com.nebel_tv.model.TopView;
 
 public class ConfigHelper {
 	
+	//config file version should be changed after every structural change in config file
+	private static final String CONFIG_FILE_VERSION = "1.1";
+	
 	public static final String TAG = ConfigHelper.class.getName();
 	public static final String CONFIG_FOLDER_NAME = "NebelTV";
-	private static final String CONFIG_FILE_NAME = "config.xml"; 
+	private static final String CONFIG_FILE_NAME = "config";
+	private static final String CONFIG_FILE_EXTENSION = ".xml";
 	
 	private static final String MOOD_TAG = "mood";
 	private static final String MOOD_NAME_ATTRIBUTE = "name";
@@ -42,6 +44,8 @@ public class ConfigHelper {
 	private static final String WHATS_HOT_TAG = "whats_hot";
 	private static final String PICTURES_TAG = "pictures";
 	private static final String RECOMMENDED_TAG = "recommended";
+	private static final String NEBEL_TV_HOMEPAGE_TAG = "nebel_tv_homepage";
+	private static final String FRONTEND_DOWNLOAD_LINK_TAG = "frontend_download_link";
 	
 	private static final String INVALID_CONFIG_MSG = "Invalid config";
 	
@@ -50,6 +54,8 @@ public class ConfigHelper {
 	private HashMap<Mood, HashMap<TopView, String>> configUrls;
 	private int jumpAheadSecValue; 
 	private int jumpBackSecValue;
+	private String nebelTVHomepage;
+	private String frontendDownloadLink;
 	private Context context;
 
     private ConfigHelper(Context context) {
@@ -63,28 +69,32 @@ public class ConfigHelper {
         if (instance == null) {
         	instance = new ConfigHelper(NebelTVApp.getContext());
         }
+        //parse config every time we request config helper class
+        //so the values will be surely up to date
+        instance.parseConfig();
         return instance;
     }
 	
 	public HashMap<Mood, HashMap<TopView, String>> getConfigUrls() {
-		parseConfig();
 		return configUrls;
 	}
 	
 	public int getJumpAheadSecValue() {
-		if(jumpAheadSecValue==0) {
-			parseConfig();
-		}
 		return jumpAheadSecValue;
 	}
 	
 	public int getJumpBackSecValue() {
-		if(jumpBackSecValue==0) {
-			parseConfig();
-		}
 		return jumpBackSecValue;
 	}
 	
+	public String getNebelTVHomepage() {
+		return nebelTVHomepage;
+	}
+
+	public String getFrontendDownloadLink() {
+		return frontendDownloadLink;
+	}
+
 	private void parseConfig() {
 		try {
 			configUrls = parseConfig(getConfigFileStream());
@@ -98,7 +108,7 @@ public class ConfigHelper {
 		final String state = Environment.getExternalStorageState();
 		if(state.equals(Environment.MEDIA_MOUNTED) || state.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
 			File configDirectory = new File(Environment.getExternalStorageDirectory(),CONFIG_FOLDER_NAME);
-			File configFile = new File(configDirectory,CONFIG_FILE_NAME);
+			File configFile = new File(configDirectory, getConfigFilename(true));
 			if(configFile.exists()) {
 				return new FileInputStream(configFile);
 			} else {
@@ -118,7 +128,7 @@ public class ConfigHelper {
 	
 	private InputStream getDefaultConfigFileStream() {
 		try {
-			return context.getAssets().open(CONFIG_FILE_NAME);
+			return context.getAssets().open(getConfigFilename(false));
 		}catch (IOException e) {
 			D.e(e,false);
 			FlurryAgent.onError(TAG, e.getMessage(), e);
@@ -128,29 +138,16 @@ public class ConfigHelper {
 	}
 	
 	private void saveConfigToExternalStorage(File configFile) {
-		InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = getDefaultConfigFileStream();
-            out = new FileOutputStream(configFile);
-            copyFile(in, out);
-            in.close();
-            in = null;
-            out.flush();
-            out.close();
-            out = null;
-          } catch(IOException e) {
-        	  D.e(e,false);
-              FlurryAgent.onError(TAG, e.getMessage(), e);
-          }       
+		FileUtils.saveFileFromInputStream(getDefaultConfigFileStream(), configFile);     
 	}
 	
-	private void copyFile(InputStream in, OutputStream out) throws IOException {
-	    byte[] buffer = new byte[1024];
-	    int read;
-	    while((read = in.read(buffer)) != -1){
-	      out.write(buffer, 0, read);
-	    }
+	/**
+	 * 
+	 * @param external -  true if config filename with config version requires; false otherwise
+	 * @return config file name
+	 */
+	private String getConfigFilename(boolean withVersion) {
+		return CONFIG_FILE_NAME + (withVersion?("_" + CONFIG_FILE_VERSION):"") + CONFIG_FILE_EXTENSION;
 	}
 	
 	private HashMap<Mood, HashMap<TopView, String>> parseConfig(InputStream in) throws IOException {
@@ -161,7 +158,7 @@ public class ConfigHelper {
             return readConfig(parser);
         } catch(Exception e) {
         	D.e(e,false);
-        	FlurryAgent.onError(TAG, e.getMessage(), e);
+        	FlurryAgent.onError(TAG, FileUtils.convertStreamToString(in), e);
         	UIUtils.showMessage(R.string.invalid_extenal_config);
         	return parseConfig(getDefaultConfigFileStream());
         } finally {
@@ -176,11 +173,12 @@ public class ConfigHelper {
 	    HashMap<TopView, String> topViewMap = new HashMap<TopView, String>();
 	    Mood currentMood = null;
 		TopView currentTopView = null;
+		String name = null; 
 		
 		int eventType = parser.getEventType();
         while (eventType != XmlPullParser.END_DOCUMENT) {
         	if(eventType == XmlPullParser.START_TAG) {		
-        		String name = parser.getName();
+        		name = parser.getName();
         		if(MOOD_TAG.equals(name)) {        			
         			String moodType = parser.getAttributeValue(null, MOOD_NAME_ATTRIBUTE);
     	        	if(FAMILY_MOOD_TAG.equals(moodType)) {
@@ -214,12 +212,13 @@ public class ConfigHelper {
         	    } else if(RECOMMENDED_TAG.equals(name)) {
         	        currentTopView = TopView.RECOMMENDED;
         	        
-        	    } else if(CONFIG_TAG.equals(name)) {
-        	    	//do nothing
-        	    	
-        	    } else if(VIDEO_OPTIONS_TAG.equals(name)) {
+        	    }else if(VIDEO_OPTIONS_TAG.equals(name)) {
         	    	jumpAheadSecValue = Integer.valueOf(parser.getAttributeValue(null, JUMP_AHEAD_TAG));
         	    	jumpBackSecValue = Integer.valueOf(parser.getAttributeValue(null, JUMP_BACK_TAG));   
+        	    	
+        	    } else if(CONFIG_TAG.equals(name) || NEBEL_TV_HOMEPAGE_TAG.equals(name)
+        	    		|| FRONTEND_DOWNLOAD_LINK_TAG.equals(name)) {
+        	    	//do nothing
         	    	
         	    } else {
         	        	//invalid config file
@@ -233,11 +232,16 @@ public class ConfigHelper {
         				topViewMap = new HashMap<TopView, String>();
         			}
         		}
+        		name = null;
         		
         	} else if(eventType == XmlPullParser.TEXT) {
         		if(currentTopView!=null) {
         			topViewMap.put(currentTopView, parser.getText());
         			currentTopView = null;
+        		} else if(NEBEL_TV_HOMEPAGE_TAG.equals(name)) {
+        			nebelTVHomepage = parser.getText();
+        		} else if(FRONTEND_DOWNLOAD_LINK_TAG.equals(name)) {
+        			frontendDownloadLink = parser.getText();
         		}
         		
         	}

@@ -14,7 +14,7 @@ import android.net.Uri;
 
 public class IVAHelper {
 
-	public static final String INTERTCEPT_URL = "nebeltv://wrapper/getMedias";
+	public static final String INTERTCEPT_URL = "nebeltv://wrapper";
 	
 	private static final String CALLBACK_PARAM = "callback";
 	

@@ -3,7 +3,9 @@ package com.nebel_tv.activity;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -16,18 +18,20 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 
+import com.nebel_tv.NebelTVApp;
 import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
 import com.nebel_tv.adapter.NavigationDrawerAdapter;
 import com.nebel_tv.adapter.NavigationDrawerAdapter.GroupType;
 import com.nebel_tv.model.Mood;
 import com.nebel_tv.storage.LocalStorage;
+import com.nebel_tv.ui.dialog.PrivacyDialogFragment;
 import com.nebel_tv.ui.fragment.TopViewPagerFragment;
+import com.nebel_tv.utils.ConfigHelper;
 
 public class MainActivity extends BaseActivity 
-					implements OnChildClickListener, OnGroupCollapseListener, OnGroupExpandListener, OnPageChangeListener  {
-	
-	private static final String TOP_VIEW_PAGER_FRAGMENT_TAG = "top_view_pager_fragment";
+					implements OnChildClickListener, OnGroupCollapseListener,
+							   OnGroupExpandListener, OnPageChangeListener  {
 	
 	private DrawerLayout drawerLayout;
     private ExpandableListView drawerList;
@@ -44,15 +48,29 @@ public class MainActivity extends BaseActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
-		menuTitles = getResources().getStringArray(R.array.menu_items);
+
 		localStorage = LocalStorage.from(this);
-		currentPosition = localStorage.getLastScreen().ordinal();
-		currentTitle = menuTitles[currentPosition];
-		HashMap<GroupType, String[]> drawerData = new HashMap<GroupType, String[]>();
-		drawerData.put(GroupType.TOP_CATEGORIES, menuTitles);
-		drawerData.put(GroupType.MOOD, getResources().getStringArray(R.array.mood_items));
-		
+		initNavigationDrawerUI();
+        
+        if (savedInstanceState != null) {
+        	topViewPagerFragment = (TopViewPagerFragment) 
+        		getSupportFragmentManager().findFragmentByTag(TopViewPagerFragment.TAG);
+        } else {
+        	topViewPagerFragment = new TopViewPagerFragment();
+    		getSupportFragmentManager()
+				.beginTransaction()
+				.add(R.id.content_frame, topViewPagerFragment, TopViewPagerFragment.TAG)
+				.commit();
+        }
+        
+        //show app policy if it's not accepted yet
+        if(!localStorage.isPolicyAccepted()) {
+        	PrivacyDialogFragment.showPrivacyDialog(getSupportFragmentManager());
+        }
+	}
+	
+	private void initNavigationDrawerUI() {
+		HashMap<GroupType, String[]> drawerData = initNavigationDrawerData();
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawerList = (ExpandableListView) findViewById(R.id.left_drawer);
 		drawerAdapter = new NavigationDrawerAdapter(this, drawerData);
@@ -90,22 +108,16 @@ public class MainActivity extends BaseActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle(currentTitle);
-        
-        
-        if (savedInstanceState != null) {
-        	topViewPagerFragment = (TopViewPagerFragment) 
-        		getSupportFragmentManager().findFragmentByTag(TOP_VIEW_PAGER_FRAGMENT_TAG);
-        } else {
-        	topViewPagerFragment = new TopViewPagerFragment();
-    		getSupportFragmentManager()
-				.beginTransaction()
-				.add(R.id.content_frame, topViewPagerFragment, TOP_VIEW_PAGER_FRAGMENT_TAG)
-				.commit();
-        }
 	}
 	
-	private void updateCurrentTitle() {
-		getSupportActionBar().setTitle(currentTitle);
+	private HashMap<GroupType, String[]> initNavigationDrawerData() {
+		menuTitles = getResources().getStringArray(R.array.menu_items);
+		currentPosition = localStorage.getLastScreen().ordinal();
+		currentTitle = menuTitles[currentPosition];
+		HashMap<GroupType, String[]> drawerData = new HashMap<GroupType, String[]>();
+		drawerData.put(GroupType.TOP_CATEGORIES, menuTitles);
+		drawerData.put(GroupType.MOOD, getResources().getStringArray(R.array.mood_items));
+		return drawerData;
 	}
 	
 	@Override
@@ -129,6 +141,9 @@ public class MainActivity extends BaseActivity
 		case R.id.menu_about:
 			AboutActivity.launch(this);
 			return true;
+		case R.id.menu_product_tour:
+			launchHomeWebPage();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
         }
@@ -137,6 +152,12 @@ public class MainActivity extends BaseActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+		if(!NebelTVApp.FRONTEND_DEBUG_MODE) {
+			MenuItem item = menu.findItem(R.id.menu_update_frontend);
+			if(item!=null) {
+				item.setVisible(false);
+			}
+		}
 		return true;
 	}
 
@@ -197,6 +218,19 @@ public class MainActivity extends BaseActivity
 	@Override
 	public void onPageScrolled(int arg0, float arg1, int arg2) {
 		//empty implementation
+	}
+	
+	private void updateCurrentTitle() {
+		getSupportActionBar().setTitle(currentTitle);
+	}
+	
+	private void launchHomeWebPage() {
+		Intent externalBrowserIntent = new Intent(Intent.ACTION_VIEW);
+		String homePageUrl = ConfigHelper.getInstance().getNebelTVHomepage();
+		if(homePageUrl!=null) {
+			externalBrowserIntent.setData(Uri.parse(homePageUrl));
+			startActivity(externalBrowserIntent);
+		}
 	}
 
 }
