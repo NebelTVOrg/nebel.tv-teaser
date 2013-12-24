@@ -12,6 +12,7 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.nebel_tv.R;
+import com.nebel_tv.frontend.FrontendUpdateTask;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.fragment.base.BaseWebViewClient;
 import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper;
@@ -20,7 +21,7 @@ import com.nebel_tv.utils.DownloadManagerHelper;
 public class PrivacyDialogFragment extends DialogFragment {
 	
 	private static final String TAG = PrivacyDialogFragment.class.getName();
-	private static final String POLICY_URL = "http://nebel.tv";
+	private static final String POLICY_URL = "file:///android_asset/privacy_policy.html";
 	
 	public static void showPrivacyDialog(FragmentManager fm) {
 		PrivacyDialogFragment privacyDialog = new PrivacyDialogFragment();
@@ -45,6 +46,7 @@ public class PrivacyDialogFragment extends DialogFragment {
                 public void onClick(final DialogInterface dialog, final int id) {
                      LocalStorage.from(getActivity()).setPolicyAccepted();
                      DownloadManagerHelper.startVideoDownload(getActivity());
+                     new FrontendUpdateTask(getActivity()).execute();
                      dismiss();
                 }
             })

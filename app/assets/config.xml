@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-    <mood name="family">
-    	<friends_feed>file:///android_asset/html/friends_feed.html</friends_feed>
-    	<whats_close>file:///android_asset/html/whats_close.html</whats_close>
-    	<recently_viewed>file:///android_asset/html/recently_viewed.html</recently_viewed>
-    	<whats_hot>file:///android_asset/html/whats_hot.html</whats_hot>
-    	<pictures>file:///android_asset/html/pictures.html</pictures>
-    	<recommended>file:///android_asset/html/recommended.html</recommended>
-    </mood>
-    <mood name="kids">
-    	<friends_feed>file:///android_asset/html/friends_feed.html</friends_feed>
-    	<whats_close>file:///android_asset/html/whats_close.html</whats_close>
-    	<recently_viewed>file:///android_asset/html/recently_viewed.html</recently_viewed>
-    	<whats_hot>file:///android_asset/html/whats_hot.html</whats_hot>
-    	<pictures>file:///android_asset/html/pictures.html</pictures>
-    	<recommended>file:///android_asset/html/recommended.html</recommended>
-    </mood>
-    <mood name="romance">
-    	<friends_feed>file:///android_asset/html/friends_feed.html</friends_feed>
-    	<whats_close>file:///android_asset/html/whats_close.html</whats_close>
-    	<recently_viewed>file:///android_asset/html/recently_viewed.html</recently_viewed>
-    	<whats_hot>file:///android_asset/html/whats_hot.html</whats_hot>
-    	<pictures>file:///android_asset/html/pictures.html</pictures>
-    	<recommended>file:///android_asset/html/recommended.html</recommended>
-    </mood>
     <video_options jump_ahead_sec="10" jump_back_sec="10"/>
     <nebel_tv_homepage>http://www.nebel.tv/</nebel_tv_homepage>
-    <frontend_download_link>https://github.com/NebelTVOrg/nebel.tv-teaser/archive/master.zip</frontend_download_link>
+    <frontend_download_link>https://docs.google.com/uc?id=0BzNgyn1JigeuNF9rSjB0M3FFbUk&amp;export=download</frontend_download_link>
 </config>

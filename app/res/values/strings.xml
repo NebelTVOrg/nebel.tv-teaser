@@ -45,7 +45,32 @@
     
     <string name="videos_are_not_downloaded">Video files are not downloaded yet. Please wait</string>
     
-    <string name="policy_title">Nebel.TV Teaser Policy</string>
+    <string name="policy_title">Application use policy</string>
     <string name="policy_btn_accept">Accept</string>
     <string name="policy_btn_decline">Decline</string>
+    
+    <string name="product_feedback">product feedback</string>
+    <string name="feature_proposal">feature proposal</string>
+    <string name="bug_report">bug report</string>
+    <string name="project_contribution">project contribution</string>
+    <string name="other">other</string> 
+    
+    <string name="feedback_email_field">Email: %1$s</string>
+    <string name="feedback_type_field">Feedback type: %1$s</string>
+    <string name="feedback_text_field">Feedback text:\n%1$s</string>
+    
+    <string name="feedback_title">Feedback</string>
+    <string name="enter_feedback_email">Enter your email:</string>
+    <string name="choose_feedback_scope">Choose feedback scope:</string>
+    <string name="enter_feedback_text">Enter feedback text:</string>
+    <string name="optional">optional</string>
+    <string name="mandatory">mandatory</string>
+    <string name="send_feedback">Send</string>
+    <string name="feedback_text_error_msg">Please enter mandatory feedback text</string>
+    <string name="feedback_success_msg">Feedback was successfully submitted. Thank you!</string>
+    <string name="feedback_failure_msg">Feedback submission failed. Please try again later.</string>
+    
+    <string name="frontend_update_msg">Updating Front-End HTML package &#8230;</string>
+    <string name="frontend_update_error_msg">Front-End update error: %1$s</string>
+    <string name="frontend_update_success_msg">Front-End was successfully updated</string>
 </resources>

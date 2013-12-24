@@ -23,15 +23,17 @@ import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
 import com.nebel_tv.adapter.NavigationDrawerAdapter;
 import com.nebel_tv.adapter.NavigationDrawerAdapter.GroupType;
+import com.nebel_tv.frontend.FrontendUpdateTask;
 import com.nebel_tv.model.Mood;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.dialog.PrivacyDialogFragment;
 import com.nebel_tv.ui.fragment.TopViewPagerFragment;
 import com.nebel_tv.utils.ConfigHelper;
+import com.nebel_tv.utils.ConfigHelper.OnConfigUpdatedListener;
 
 public class MainActivity extends BaseActivity 
 					implements OnChildClickListener, OnGroupCollapseListener,
-							   OnGroupExpandListener, OnPageChangeListener  {
+							   OnGroupExpandListener, OnPageChangeListener, OnConfigUpdatedListener  {
 	
 	private DrawerLayout drawerLayout;
     private ExpandableListView drawerList;
@@ -67,6 +69,18 @@ public class MainActivity extends BaseActivity
         if(!localStorage.isPolicyAccepted()) {
         	PrivacyDialogFragment.showPrivacyDialog(getSupportFragmentManager());
         }
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		ConfigHelper.getInstance().registerOnConfigUpdatedListener(this);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		ConfigHelper.getInstance().unregisterOnConfigUpdatedListener(this);
 	}
 	
 	private void initNavigationDrawerUI() {
@@ -144,6 +158,9 @@ public class MainActivity extends BaseActivity
 		case R.id.menu_product_tour:
 			launchHomeWebPage();
 			return true;
+		case R.id.menu_update_frontend:
+			new FrontendUpdateTask(this).execute();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
         }
@@ -176,7 +193,7 @@ public class MainActivity extends BaseActivity
 			drawerLayout.closeDrawer(drawerList);
 			drawerAdapter.notifyDataSetChanged();
 			if(topViewPagerFragment!=null) {
-				topViewPagerFragment.notifyMoodChanged();
+				topViewPagerFragment.notifyDataChanged();
 			}
 		} else if(type==GroupType.TOP_CATEGORIES) {
 			if(currentPosition==childPosition) {
@@ -218,6 +235,19 @@ public class MainActivity extends BaseActivity
 	@Override
 	public void onPageScrolled(int arg0, float arg1, int arg2) {
 		//empty implementation
+	}	
+
+	@Override
+	public void onConfigUpdated() {
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				if(topViewPagerFragment!=null) {
+					topViewPagerFragment.notifyDataChanged();
+				}
+			}
+		});
 	}
 	
 	private void updateCurrentTitle() {
@@ -226,7 +256,7 @@ public class MainActivity extends BaseActivity
 	
 	private void launchHomeWebPage() {
 		Intent externalBrowserIntent = new Intent(Intent.ACTION_VIEW);
-		String homePageUrl = ConfigHelper.getInstance().getNebelTVHomepage();
+		String homePageUrl = ConfigHelper.getInstance().getConfig().getNebelTVHomepage();
 		if(homePageUrl!=null) {
 			externalBrowserIntent.setData(Uri.parse(homePageUrl));
 			startActivity(externalBrowserIntent);

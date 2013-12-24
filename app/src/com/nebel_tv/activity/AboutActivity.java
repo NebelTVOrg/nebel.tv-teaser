@@ -12,14 +12,18 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.flurry.android.FlurryAgent;
 import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
+import com.nebel_tv.github.GitHubIssueDialogFragment;
 import com.nebel_tv.utils.D;
 
-public class AboutActivity extends BaseActivity {
+public class AboutActivity extends BaseActivity implements OnClickListener {
 	
 	private static final String TAG = AboutActivity.class.getName();
 	
@@ -29,6 +33,7 @@ public class AboutActivity extends BaseActivity {
 	}
 	
 	private TextView contentText;
+	private Button feedbackBtn;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,8 @@ public class AboutActivity extends BaseActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 		
 		contentText = (TextView) findViewById(R.id.txt_content);
+		feedbackBtn = (Button) findViewById(R.id.btn_feedback);
+		feedbackBtn.setOnClickListener(this);
 		String versionName = getBuildVersionName();
 		String buildDate = getBuildDate();
 		if(versionName==null) {
@@ -83,6 +90,11 @@ public class AboutActivity extends BaseActivity {
 			FlurryAgent.onError(TAG, e.getMessage(), e);
 			return null;
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		GitHubIssueDialogFragment.showGitHubIssueDialog(getSupportFragmentManager());
 	}
 
 }

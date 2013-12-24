@@ -49,6 +49,7 @@ import com.nebel_tv.ui.view.VideoSeekBar;
 import com.nebel_tv.utils.ConfigHelper;
 import com.nebel_tv.utils.D;
 import com.nebel_tv.utils.DateTimeUtils;
+import com.nebel_tv.utils.ConfigHelper.ConfigModel;
 import com.vayavision.MediaCore.MediaCore;
 import com.vayavision.MediaCore.OpenGLES20Renderer;
 import com.vayavision.MediaCore.PlayerCore2;
@@ -130,9 +131,9 @@ public class MediaPlaybackActivity extends Activity
 		setVolumeControlStream(DEFAULT_AUDIO_STREAM);
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		maxStreamVolume = audioManager.getStreamMaxVolume(DEFAULT_AUDIO_STREAM);
-		ConfigHelper configHelper = ConfigHelper.getInstance();
-		seekBackValueInSec = configHelper.getJumpBackSecValue();
-		seekAheadValueInSec = configHelper.getJumpAheadSecValue();
+		ConfigModel config = ConfigHelper.getInstance().getConfig();
+		seekBackValueInSec = config.getJumpBackSecValue();
+		seekAheadValueInSec = config.getJumpAheadSecValue();
 		localStorage = LocalStorage.from(this);
 		showTimeRemaining = localStorage.isShowTimeRemaining();
 		

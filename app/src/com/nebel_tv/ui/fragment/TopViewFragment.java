@@ -47,14 +47,16 @@ public class TopViewFragment extends BaseWebViewFragment {
 		super.onStart();
 		webViewUILoaderHelper.switchUIState(UIState.LOADING);
 		Mood lastMood = LocalStorage.from(getActivity()).getLastMood();
-		configUrls = ConfigHelper.getInstance().getConfigUrls().get(lastMood);
+		configUrls = ConfigHelper.getInstance().getConfig().getConfigUrls().get(lastMood);
 		loadTopView();
 	}
 	
 	private void loadTopView() {
-		String url = configUrls.get(topView);
-		if(url!=null) {
-			webView.loadUrl(url);
+		if(configUrls!=null) {
+			String url = configUrls.get(topView);
+			if(url!=null) {
+				webView.loadUrl(url);
+			}
 		}
 	}
 
