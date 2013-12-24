@@ -3,6 +3,7 @@ package com.nebel_tv.utils;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
@@ -16,15 +17,37 @@ public class DownloadManagerHelper {
 	
 	private static final String[] VIDEO_URLS = new String[] {
 		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_h264.mov",
-//		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov"
+		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov"
 	};
 	
 	public static void startVideoDownload(Context context) {
 		DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+		Cursor cursor = dm.query(new Query());
 		File configDirectory = new File(Environment.getExternalStorageDirectory(),ConfigHelper.CONFIG_FOLDER_NAME);
 		
-		for(int i=0; i<VIDEO_URLS.length; i++) {
-			Uri uri = Uri.parse(VIDEO_URLS[i]);
+		int videoUrlsSize = VIDEO_URLS.length;
+		ArrayList<String> bufferVideoUrls = new ArrayList<String>(Arrays.asList(VIDEO_URLS));
+		
+		if(cursor.moveToFirst()) {
+			int uriColumn = cursor.getColumnIndex(DownloadManager.COLUMN_URI);
+			int statusColumn = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+			do {
+				String uri = cursor.getString(uriColumn);
+				int status = cursor.getInt(statusColumn); 
+				for(int i=0; i<videoUrlsSize; i++) {
+					if(VIDEO_URLS[i].equals(uri) && status!=DownloadManager.STATUS_FAILED) {
+						bufferVideoUrls.remove(VIDEO_URLS[i]);
+					}
+					if(bufferVideoUrls.size()==0) {
+						break;
+					}
+				}
+			} while(cursor.moveToNext());
+		}
+		cursor.close();
+		
+		for(String url : bufferVideoUrls) {
+			Uri uri = Uri.parse(url);
 			Request request = new Request(uri);
 			request.setAllowedNetworkTypes(Request.NETWORK_WIFI);
 			request.setTitle(uri.getLastPathSegment());
@@ -57,6 +80,7 @@ public class DownloadManagerHelper {
 				}
 			} while(cursor.moveToNext());
 		}
+		cursor.close();
 		return videoFiles.size()>=videoUrlsSize?videoFiles.toArray(new String[videoFiles.size()]):null;
 	}
 	
