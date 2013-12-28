@@ -18,7 +18,6 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.PowerManager;
-import android.widget.Toast;
 
 import com.nebel_tv.R;
 import com.nebel_tv.utils.ConfigHelper;
@@ -61,7 +60,7 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
 
         String result = downloadFrontendPackage();
         if(result==null) {
-        	result = unpackZip();
+        	result = unpackFrontendZip();
         	if(result==null) {
         		 try {
 					ConfigHelper.getInstance().updateConfigFile();
@@ -150,10 +149,11 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
         return null;
     }
     
-    private String unpackZip() {       
+    private String unpackFrontendZip() {       
          InputStream is = null;
          ZipInputStream zis = null;
          File frontendPackageFile = getFrontendPackageFile();
+         String topDirectoryName = "NebelTV-TeaserFrontend-master/";
          try {
         	 String filename;
              is = new FileInputStream(frontendPackageFile);
@@ -161,14 +161,19 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
              ZipEntry ze;
              byte[] buffer = new byte[1024];
              int count;
-
+             
              while ((ze = zis.getNextEntry()) != null) {
                  filename = ze.getName();
+                 //TODO this is temp solution to skip root folder
+                 //should be implemented universal solution
+                 if(filename.contains(topDirectoryName)) {
+                	 filename = filename.substring(topDirectoryName.length());
+                 }
 
                  if (ze.isDirectory()) {
-                    File fmd = new File(configDirectory, filename);
-                    fmd.mkdirs();
-                    continue;
+                	 File fmd = new File(configDirectory, filename);
+                     fmd.mkdirs();
+                     continue;
                  }
 
                  FileOutputStream fout = new FileOutputStream(new File(configDirectory, filename));
