@@ -18,7 +18,12 @@
         android:id="@+id/menu_donate"
         android:showAsAction="never"
         android:title="@string/menu_donate"/>
-    
+
+    <item
+        android:id="@+id/menu_feedback"
+        android:showAsAction="never"
+        android:title="@string/menu_feedback"/>
+        
     <item
         android:id="@+id/menu_update_frontend"
         android:showAsAction="never"

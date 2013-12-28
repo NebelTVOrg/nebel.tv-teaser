@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.flurry.android.FlurryAgent;
 import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
-import com.nebel_tv.github.GitHubIssueDialogFragment;
 import com.nebel_tv.utils.D;
 
 public class AboutActivity extends BaseActivity implements OnClickListener {
@@ -32,8 +31,9 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 		c.startActivity(intent);
 	}
 	
-	private TextView contentText;
-	private Button feedbackBtn;
+	private TextView versionText;
+	private TextView releaseDateText;
+	private Button finishBtn;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +43,11 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 		
-		contentText = (TextView) findViewById(R.id.txt_content);
-		feedbackBtn = (Button) findViewById(R.id.btn_feedback);
-		feedbackBtn.setOnClickListener(this);
+        versionText = (TextView) findViewById(R.id.txt_version);
+        releaseDateText = (TextView) findViewById(R.id.txt_release_date);
+		finishBtn = (Button) findViewById(R.id.btn_finish);
+		finishBtn.setOnClickListener(this);
+		
 		String versionName = getBuildVersionName();
 		String buildDate = getBuildDate();
 		if(versionName==null) {
@@ -58,8 +60,8 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 	}
 	
 	private void fillAboutContent(String version, String releaseDate) {
-		contentText.setText(String.format(
-				getString(R.string.about_content), version, releaseDate));
+		versionText.setText(String.format(getString(R.string.version), version));
+		releaseDateText.setText(String.format(getString(R.string.release_date), releaseDate));
 	}
 	
 	private String getBuildVersionName() {
@@ -94,7 +96,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		GitHubIssueDialogFragment.showGitHubIssueDialog(getSupportFragmentManager());
+		onBackPressed();
 	}
 
 }

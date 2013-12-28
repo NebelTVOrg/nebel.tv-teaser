@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="about_top_margin">100dp</dimen>
+	<dimen name="about_version_margin">30dp</dimen>
+	<dimen name="about_btn_margin">50dp</dimen>
+	<dimen name="about_link_text_size">22dp</dimen>
+	<dimen name="rounded_btn_height">30dp</dimen>	
+	<dimen name="small_text_size">12dp</dimen>
+	<dimen name="medium_text_size">18dp</dimen>
+	<dimen name="big_text_size">32dp</dimen>
+	<item name="feedback_edit_max_lines" type="integer">3</item>
+</resources>

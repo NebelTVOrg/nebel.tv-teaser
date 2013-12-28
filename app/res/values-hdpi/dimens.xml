@@ -18,5 +18,12 @@
     <dimen name="side_sliding_margin_bottom">37dp</dimen>
     <dimen name="top_siding_width">117dp</dimen>
     <dimen name="top_siding_height">137dp</dimen>
-    <dimen name="sliding_wheel_text_item_size">12sp</dimen>    
+    <dimen name="sliding_wheel_text_item_size">12sp</dimen>
+    
+    <dimen name="about_top_margin">60dp</dimen>
+	<dimen name="about_version_margin">20dp</dimen>
+	<dimen name="about_btn_margin">40dp</dimen>	
+	<dimen name="small_text_size">12dp</dimen>
+	<dimen name="medium_text_size">16dp</dimen>
+	<dimen name="big_text_size">26dp</dimen>
 </resources>

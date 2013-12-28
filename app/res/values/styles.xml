@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -16,5 +16,28 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    
+    <style name="RoundedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/rounded_btn_height</item>
+        <item name="android:background">@drawable/btn_rounded</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+    
+    <style name="Text">
+        <item name="android:ellipsize">end</item>
+    </style>
+    
+    <style name="Text.Small">
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
 
+    <style name="Text.Medium">
+        <item name="android:textSize">@dimen/medium_text_size</item>
+    </style>
+    
+    <style name="Text.Big">
+        <item name="android:textSize">@dimen/big_text_size</item>
+    </style>
+    
 </resources>

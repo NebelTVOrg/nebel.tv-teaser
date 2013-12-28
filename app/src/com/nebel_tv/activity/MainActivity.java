@@ -158,6 +158,9 @@ public class MainActivity extends BaseActivity
 		case R.id.menu_product_tour:
 			launchHomeWebPage();
 			return true;
+		case R.id.menu_feedback:
+			FeedbackActivity.launch(this);
+			return true;
 		case R.id.menu_update_frontend:
 			new FrontendUpdateTask(this).execute();
 			return true;

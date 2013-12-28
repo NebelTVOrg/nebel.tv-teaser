@@ -104,15 +104,15 @@ public class GitHubIssueAsyncTask extends AsyncTask<Void, Void, Boolean> {
 		Issue issue = new Issue();
 		StringBuilder bodyText = new StringBuilder();
 		if(email!=null) {
-			bodyText.append(String.format(context.getString(R.string.feedback_email_field), email));
+			bodyText.append(String.format(context.getString(R.string.feedback_email_msg_field), email));
 			bodyText.append("\n");
 		}
 		if(feedbackType!=null && feedbackType!=FeedbackType.NONE) {
-			bodyText.append(String.format(context.getString(R.string.feedback_type_field),
+			bodyText.append(String.format(context.getString(R.string.feedback_type_msg_field),
 														context.getString(feedbackType.getResId())));
 			bodyText.append("\n");
 		}	
-		bodyText.append(String.format(context.getString(R.string.feedback_text_field), feedbackText));
+		bodyText.append(String.format(context.getString(R.string.feedback_type_msg_field), feedbackText));
 		
 		issue.setBody(bodyText.toString());
 		int titleLength = feedbackText.length()>DEFAULT_TITLE_LENGTH?DEFAULT_TITLE_LENGTH:feedbackText.length();

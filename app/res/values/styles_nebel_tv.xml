@@ -17,7 +17,7 @@
      limitations under the License.
 -->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Theme.Nebel_tv" parent="@style/Theme.AppCompat.Light">
         <item name="actionBarItemBackground">@drawable/selectable_background_nebel_tv</item>
@@ -29,8 +29,7 @@
         <item name="actionModeBackground">@drawable/cab_background_top_nebel_tv</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_nebel_tv</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Nebel_tv</item>
-
-        
+        <item name="actionOverflowButtonStyle">@style/OverFlow.Nebel_tv</item>        
     </style>
 
     <style name="ActionBar.Solid.Nebel_tv" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
@@ -38,6 +37,7 @@
         <item name="backgroundStacked">@drawable/ab_stacked_solid_nebel_tv</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_nebel_tv</item>
         <item name="progressBarStyle">@style/ProgressBar.Nebel_tv</item>
+        <item name="titleTextStyle">@style/ActionBar.TitleTextStyle.Nebel_tv</item>        
     </style>
 
     <style name="ActionBar.Transparent.Nebel_tv" parent="@style/Widget.AppCompat.Light.ActionBar">
@@ -76,5 +76,15 @@
         <item name="popupMenuStyle">@style/PopupMenu.Nebel_tv</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Nebel_tv</item>
     </style>
+    
+    <style name="ActionBar.TitleTextStyle.Nebel_tv" parent="@android:style/TextAppearance.Medium">
+    	<item name="android:textColor">@color/main_color</item>
+    </style>
 
+    <style name="OverFlow.Nebel_tv" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+    	<item name="android:src">@drawable/ic_overflow</item>
+	</style>
+    
+    <dimen name="feedback_spinner_padding_left">7dp</dimen>
+    
 </resources>

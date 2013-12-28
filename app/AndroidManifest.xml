@@ -32,7 +32,13 @@
         
         <activity
             android:name=".activity.AboutActivity"
-            android:label="@string/menu_about"/>
+            android:label="@string/menu_about"
+            android:screenOrientation="sensorPortrait"/>
+
+        <activity
+            android:name=".activity.FeedbackActivity"
+            android:label="@string/menu_feedback"
+            android:screenOrientation="sensorPortrait"/>        
         
         <activity
             android:name=".activity.CategoryActivity"

@@ -29,7 +29,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_nebel_tv</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_nebel_tv</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Nebel_tv</item>
-        
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow.Nebel_tv</item>
         
     </style>
 
@@ -38,6 +38,7 @@
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_nebel_tv</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_nebel_tv</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Nebel_tv</item>
+        <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle.Nebel_tv</item>   
     </style>
 
     <style name="ActionBar.Transparent.Nebel_tv" parent="@style/Widget.AppCompat.Light.ActionBar">
@@ -50,5 +51,14 @@
         <item name="android:popupMenuStyle">@style/PopupMenu.Nebel_tv</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Nebel_tv</item>
     </style>
+    
+    <style name="ActionBar.TitleTextStyle.Nebel_tv" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+    	<item name="android:textColor">@color/main_color</item>
+    </style>
 
+    <style name="OverFlow.Nebel_tv" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+    	<item name="android:src">@drawable/ic_overflow</item>
+	</style>
+	
+    <dimen name="feedback_spinner_padding_left">0dp</dimen>
 </resources>
