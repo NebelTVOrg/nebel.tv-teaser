@@ -14,10 +14,12 @@ import android.widget.TextView;
 
 import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
+import com.nebel_tv.github.GitHubIssueAsyncTask;
 import com.nebel_tv.github.GitHubIssueAsyncTask.FeedbackType;
+import com.nebel_tv.github.GitHubIssueAsyncTask.OnGitHubIssueCompletedListener;
 import com.nebel_tv.utils.UIUtils;
 
-public class FeedbackActivity extends BaseActivity {
+public class FeedbackActivity extends BaseActivity implements OnGitHubIssueCompletedListener {
 	
 	public static void launch(Context c) {
 		Intent intent = new Intent(c, FeedbackActivity.class);
@@ -62,12 +64,16 @@ public class FeedbackActivity extends BaseActivity {
 		String feedbackText = feedbackTextInput.getText().toString();
 		
 		if(feedbackText!=null && !"".equals(feedbackText)) {
-//			new GitHubIssueAsyncTask(
-//					this, feedbackText, email, feedbackType).execute();
-			onBackPressed();
+			new GitHubIssueAsyncTask(
+					this, this, feedbackText, email, feedbackType).execute();
 		} else {
 			UIUtils.showMessage(R.string.feedback_text_error_msg);
 		}
+	}
+	
+	@Override
+	public void onGitHubIssueCompleted() {
+		onBackPressed();
 	}
 
 }

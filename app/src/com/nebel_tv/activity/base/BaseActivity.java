@@ -24,13 +24,13 @@ public abstract class BaseActivity extends ActionBarActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-//		FlurryAgent.onStartSession(this, NebelTVApp.FLURRY_API_KEY);
+		FlurryAgent.onStartSession(this, NebelTVApp.FLURRY_API_KEY);
 	}
 	
 	@Override
 	protected void onStop() {
 		super.onStop();		
-//		FlurryAgent.onEndSession(this);
+		FlurryAgent.onEndSession(this);
 	}
 
 	public void showFragment(Fragment fragment) {

@@ -16,8 +16,8 @@ import android.os.Environment;
 public class DownloadManagerHelper {
 	
 	private static final String[] VIDEO_URLS = new String[] {
-//		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_h264.mov",
-//		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov"
+		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_h264.mov",
+		"http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov"
 	};
 	
 	public static void startVideoDownload(Context context) {

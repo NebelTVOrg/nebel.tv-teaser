@@ -17,6 +17,10 @@ import com.nebel_tv.utils.UIUtils;
 
 public class GitHubIssueAsyncTask extends AsyncTask<Void, Void, Boolean> {
 	
+	public interface OnGitHubIssueCompletedListener {
+		void onGitHubIssueCompleted();
+	}
+	
 	public static enum FeedbackType {
 				
 		NONE(EMPTY_RES_VALUE),
@@ -57,15 +61,17 @@ public class GitHubIssueAsyncTask extends AsyncTask<Void, Void, Boolean> {
 	private String feedbackText;
 	private String email;
 	private FeedbackType feedbackType;
+	private OnGitHubIssueCompletedListener listener;
 	
 	private ProgressDialog progressDialog;
 	
-	public GitHubIssueAsyncTask(Context context, 
+	public GitHubIssueAsyncTask(Context context, OnGitHubIssueCompletedListener listener,
 								String feedbackText, String email, FeedbackType feedbackType) {
 		if(feedbackText==null) {
 			throw new IllegalArgumentException("feedbackText must not be null");
 		}
 		this.context = context;
+		this.listener = listener;
 		this.feedbackText = feedbackText;
 		this.email = email;
 		this.feedbackType = feedbackType;
@@ -98,12 +104,16 @@ public class GitHubIssueAsyncTask extends AsyncTask<Void, Void, Boolean> {
 	protected void onPostExecute(Boolean result) {
 		progressDialog.dismiss();
 		UIUtils.showMessage(result?R.string.feedback_success_msg:R.string.feedback_failure_msg);
+		if(listener!=null) {
+			listener.onGitHubIssueCompleted();
+		}
+		
 	}
 	
 	private Issue createIssue() {
 		Issue issue = new Issue();
 		StringBuilder bodyText = new StringBuilder();
-		if(email!=null) {
+		if(email!=null && !email.isEmpty()) {
 			bodyText.append(String.format(context.getString(R.string.feedback_email_msg_field), email));
 			bodyText.append("\n");
 		}
@@ -112,7 +122,7 @@ public class GitHubIssueAsyncTask extends AsyncTask<Void, Void, Boolean> {
 														context.getString(feedbackType.getResId())));
 			bodyText.append("\n");
 		}	
-		bodyText.append(String.format(context.getString(R.string.feedback_type_msg_field), feedbackText));
+		bodyText.append(String.format(context.getString(R.string.feedback_msg_field), feedbackText));
 		
 		issue.setBody(bodyText.toString());
 		int titleLength = feedbackText.length()>DEFAULT_TITLE_LENGTH?DEFAULT_TITLE_LENGTH:feedbackText.length();

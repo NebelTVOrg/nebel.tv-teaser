@@ -58,7 +58,7 @@
     
     <string name="feedback_email_msg_field">Email: %1$s</string>
     <string name="feedback_type_msg_field">Feedback type: %1$s</string>
-    <string name="enter_feedback_msg_text">Feedback message:\n%1$s</string>
+    <string name="feedback_msg_field">Feedback message:\n%1$s</string>
     <string name="confirm">Confirm</string>
     <string name="feedback_text_error_msg">Please enter mandatory feedback message</string>
     <string name="feedback_success_msg">Feedback was successfully submitted. Thank you!</string>
