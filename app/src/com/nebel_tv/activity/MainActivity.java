@@ -24,7 +24,7 @@ import com.nebel_tv.activity.base.BaseActivity;
 import com.nebel_tv.adapter.NavigationDrawerAdapter;
 import com.nebel_tv.adapter.NavigationDrawerAdapter.GroupType;
 import com.nebel_tv.frontend.FrontendUpdateTask;
-import com.nebel_tv.model.Mood;
+import com.nebel_tv.model.TopView;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.dialog.PrivacyDialogFragment;
 import com.nebel_tv.ui.fragment.TopViewPagerFragment;
@@ -125,12 +125,11 @@ public class MainActivity extends BaseActivity
 	}
 	
 	private HashMap<GroupType, String[]> initNavigationDrawerData() {
-		menuTitles = getResources().getStringArray(R.array.menu_items);
+		menuTitles = TopView.getTitles();
 		currentPosition = localStorage.getLastScreen().ordinal();
 		currentTitle = menuTitles[currentPosition];
 		HashMap<GroupType, String[]> drawerData = new HashMap<GroupType, String[]>();
 		drawerData.put(GroupType.TOP_CATEGORIES, menuTitles);
-		drawerData.put(GroupType.MOOD, getResources().getStringArray(R.array.mood_items));
 		return drawerData;
 	}
 	
@@ -152,6 +151,9 @@ public class MainActivity extends BaseActivity
           return true;
         }
         switch (item.getItemId()) {
+        case R.id.menu_mood:
+        	MoodActivity.launchForResult(this);
+        	return true;
 		case R.id.menu_about:
 			AboutActivity.launch(this);
 			return true;
@@ -186,19 +188,7 @@ public class MainActivity extends BaseActivity
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
 		GroupType type = drawerAdapter.getGroupEnum(groupPosition);
-		if(type==GroupType.MOOD) {
-			Mood mood = Mood.values()[childPosition];
-			if(localStorage.getLastMood()==mood) {
-				drawerLayout.closeDrawer(drawerList);
-				return true;
-			}
-			localStorage.setLastMood(mood);
-			drawerLayout.closeDrawer(drawerList);
-			drawerAdapter.notifyDataSetChanged();
-			if(topViewPagerFragment!=null) {
-				topViewPagerFragment.notifyDataChanged();
-			}
-		} else if(type==GroupType.TOP_CATEGORIES) {
+		if(type==GroupType.TOP_CATEGORIES) {
 			if(currentPosition==childPosition) {
 				drawerLayout.closeDrawer(drawerList);
 				return true;
@@ -251,6 +241,16 @@ public class MainActivity extends BaseActivity
 				}
 			}
 		});
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode==MoodActivity.MOOD_ACTIVITY_REQUEST_CODE &&
+				resultCode==RESULT_OK && data!=null) {
+			if(topViewPagerFragment!=null) {
+				topViewPagerFragment.notifyDataChanged();
+			}
+		}
 	}
 	
 	private void updateCurrentTitle() {

@@ -19,4 +19,7 @@
     <dimen name="top_siding_width">280dp</dimen>
     <dimen name="top_siding_height">330dp</dimen>
     <dimen name="sliding_wheel_text_item_size">30sp</dimen>
+
+    <dimen name="mood_items_spacing">60dp</dimen>
+	<dimen name="mood_title_margin">32dp</dimen>
 </resources>

@@ -4,7 +4,8 @@
 	<dimen name="about_version_margin">30dp</dimen>
 	<dimen name="about_btn_margin">50dp</dimen>
 	<dimen name="about_link_text_size">22dp</dimen>
-	<dimen name="rounded_btn_height">30dp</dimen>	
+	<dimen name="rounded_btn_height">30dp</dimen>
+	<dimen name="mini_text_size">8dp</dimen>	
 	<dimen name="small_text_size">12dp</dimen>
 	<dimen name="medium_text_size">18dp</dimen>
 	<dimen name="big_text_size">32dp</dimen>

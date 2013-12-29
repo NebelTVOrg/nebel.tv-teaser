@@ -17,6 +17,14 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
+  <style name="Theme.Transparent" parent="Theme.Nebel_tv">
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:backgroundDimEnabled">true</item>
+  </style>
+    
     <style name="RoundedButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/rounded_btn_height</item>
@@ -26,6 +34,10 @@
     
     <style name="Text">
         <item name="android:ellipsize">end</item>
+    </style>
+    
+    <style name="Text.Mini">
+        <item name="android:textSize">@dimen/mini_text_size</item>
     </style>
     
     <style name="Text.Small">
