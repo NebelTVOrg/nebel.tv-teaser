@@ -13,7 +13,6 @@ import android.view.SurfaceHolder;
 public class MediaCore {
 	
 	static{
-		System.loadLibrary("ass");
 		System.loadLibrary("ffmpeg");
 		System.loadLibrary("SystemCore");
 		try{
@@ -24,5 +23,4 @@ public class MediaCore {
 	}
 	
 	public native static PlayerCore2 createPlayerCore2(SurfaceHolder holder);
-	public native static PlayerCore2 createPlayerCore2(OpenGLES20Renderer renderer);
 }

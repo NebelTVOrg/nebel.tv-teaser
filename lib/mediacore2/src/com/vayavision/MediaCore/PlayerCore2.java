@@ -20,6 +20,9 @@ public class PlayerCore2 {
 		void onGetTrackCountComplete(int status, int type, int trackCount);
 		void onGetActiveTrackComplete(int status, int type, int track);
 		void onActivateTrackComplete(int status, int type, int newTrack);
+		void onGetMediaCountComplete(int status, int mediaCount);
+		void onGetActiveMediaComplete(int status, int media);
+		void onActivateMediaComplete(int status, int newMedia);
 		void onStateChange(int newState, int oldState);
 		void onPositionChange(long position);
 		void onBufferingProgress(long L1Length, long L2Length);
@@ -87,4 +90,10 @@ public class PlayerCore2 {
 	public native int getTrackCount(int type);
 	public native int getActiveTrack(int type);
 	public native int activateTrack(int type, int newTrack);
+
+	public native int getMediaCount();
+	public native int getActiveMedia();
+	public native int activateMedia(int newMedia);
+
+	public native void setWindowState(boolean renderable);
 }

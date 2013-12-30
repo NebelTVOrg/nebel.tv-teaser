@@ -15,16 +15,14 @@ import kankan.wheel.widget.WheelView.CenterImageAlignType;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ConfigurationInfo;
 import android.media.AudioManager;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnLongClickListener;
@@ -47,11 +45,10 @@ import com.nebel_tv.ui.view.VerticalSeekBar;
 import com.nebel_tv.ui.view.VerticalSeekBar.ThumbOrientation;
 import com.nebel_tv.ui.view.VideoSeekBar;
 import com.nebel_tv.utils.ConfigHelper;
+import com.nebel_tv.utils.ConfigHelper.ConfigModel;
 import com.nebel_tv.utils.D;
 import com.nebel_tv.utils.DateTimeUtils;
-import com.nebel_tv.utils.ConfigHelper.ConfigModel;
 import com.vayavision.MediaCore.MediaCore;
-import com.vayavision.MediaCore.OpenGLES20Renderer;
 import com.vayavision.MediaCore.PlayerCore2;
 import com.vayavision.MediaCore.PlayerCore2.Configuration;
 
@@ -77,8 +74,6 @@ public class MediaPlaybackActivity extends Activity
 	}
 	
 	private SurfaceView mSurfaceView = null;
-	private GLSurfaceView mGlView = null;
-	private OpenGLES20Renderer mGlRenderer = null;
 	private PlayerCore2 mCore2 = null;
 	
 	private AudioManager audioManager;
@@ -112,12 +107,32 @@ public class MediaPlaybackActivity extends Activity
 	private long mDurationInSeconds;
 	private int mAudioTrackCount;
 	private int mSubtitleTrackCount;
+	private int mMediaTrackCount;
 	private int mActiveAudioTrack;
 	private int mActiveSubtitleTrack;
+	private int mActiveMediaTrack;
 	private boolean showTimeRemaining;
 	
 	private Animation animFadeOut;
 	private Animation animFadeIn;
+	
+	private class SurfaceHolderCallback implements SurfaceHolder.Callback{
+		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+			// do nothing
+		}
+
+		public void surfaceCreated(SurfaceHolder holder) {
+			if(mCore2 != null){
+				mCore2.setWindowState(true);
+			}
+		}
+
+		public void surfaceDestroyed(SurfaceHolder holder) {
+			if(mCore2 != null){
+				mCore2.setWindowState(false);
+			}
+		}
+	}
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -157,20 +172,14 @@ public class MediaPlaybackActivity extends Activity
 		}
 		timer = new Timer();
 		
-		if(isOpenGL2ES20supported()){
-			mGlRenderer = new OpenGLES20Renderer();
-			mGlView = new GLSurfaceView(this);	
-	        mGlView.setEGLContextClientVersion(2);			
-			mGlView.setRenderer(mGlRenderer);
-		        
-			videoViewContainer.addView(mGlView);			        
-			mCore2 = MediaCore.createPlayerCore2(mGlRenderer);
-		}else{
-			mSurfaceView = new SurfaceView(this);
-			
-			videoViewContainer.addView(mSurfaceView);			        
-	        mCore2 = MediaCore.createPlayerCore2(mSurfaceView.getHolder());
-		}
+		mSurfaceView = new SurfaceView(this);
+		
+		videoViewContainer.addView(mSurfaceView);	
+		
+		SurfaceHolder holder = mSurfaceView.getHolder();
+		holder.addCallback(new SurfaceHolderCallback());
+		
+		mCore2 = MediaCore.createPlayerCore2(holder);
 		
         initPlayerControlListeners();
 
@@ -262,7 +271,7 @@ public class MediaPlaybackActivity extends Activity
     	
     	videoQualityWheel.setCenterDrawableRes(R.drawable.panel_top_selected_item_bg, CenterImageAlignType.CENTER);
     	videoQualityWheel.setVisibleItems(QUALITY_WHEEL_VISIBLE_ITEMS_NUM);
-    	updateVideoQualityValues();
+    	subtitleWheel.addChangingListener(this);
         
         playBtn = (ImageButton) findViewById(R.id.btn_play_pause);
         seekBackBtn = (ImageButton) findViewById(R.id.btn_back);     
@@ -360,11 +369,16 @@ public class MediaPlaybackActivity extends Activity
     private void updateVideoQualityValues() {
     	//TODO implement real quality as far as it will be implemented on video player
     	//hardcoded names used until then
-    	String[] items = new String[] {"Auto", "360", "480", "720"};
-    	ArrayWheelAdapter<String> videoQualityWheelAdapter = new ArrayWheelAdapter<String>(this, items);
-    	videoQualityWheelAdapter.setItemResource(R.layout.wheel_text_item);
-    	videoQualityWheel.setViewAdapter(videoQualityWheelAdapter);
-    	videoQualityWheel.setCurrentItem(3);
+    	if(mMediaTrackCount>0) {
+    		String[] items = new String[mMediaTrackCount];
+    		for(int i=0; i<mMediaTrackCount; i++) {
+        		items[i] = "quality "+i;
+        	}
+    		ArrayWheelAdapter<String> videoQualityWheelAdapter = new ArrayWheelAdapter<String>(this, items);
+        	videoQualityWheelAdapter.setItemResource(R.layout.wheel_text_item);
+        	videoQualityWheel.setViewAdapter(videoQualityWheelAdapter);
+        	videoQualityWheel.setCurrentItem(mActiveMediaTrack);
+    	}
     }
     
     private void setCurrentSeekbarValues() {
@@ -403,9 +417,6 @@ public class MediaPlaybackActivity extends Activity
     protected void onResume() {
         super.onResume();
         setCurrentSeekbarValues();
-        if(mGlView != null){
-        	mGlView.onResume();
-        }
         if(mCore2 != null && mState == PlayerCore2.STATE_PAUSED){
         	mCore2.play();
         }
@@ -419,9 +430,6 @@ public class MediaPlaybackActivity extends Activity
     	if(mCore2 != null && mState == PlayerCore2.STATE_PLAYING){
     		mCore2.pause();
        	}
-        if(mGlView != null){
-            mGlView.onPause();        	
-		}
         super.onPause();
 	}
     
@@ -653,6 +661,30 @@ public class MediaPlaybackActivity extends Activity
 	}
 	
 	@Override
+	public void onGetMediaCountComplete(int status, int mediaCount) {
+		D.d(getMethodName(1) + ": " + status + " " + mediaCount);
+		mMediaTrackCount = mediaCount;
+	}
+
+	@Override
+	public void onGetActiveMediaComplete(int status, int media) {
+		D.d(getMethodName(1) + ": " + status + " " + media);
+		mActiveMediaTrack = media;
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				updateVideoQualityValues();
+			}
+		});
+	}
+
+	@Override
+	public void onActivateMediaComplete(int status, int newMedia) {
+		D.d(getMethodName(1) + ": " + status + " " + newMedia);
+	}
+	
+	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
 		if(videoSeekBar==seekBar) {
@@ -697,6 +729,8 @@ public class MediaPlaybackActivity extends Activity
 			mCore2.activateTrack(PlayerCore2.TRACK_TYPE_AUDIO, newValue);
 		} else if(subtitleWheel==wheel) {
 			mCore2.activateTrack(PlayerCore2.TRACK_TYPE_SUBTITLE, newValue);
+		} else if(videoQualityWheel==wheel) {
+			mCore2.activateMedia(newValue);
 		}
 	}
 	
@@ -741,14 +775,6 @@ public class MediaPlaybackActivity extends Activity
 		android.provider.Settings.System.putInt(getContentResolver(),
 			     android.provider.Settings.System.SCREEN_BRIGHTNESS,
 			     Math.round(floatPercentValue*MAX_SETTINGS_BRIGHTNESS_VALUE));
-	}
-	
-	private boolean isOpenGL2ES20supported() {
-		final ActivityManager activityManager = 
-		    (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-		final ConfigurationInfo configurationInfo = 
-		    activityManager.getDeviceConfigurationInfo();
-		return configurationInfo.reqGlEsVersion >= 0x20000;
 	}
 	
 	private String getMethodName(final int depth) {
