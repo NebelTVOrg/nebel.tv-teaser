@@ -122,6 +122,9 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
             int count;
             while ((count = input.read(data)) != -1) {
                 if (isCancelled()) {
+                	if(input!=null) {
+                		input.close();
+                	}
                     return null;
                 }
                 total += count;
