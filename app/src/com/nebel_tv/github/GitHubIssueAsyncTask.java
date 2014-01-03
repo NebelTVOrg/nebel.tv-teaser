@@ -53,8 +53,8 @@ public class GitHubIssueAsyncTask extends AsyncTask<Void, Void, Boolean> {
 	
 	private static final int EMPTY_RES_VALUE = -1;
 	private static final String REPO_ID = "NebelTVOrg/nebel.tv-teaser";
-	private static final String DEFAULT_USER_LOGIN = "kowalski89";
-	private static final String DEFAULT_USER_PASS = "udpbwt723";
+	private static final String DEFAULT_USER_LOGIN = "feedback-nebeltv ";
+	private static final String DEFAULT_USER_PASS = "KUAL9cR9a6EJ";
 	private static final int DEFAULT_TITLE_LENGTH = 10;
 	
 	private Context context;
