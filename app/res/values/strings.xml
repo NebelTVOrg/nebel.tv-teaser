@@ -35,7 +35,6 @@
     <string name="external_storage_read_only">Can\'t write config file to the external storage(it is read-only). Loading default config</string>
 	<string name="invalid_extenal_config">Invalid external config. Loading the default one</string>
 	
-	<string name="mood_title">Mood</string>
 	<string name="categories_title">Categories</string>
     <string name="category_title">Category view</string>
     
