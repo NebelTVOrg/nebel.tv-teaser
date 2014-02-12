@@ -11,7 +11,6 @@ import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.fragment.base.BaseWebViewFragment;
 import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
 import com.nebel_tv.utils.ConfigHelper;
-import com.nebel_tv.utils.IVAHelper;
 
 public class TopViewFragment extends BaseWebViewFragment {
     
@@ -55,6 +54,8 @@ public class TopViewFragment extends BaseWebViewFragment {
 		if(configUrls!=null) {
 			String url = configUrls.get(topView);
 			if(url!=null) {
+				//TODO maybe change it when remote frontend will be implemented
+				webView.clearCache(true);
 				webView.loadUrl(url);
 			}
 		}
@@ -62,11 +63,6 @@ public class TopViewFragment extends BaseWebViewFragment {
 
 	@Override
 	protected boolean shouldOverrideUrlLoading(String url, int depth) {
-		if(url!=null && url.startsWith(IVAHelper.INTERTCEPT_URL)) {
-			String jsCall = IVAHelper.getInstance().getMedias(url);
-			webView.loadUrl("javascript:"+jsCall);
-			return true;
-		}
 		if(depth==0) {
 			return false;
 		} else {

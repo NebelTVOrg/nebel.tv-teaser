@@ -31,7 +31,7 @@ public class BaseWebViewClient extends WebViewClient {
 	public void onPageFinished(WebView view, String url) {
 		super.onPageFinished(view, url);
 		if(webViewUILoaderHelper!=null) {
-		webViewUILoaderHelper.switchUIState(UIState.SHOWING_DATA);
+			webViewUILoaderHelper.switchUIState(UIState.SHOWING_DATA);
 		}
 	}
 	

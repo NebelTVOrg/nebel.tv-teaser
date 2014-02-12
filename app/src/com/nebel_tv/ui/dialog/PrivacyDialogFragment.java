@@ -45,7 +45,8 @@ public class PrivacyDialogFragment extends DialogFragment {
             	@Override
                 public void onClick(final DialogInterface dialog, final int id) {
                      LocalStorage.from(getActivity()).setPolicyAccepted();
-                     DownloadManagerHelper.startVideoDownload(getActivity());
+                     //TODO temp disable video files loading
+//                     DownloadManagerHelper.startVideoDownload(getActivity());
                      new FrontendUpdateTask(getActivity()).execute();
                      dismiss();
                 }
