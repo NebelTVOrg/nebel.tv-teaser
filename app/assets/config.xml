@@ -2,5 +2,5 @@
 <config>
     <video_options jump_ahead_sec="10" jump_back_sec="10"/>
     <nebel_tv_homepage>http://www.nebel.tv/</nebel_tv_homepage>
-    <frontend_download_link>https://github.com/NebelTVOrg/NebelTV-TeaserFrontend/archive/master.zip</frontend_download_link>
+    <frontend_download_link>https://github.com/NebelTVOrg/nebel.tv-teaser-frontend/archive/master.zip</frontend_download_link>
 </config>

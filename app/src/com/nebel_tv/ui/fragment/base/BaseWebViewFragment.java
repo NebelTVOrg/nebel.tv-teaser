@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 
 import com.nebel_tv.R;
 import com.nebel_tv.activity.base.BaseActivity;
-import com.nebel_tv.content.api.MediaWrapperResponse;
+import com.nebel_tv.content.api.WrapperResponse;
 import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
 import com.nebel_tv.wrapper.IvaWrapperManager;
 
@@ -30,8 +30,10 @@ public abstract class BaseWebViewFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_webview, container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_webview, container,
+				false);
 		webView = (WebView) view.findViewById(R.id.webview);
 		progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 		webViewUILoaderHelper = new WebViewUILoaderHelper(webView, progressBar);
@@ -47,8 +49,9 @@ public abstract class BaseWebViewFragment extends Fragment {
 		webView.setWebViewClient(new NebelTVWebViewClient(webViewUILoaderHelper));
 		webView.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
-				Log.d(BaseWebViewFragment.class.getName(), cm.message() + " -- From line " + cm.lineNumber() + " of "
-						+ cm.sourceId());
+				Log.d(BaseWebViewFragment.class.getName(),
+						cm.message() + " -- From line " + cm.lineNumber()
+								+ " of " + cm.sourceId());
 				return true;
 			}
 		});
@@ -75,7 +78,8 @@ public abstract class BaseWebViewFragment extends Fragment {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			boolean ret = BaseWebViewFragment.this.shouldOverrideUrlLoading(url, counter);
+			boolean ret = BaseWebViewFragment.this.shouldOverrideUrlLoading(
+					url, counter);
 			if (ret = true) {
 				// counter=0;
 			}
@@ -93,7 +97,8 @@ public abstract class BaseWebViewFragment extends Fragment {
 		}
 	}
 
-	private class WrapperRequestTask extends AsyncTask<String, Void, MediaWrapperResponse> {
+	private class WrapperRequestTask extends
+			AsyncTask<String, Void, WrapperResponse> {
 
 		private String url;
 
@@ -103,19 +108,21 @@ public abstract class BaseWebViewFragment extends Fragment {
 		}
 
 		@Override
-		protected MediaWrapperResponse doInBackground(String... params) {
+		protected WrapperResponse doInBackground(String... params) {
 			url = params[0];
 			return IvaWrapperManager.getInstance().getData(url);
 		}
 
-		protected void onPostExecute(MediaWrapperResponse result) {
+		protected void onPostExecute(WrapperResponse result) {
 			webView.loadUrl("javascript:" + getFunctionCallString(result));
 			webViewUILoaderHelper.switchUIState(UIState.SHOWING_DATA);
 		}
 
-		private String getFunctionCallString(MediaWrapperResponse response) {
-			String callbackFuncName = IvaWrapperManager.getCallbackFuncName(url);
-			return callbackFuncName + "(\"" + formatJsonForJS(response.responseData) + "\");";
+		private String getFunctionCallString(WrapperResponse response) {
+			String callbackFuncName = IvaWrapperManager
+					.getCallbackFuncName(url);
+			return callbackFuncName + "(\""
+					+ formatJsonForJS(response.responseData) + "\");";
 		}
 
 		private String formatJsonForJS(String value) {
@@ -127,7 +134,8 @@ public abstract class BaseWebViewFragment extends Fragment {
 		 * (U+0000 through U+001F).
 		 * 
 		 * @warn Replace method with regexp
-		 * @param s The input JSON string
+		 * @param s
+		 *            The input JSON string
 		 * 
 		 * @return Well-formatted JSON string for JavaScript
 		 */
@@ -177,7 +185,8 @@ public abstract class BaseWebViewFragment extends Fragment {
 					sb.append("\\/");
 					break;
 				default:
-					if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F')
+					if ((ch >= '\u0000' && ch <= '\u001F')
+							|| (ch >= '\u007F' && ch <= '\u009F')
 							|| (ch >= '\u2000' && ch <= '\u20FF')) {
 						String ss = Integer.toHexString(ch);
 						sb.append("\\u");
