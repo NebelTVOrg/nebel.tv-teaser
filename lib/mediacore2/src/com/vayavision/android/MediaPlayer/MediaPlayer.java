@@ -113,17 +113,17 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 		
 		mSurfaceView = new SurfaceView(this);
 		
-		RelativeLayout frame = (RelativeLayout)findViewById(R.id.statusLayout);
+		RelativeLayout frame = (RelativeLayout)mStatusView;
 		
 		if(frame != null){
-			frame.addView(mSurfaceView, 0);			
+			frame.addView(mSurfaceView, 0);
 		}
 		
 		SurfaceHolder holder = mSurfaceView.getHolder();
 		
 		holder.addCallback(new SurfaceHolderCallback());
 		
-        mCore2 = MediaCore.createPlayerCore2(holder);
+        mCore2 = MediaCore.createPlayerCore2(holder, getExternalCacheDir().getAbsolutePath());
 		
         initPlayerControlListeners();
 
@@ -213,9 +213,13 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
         mBtnLoadUnload.setOnClickListener(new OnClickListener() {
         	 public void onClick(View v) {
         		 if(mState == PlayerCore2.STATE_IDLE){
+					 String url = new String("http://54.201.170.111/assets/001-270p-686kb.mp4");
+    				 mCore2.load(new String[]{url});
+    				 mTxtFileName.setText("URL: " + url);
+/*    				 
         			 loadFileList();
-
         			 showDialog(DIALOG_LOAD_FILE);
+*/
         		 }else{
        				 mCore2.unload();
         		 }        			 

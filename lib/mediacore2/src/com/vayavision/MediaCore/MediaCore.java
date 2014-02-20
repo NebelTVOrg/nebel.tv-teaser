@@ -22,5 +22,5 @@ public class MediaCore {
 		System.loadLibrary("PlayerCore");
 	}
 	
-	public native static PlayerCore2 createPlayerCore2(SurfaceHolder holder);
+	public native static PlayerCore2 createPlayerCore2(SurfaceHolder holder, String cachePath);
 }

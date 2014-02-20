@@ -193,7 +193,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 		SurfaceHolder holder = mSurfaceView.getHolder();
 		holder.addCallback(new SurfaceHolderCallback());
 
-		mCore2 = MediaCore.createPlayerCore2(holder);
+		mCore2 = MediaCore.createPlayerCore2(holder, getExternalCacheDir().getAbsolutePath());
 
 		initPlayerControlListeners();
 
