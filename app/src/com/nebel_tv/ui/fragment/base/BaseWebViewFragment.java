@@ -1,4 +1,20 @@
-﻿package com.nebel_tv.ui.fragment.base;
+﻿/**
+ * Copyright (C) 2014 Nebel TV (http://nebel.tv)
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.nebel_tv.ui.fragment.base;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -14,6 +30,7 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.nebel_tv.R;
+import com.nebel_tv.activity.MediaPlaybackActivity;
 import com.nebel_tv.activity.base.BaseActivity;
 import com.nebel_tv.content.api.WrapperResponse;
 import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
@@ -25,15 +42,18 @@ public abstract class BaseWebViewFragment extends Fragment {
 	protected WebView webView;
 	protected ProgressBar progressBar;
 
+	// TODO Remove
+	private static final String[] VIDEO_URLS = new String[] { "http://54.201.170.111/assets/001-180p-185kb.mp4",
+			"http://54.201.170.111/assets/001-270p-686kb.mp4", "http://54.201.170.111/assets/001-720p-2500kb.mp4"
+	};
+
 	protected BaseActivity getParentActivity() {
 		return (BaseActivity) getActivity();
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_webview, container,
-				false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_webview, container, false);
 		webView = (WebView) view.findViewById(R.id.webview);
 		progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 		webViewUILoaderHelper = new WebViewUILoaderHelper(webView, progressBar);
@@ -49,9 +69,8 @@ public abstract class BaseWebViewFragment extends Fragment {
 		webView.setWebViewClient(new NebelTVWebViewClient(webViewUILoaderHelper));
 		webView.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
-				Log.d(BaseWebViewFragment.class.getName(),
-						cm.message() + " -- From line " + cm.lineNumber()
-								+ " of " + cm.sourceId());
+				Log.d(BaseWebViewFragment.class.getName(), cm.message() + " -- From line " + cm.lineNumber() + " of "
+						+ cm.sourceId());
 				return true;
 			}
 		});
@@ -73,13 +92,17 @@ public abstract class BaseWebViewFragment extends Fragment {
 			super.onLoadResource(view, url);
 			if (url.startsWith(IvaWrapperManager.IVAWRAPPER_HOST)) {
 				wrapperRequestUrl = url;
+				
+				//TODO Temporary code 
+				if(url.contains("getVideoAssets")){
+					MediaPlaybackActivity.launch(getActivity(), VIDEO_URLS);
+				}
 			}
 		}
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			boolean ret = BaseWebViewFragment.this.shouldOverrideUrlLoading(
-					url, counter);
+			boolean ret = BaseWebViewFragment.this.shouldOverrideUrlLoading(url, counter);
 			if (ret = true) {
 				// counter=0;
 			}
@@ -97,8 +120,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 		}
 	}
 
-	private class WrapperRequestTask extends
-			AsyncTask<String, Void, WrapperResponse> {
+	private class WrapperRequestTask extends AsyncTask<String, Void, WrapperResponse> {
 
 		private String url;
 
@@ -114,15 +136,26 @@ public abstract class BaseWebViewFragment extends Fragment {
 		}
 
 		protected void onPostExecute(WrapperResponse result) {
-			webView.loadUrl("javascript:" + getFunctionCallString(result));
-			webViewUILoaderHelper.switchUIState(UIState.SHOWING_DATA);
+
+			if (result.responseResult == WrapperResponse.ResponseResult.Ok) {
+				
+				switch (result.responseType) {
+				case NA:
+					webView.loadUrl("javascript:" + getFunctionCallString(result));
+					webViewUILoaderHelper.switchUIState(UIState.SHOWING_DATA);
+					break;
+				case VideoAssets:
+					break;
+				}
+				
+			}else {
+				//TODO
+			}
 		}
 
 		private String getFunctionCallString(WrapperResponse response) {
-			String callbackFuncName = IvaWrapperManager
-					.getCallbackFuncName(url);
-			return callbackFuncName + "(\""
-					+ formatJsonForJS(response.responseData) + "\");";
+			String callbackFuncName = IvaWrapperManager.getCallbackFuncName(url);
+			return callbackFuncName + "(\"" + formatJsonForJS(response.responseData) + "\");";
 		}
 
 		private String formatJsonForJS(String value) {
@@ -185,8 +218,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 					sb.append("\\/");
 					break;
 				default:
-					if ((ch >= '\u0000' && ch <= '\u001F')
-							|| (ch >= '\u007F' && ch <= '\u009F')
+					if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F')
 							|| (ch >= '\u2000' && ch <= '\u20FF')) {
 						String ss = Integer.toHexString(ch);
 						sb.append("\\u");

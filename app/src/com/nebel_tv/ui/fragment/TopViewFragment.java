@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2014 Nebel TV (http://nebel.tv)
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.nebel_tv.ui.fragment;
 
 import java.util.HashMap;
@@ -13,28 +29,28 @@ import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
 import com.nebel_tv.utils.ConfigHelper;
 
 public class TopViewFragment extends BaseWebViewFragment {
-    
-    private static final String EXTRA_TOP_VIEW_KEY = "EXTRA_TOP_VIEW_KEY";
-	
+
+	private static final String EXTRA_TOP_VIEW_KEY = "EXTRA_TOP_VIEW_KEY";
+
 	private TopView topView;
 	private HashMap<TopView, String> configUrls;
-	
+
 	public static TopViewFragment newInstance(TopView topView) {
 		TopViewFragment f = new TopViewFragment();
-		
+
 		Bundle args = new Bundle();
-        args.putInt(EXTRA_TOP_VIEW_KEY, topView.ordinal());
-        f.setArguments(args);
-        
+		args.putInt(EXTRA_TOP_VIEW_KEY, topView.ordinal());
+		f.setArguments(args);
+
 		return f;
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
+
 		Bundle args = getArguments();
-		if(args!=null) {
+		if (args != null) {
 			topView = TopView.values()[args.getInt(EXTRA_TOP_VIEW_KEY, 0)];
 		} else {
 			topView = TopView.FRIENDS_FEED;
@@ -49,12 +65,13 @@ public class TopViewFragment extends BaseWebViewFragment {
 		configUrls = ConfigHelper.getInstance().getConfig().getConfigUrls().get(lastMood);
 		loadTopView();
 	}
-	
+
 	private void loadTopView() {
-		if(configUrls!=null) {
+		if (configUrls != null) {
 			String url = configUrls.get(topView);
-			if(url!=null) {
-				//TODO maybe change it when remote frontend will be implemented
+			if (url != null) {
+				// TODO maybe change it when remote front-end will be
+				// implemented
 				webView.clearCache(true);
 				webView.loadUrl(url);
 			}
@@ -63,10 +80,10 @@ public class TopViewFragment extends BaseWebViewFragment {
 
 	@Override
 	protected boolean shouldOverrideUrlLoading(String url, int depth) {
-		if(depth==0) {
+		if (depth == 0) {
 			return false;
 		} else {
-    		CategoryActivity.launch(getActivity(), url);
+			CategoryActivity.launch(getActivity(), url);
 			return true;
 		}
 	}

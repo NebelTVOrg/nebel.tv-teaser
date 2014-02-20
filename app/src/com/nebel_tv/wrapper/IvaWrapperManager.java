@@ -8,7 +8,7 @@ import com.nebel_tv.content.api.WrapperResponse;
 
 public class IvaWrapperManager {
 	
-	public static final String IVAWRAPPER_HOST = "http://nebel.tv";
+	public static final String IVAWRAPPER_HOST = "http://nebeltv.org";
 	public static final String CALLBACK_PARAM_NAME = "callback";
 
 	
