@@ -34,7 +34,7 @@ import com.nebel_tv.activity.MediaPlaybackActivity;
 import com.nebel_tv.activity.base.BaseActivity;
 import com.nebel_tv.content.api.WrapperResponse;
 import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
-import com.nebel_tv.wrapper.IvaWrapperManager;
+import com.nebel_tv.wrapper.ContentWrapperManager;
 
 public abstract class BaseWebViewFragment extends Fragment {
 
@@ -90,7 +90,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 		@Override
 		public void onLoadResource(WebView view, String url) {
 			super.onLoadResource(view, url);
-			if (url.startsWith(IvaWrapperManager.IVAWRAPPER_HOST)) {
+			if (url.startsWith(ContentWrapperManager.IVAWRAPPER_HOST)) {
 				wrapperRequestUrl = url;
 				
 				//TODO Temporary code 
@@ -132,7 +132,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 		@Override
 		protected WrapperResponse doInBackground(String... params) {
 			url = params[0];
-			return IvaWrapperManager.getInstance().getData(url);
+			return ContentWrapperManager.getInstance().getData(url);
 		}
 
 		protected void onPostExecute(WrapperResponse result) {
@@ -140,7 +140,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 			if (result.responseResult == WrapperResponse.ResponseResult.Ok) {
 				
 				switch (result.responseType) {
-				case NA:
+				case Content:
 					webView.loadUrl("javascript:" + getFunctionCallString(result));
 					webViewUILoaderHelper.switchUIState(UIState.SHOWING_DATA);
 					break;
@@ -154,7 +154,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 		}
 
 		private String getFunctionCallString(WrapperResponse response) {
-			String callbackFuncName = IvaWrapperManager.getCallbackFuncName(url);
+			String callbackFuncName = ContentWrapperManager.getCallbackFuncName(url);
 			return callbackFuncName + "(\"" + formatJsonForJS(response.responseData) + "\");";
 		}
 
