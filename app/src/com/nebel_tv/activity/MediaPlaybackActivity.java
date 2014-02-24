@@ -68,8 +68,8 @@ import com.vayavision.MediaCore.MediaCore;
 import com.vayavision.MediaCore.PlayerCore2;
 import com.vayavision.MediaCore.PlayerCore2.Configuration;
 
-public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEventListener, OnSeekBarChangeListener,
-		OnWheelChangedListener, UncaughtExceptionHandler {
+public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEventListener, OnSeekBarChangeListener, OnWheelChangedListener,
+		UncaughtExceptionHandler {
 
 	private static final String TAG = MediaPlaybackActivity.class.getName();
 	private static final String KEY_VIDEO_URLS = "KEY_VIDEO_URLS";
@@ -322,8 +322,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	public void onSeekForwardClick(View v) {
-		D.d(getMethodName(1) + " : " + "seek forward request to pos: " + (mPositionInSeconds + seekAheadValueInSec)
-				+ " s");
+		D.d(getMethodName(1) + " : " + "seek forward request to pos: " + (mPositionInSeconds + seekAheadValueInSec) + " s");
 		mCore2.setPosition(DateTimeUtils.getSecValueInMicros(mPositionInSeconds + seekAheadValueInSec), 0,
 				DateTimeUtils.getSecValueInMicros(mDurationInSeconds));
 		mCore2.play();
@@ -396,8 +395,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	private void setCurrentSeekbarValues() {
-		volumeSeekBar.setProgressAndThumb(getProgressFromStreamVolume(audioManager
-				.getStreamVolume(DEFAULT_AUDIO_STREAM)));
+		volumeSeekBar.setProgressAndThumb(getProgressFromStreamVolume(audioManager.getStreamVolume(DEFAULT_AUDIO_STREAM)));
 		brightnessSeekBar.setProgressAndThumb(getBrigtnessPercentage());
 	}
 
@@ -726,8 +724,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		if (videoSeekBar == seekBar) {
 			videoSeekBar.setAutochange(true);
-			mCore2.setPosition(DateTimeUtils.getSecValueInMicros(seekBar.getProgress()), 0,
-					DateTimeUtils.getSecValueInMicros(mDurationInSeconds));
+			mCore2.setPosition(DateTimeUtils.getSecValueInMicros(seekBar.getProgress()), 0, DateTimeUtils.getSecValueInMicros(mDurationInSeconds));
 		}
 	}
 
@@ -773,15 +770,13 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 	private int getBrigtnessPercentage() {
 		float floatPercentValue = (float) android.provider.Settings.System.getInt(getContentResolver(),
-				android.provider.Settings.System.SCREEN_BRIGHTNESS, MAX_SETTINGS_BRIGHTNESS_VALUE)
-				/ (float) MAX_SETTINGS_BRIGHTNESS_VALUE;
+				android.provider.Settings.System.SCREEN_BRIGHTNESS, MAX_SETTINGS_BRIGHTNESS_VALUE) / (float) MAX_SETTINGS_BRIGHTNESS_VALUE;
 		return Math.round(floatPercentValue * 100);
 	}
 
 	private void setBrightnessPecentage(int percentage) {
 		float floatPercentValue = (float) percentage / 100f;
-		android.provider.Settings.System.putInt(getContentResolver(),
-				android.provider.Settings.System.SCREEN_BRIGHTNESS,
+		android.provider.Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS,
 				Math.round(floatPercentValue * MAX_SETTINGS_BRIGHTNESS_VALUE));
 	}
 
@@ -847,5 +842,4 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 			controlContainer.setVisibility(View.VISIBLE);
 		}
 	};
-
 }

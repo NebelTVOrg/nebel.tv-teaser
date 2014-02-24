@@ -23,35 +23,34 @@ import com.nebel_tv.content.api.ContentWrapper;
 import com.nebel_tv.content.api.WrapperResponse;
 
 public class ContentWrapperManager {
-	
+
 	public static final String WRAPPER_HOST = "http://nebeltv.org";
 	public static final String CALLBACK_PARAM_NAME = "callback";
-	
-	
+
 	private static ContentWrapperManager instance;
-	
+
 	private IContentWrapper contentWrapper;
-	
+
 	public static synchronized ContentWrapperManager getInstance() {
-		if(instance==null) {
+		if (instance == null) {
 			instance = new ContentWrapperManager();
 		}
 		return instance;
 	}
-	
+
 	private ContentWrapperManager() {
 		contentWrapper = new ContentWrapper();
 	}
-	
+
 	public WrapperResponse getData(String url) {
 		return contentWrapper.getMediaData(url);
 	}
-	
+
 	public static String getCallbackFuncName(String url) {
-		if(url==null) {
+		if (url == null) {
 			return null;
 		}
-		
+
 		Uri uri = Uri.parse(url);
 		return uri.getQueryParameter(CALLBACK_PARAM_NAME);
 	}

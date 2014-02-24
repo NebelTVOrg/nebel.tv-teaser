@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2014 Nebel TV (http://nebel.tv)
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.nebel_tv.frontend;
 
 import java.io.BufferedInputStream;
@@ -34,32 +50,27 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
 		this.context = context;
 
 		progressDialog = new ProgressDialog(context);
-		progressDialog.setMessage(context
-				.getString(R.string.frontend_update_msg));
+		progressDialog.setMessage(context.getString(R.string.frontend_update_msg));
 		progressDialog.setIndeterminate(true);
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		progressDialog.setCancelable(true);
 
-		progressDialog
-				.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						FrontendUpdateTask.this.cancel(true);
-					}
-				});
+		progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				FrontendUpdateTask.this.cancel(true);
+			}
+		});
 
 		ConfigHelper configHelper = ConfigHelper.getInstance();
 		configDirectory = configHelper.getConfigDirectory();
-		frontendDownloadLink = configHelper.getConfig()
-				.getFrontendDownloadLink();
+		frontendDownloadLink = configHelper.getConfig().getFrontendDownloadLink();
 	}
 
 	@Override
 	protected String doInBackground(Void... params) {
-		PowerManager pm = (PowerManager) context
-				.getSystemService(Context.POWER_SERVICE);
-		PowerManager.WakeLock wl = pm.newWakeLock(
-				PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
+		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+		PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
 		wl.acquire();
 
 		String result = downloadFrontendPackage();
@@ -96,9 +107,7 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
 	protected void onPostExecute(String result) {
 		progressDialog.dismiss();
 		if (result != null) {
-			UIUtils.showMessage(String.format(
-					context.getString(R.string.frontend_update_error_msg),
-					result));
+			UIUtils.showMessage(String.format(context.getString(R.string.frontend_update_error_msg), result));
 		} else {
 			UIUtils.showMessage(R.string.frontend_update_success_msg);
 		}
@@ -114,8 +123,7 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
 			connection.connect();
 
 			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				return "Server returned HTTP " + connection.getResponseCode()
-						+ " " + connection.getResponseMessage();
+				return "Server returned HTTP " + connection.getResponseCode() + " " + connection.getResponseMessage();
 			}
 
 			int fileLength = connection.getContentLength();
@@ -163,7 +171,7 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
 		InputStream is = null;
 		ZipInputStream zis = null;
 		File frontendPackageFile = getFrontendPackageFile();
-		//TODO remove magic string
+		// TODO remove magic string
 		String topDirectoryName = "nebel.tv-teaser-frontend-master/";
 		try {
 			String filename;
@@ -187,8 +195,7 @@ public class FrontendUpdateTask extends AsyncTask<Void, Integer, String> {
 					continue;
 				}
 
-				FileOutputStream fout = new FileOutputStream(new File(
-						configDirectory, filename));
+				FileOutputStream fout = new FileOutputStream(new File(configDirectory, filename));
 
 				while ((count = zis.read(buffer)) != -1) {
 					fout.write(buffer, 0, count);

@@ -44,10 +44,10 @@ public abstract class BaseWebViewFragment extends Fragment {
 	protected WebView webView;
 	protected ProgressBar progressBar;
 
-	// TODO Remove
-	private static final String[] VIDEO_URLS = new String[] { "http://54.201.170.111/assets/001-180p-185kb.mp4",
-			"http://54.201.170.111/assets/001-270p-686kb.mp4", "http://54.201.170.111/assets/001-720p-2500kb.mp4"
-	};
+	// private static final String[] VIDEO_URLS = new String[] {
+	// "http://54.201.170.111/assets/001-180p-185kb.mp4",
+	// "http://54.201.170.111/assets/001-270p-686kb.mp4",
+	// "http://54.201.170.111/assets/001-720p-2500kb.mp4" };
 
 	protected BaseActivity getParentActivity() {
 		return (BaseActivity) getActivity();
@@ -71,8 +71,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 		webView.setWebViewClient(new NebelTVWebViewClient(webViewUILoaderHelper));
 		webView.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
-				Log.d(BaseWebViewFragment.class.getName(), cm.message() + " -- From line " + cm.lineNumber() + " of "
-						+ cm.sourceId());
+				Log.d(BaseWebViewFragment.class.getName(), cm.message() + " -- From line " + cm.lineNumber() + " of " + cm.sourceId());
 				return true;
 			}
 		});
@@ -134,7 +133,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 
 		protected void onPostExecute(WrapperResponse result) {
 			if (result.responseResult == WrapperResponse.ResponseResult.Ok) {
-				
+
 				switch (result.responseType) {
 				case Content:
 					webView.loadUrl("javascript:" + getFunctionCallString(result));
@@ -143,12 +142,12 @@ public abstract class BaseWebViewFragment extends Fragment {
 				case VideoAssets:
 					VideoAssetsWrapper wrapper = new VideoAssetsWrapper(result.responseData);
 					String[] urls = wrapper.getVideoURLs();
-					if(urls != null && url.length() !=0){
+					if (urls != null && url.length() != 0) {
 						MediaPlaybackActivity.launch(getActivity(), urls);
 					}
 					break;
 				}
-			}else {
+			} else {
 				D.w("Wrapper: url: " + url + ", response: " + result.responseResult);
 			}
 		}
@@ -218,8 +217,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 					sb.append("\\/");
 					break;
 				default:
-					if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F')
-							|| (ch >= '\u2000' && ch <= '\u20FF')) {
+					if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F') || (ch >= '\u2000' && ch <= '\u20FF')) {
 						String ss = Integer.toHexString(ch);
 						sb.append("\\u");
 						for (int k = 0; k < 4 - ss.length(); k++) {

@@ -29,15 +29,15 @@ import android.widget.TextView;
 
 public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener {
 	private static final String TAG = "Player";
-	
+
 	private static String getMethodName(final int depth) {
-	  final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
-	  return ste[ste.length - 1 - depth].getMethodName();
-	}	
-	
+		final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+		return ste[ste.length - 1 - depth].getMethodName();
+	}
+
 	private SurfaceView mSurfaceView = null;
 	private PlayerCore2 mCore2 = null;
-	
+
 	private int mState;
 	private long mPosition;
 	private long mDuration;
@@ -50,7 +50,7 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 	private int mActiveAudioTrack;
 	private int mActiveVideoTrack;
 	private int mActiveSubtitleTrack;
-	
+
 	private Button mBtnLoadUnload;
 	private Button mBtnPlayPause;
 	private Button mBtnStop;
@@ -63,12 +63,12 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 	private TextView mTxtPlaybackStats;
 	private View mControlView;
 	private View mStatusView;
-	
+
 	/**************************************************
 	 * File browser resources
 	 *************************************************/
-	private static final int DIALOG_LOAD_FILE = 1000;	
-	
+	private static final int DIALOG_LOAD_FILE = 1000;
+
 	// Stores names of traversed directories
 	private ArrayList<String> directories = new ArrayList<String>();
 
@@ -77,69 +77,69 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 
 	private Item[] fileList;
 	private File browsePath = new File("/mnt");
-	
+
 	private String browseFile = null;
-	
+
 	private ListAdapter listAdapter;
-	
-	private class SurfaceHolderCallback implements SurfaceHolder.Callback{
+
+	private class SurfaceHolderCallback implements SurfaceHolder.Callback {
 		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 			// TODO Auto-generated method stub
 		}
 
 		public void surfaceCreated(SurfaceHolder holder) {
-			if(mCore2 != null){
+			if (mCore2 != null) {
 				mCore2.setWindowState(true);
 			}
 		}
 
 		public void surfaceDestroyed(SurfaceHolder holder) {
-			if(mCore2 != null){
+			if (mCore2 != null) {
 				mCore2.setWindowState(false);
 			}
 		}
 	}
-	
+
 	/** Called when the activity is first created. */
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
-		mControlView = (View)findViewById(R.id.controlLayout);
-		mStatusView = (View)findViewById(R.id.statusLayout);
-		
+
+		mControlView = (View) findViewById(R.id.controlLayout);
+		mStatusView = (View) findViewById(R.id.statusLayout);
+
 		mSurfaceView = new SurfaceView(this);
-		
-		RelativeLayout frame = (RelativeLayout)mStatusView;
-		
-		if(frame != null){
+
+		RelativeLayout frame = (RelativeLayout) mStatusView;
+
+		if (frame != null) {
 			frame.addView(mSurfaceView, 0);
 		}
-		
-		SurfaceHolder holder = mSurfaceView.getHolder();
-		
-		holder.addCallback(new SurfaceHolderCallback());
-		
-        mCore2 = MediaCore.createPlayerCore2(holder, getExternalCacheDir().getAbsolutePath());
-		
-        initPlayerControlListeners();
 
-        mCore2.addListener(this);
-	        
-        mCore2.getState();
-    }
-	
+		SurfaceHolder holder = mSurfaceView.getHolder();
+
+		holder.addCallback(new SurfaceHolderCallback());
+
+		mCore2 = MediaCore.createPlayerCore2(holder, getExternalCacheDir().getAbsolutePath());
+
+		initPlayerControlListeners();
+
+		mCore2.addListener(this);
+
+		mCore2.getState();
+	}
+
 	private void updateState(int state) {
-		switch(state){
+		switch (state) {
 		case PlayerCore2.STATE_IDLE:
 			mBtnLoadUnload.setText(getResources().getString(R.string.btn_load));
-			
+
 			mBtnLoadUnload.setEnabled(true);
 			mTxtFileName.setText("Nothing loaded");
-			
+
 			mBtnPlayPause.setEnabled(false);
 			mBtnStop.setEnabled(false);
 			mBtnSeekLeft.setEnabled(false);
@@ -147,11 +147,11 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 			mBtnToggleAudio.setEnabled(false);
 			mBtnToggleVideo.setEnabled(false);
 			mBtnToggleSubtitle.setEnabled(false);
-			break;		
+			break;
 		case PlayerCore2.STATE_STOPPED:
 			mBtnLoadUnload.setText(getResources().getString(R.string.btn_unload));
 			mBtnPlayPause.setText(getResources().getString(R.string.btn_play));
-	        
+
 			mBtnLoadUnload.setEnabled(true);
 			mBtnPlayPause.setEnabled(true);
 			mBtnStop.setEnabled(false);
@@ -160,10 +160,10 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 			mBtnToggleAudio.setEnabled(false);
 			mBtnToggleVideo.setEnabled(false);
 			mBtnToggleSubtitle.setEnabled(false);
-			break;		
+			break;
 		case PlayerCore2.STATE_PLAYING:
 			mBtnPlayPause.setText(getResources().getString(R.string.btn_pause));
-			
+
 			mBtnLoadUnload.setEnabled(false);
 			mBtnPlayPause.setEnabled(true);
 			mBtnStop.setEnabled(true);
@@ -172,11 +172,11 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 			mBtnToggleAudio.setEnabled(mAudioTrackCount > 1);
 			mBtnToggleVideo.setEnabled(mVideoTrackCount > 1);
 			mBtnToggleSubtitle.setEnabled(mSubtitleTrackCount > 0);
-			break;		
+			break;
 		case PlayerCore2.STATE_PAUSED:
 			mBtnPlayPause.setText(getResources().getString(R.string.btn_play));
 			mBtnStop.setText(getResources().getString(R.string.btn_stop));
-			
+
 			mBtnLoadUnload.setEnabled(false);
 			mBtnPlayPause.setEnabled(true);
 			mBtnStop.setEnabled(true);
@@ -185,10 +185,10 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 			mBtnToggleAudio.setEnabled(mAudioTrackCount > 1);
 			mBtnToggleVideo.setEnabled(mVideoTrackCount > 1);
 			mBtnToggleSubtitle.setEnabled(mSubtitleTrackCount > 0);
-			break;		
+			break;
 		case PlayerCore2.STATE_BUFFERING:
 			mBtnPlayPause.setText(getResources().getString(R.string.btn_pause));
-			
+
 			mBtnLoadUnload.setEnabled(false);
 			mBtnPlayPause.setEnabled(false);
 			mBtnStop.setEnabled(true);
@@ -202,109 +202,109 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 			Log.e(TAG, "Unknown state " + state);
 			return;
 		}
-		
-		mTxtPlaybackStats.setText(String.format("%.02f/%.02f %.02f/%.02f", (float )mL1Length / 1000000.0, (float )mL2Length / 1000000.0, (float )mPosition / 1000000.0, (float )mDuration / 1000000.0));
-		
+
+		mTxtPlaybackStats.setText(String.format("%.02f/%.02f %.02f/%.02f", (float) mL1Length / 1000000.0,
+				(float) mL2Length / 1000000.0, (float) mPosition / 1000000.0, (float) mDuration / 1000000.0));
+
 		mState = state;
-	}	
-    
-    protected void initPlayerControlListeners(){
-    	mBtnLoadUnload = (Button) findViewById(R.id.btnLoadUnload);
-        mBtnLoadUnload.setOnClickListener(new OnClickListener() {
-        	 public void onClick(View v) {
-        		 if(mState == PlayerCore2.STATE_IDLE){
-					 String url = new String("http://54.201.170.111/assets/001-270p-686kb.mp4");
-    				 mCore2.load(new String[]{url});
-    				 mTxtFileName.setText("URL: " + url);
-/*    				 
-        			 loadFileList();
-        			 showDialog(DIALOG_LOAD_FILE);
-*/
-        		 }else{
-       				 mCore2.unload();
-        		 }        			 
-        	 }
-		});        
-        
-        mBtnPlayPause = (Button) findViewById(R.id.btnPlayPause);
-        mBtnPlayPause.setOnClickListener(new OnClickListener() {
-        	 public void onClick(View v) {
-           		 if(mState == PlayerCore2.STATE_PLAYING){
-        			 mCore2.pause();
-        		 }else{
-       				 mCore2.play();
-        		 }
-        	 }
-		});	        
-        
-        mBtnStop = (Button) findViewById(R.id.btnStop);
-        mBtnStop.setOnClickListener(new OnClickListener() {				
+	}
+
+	protected void initPlayerControlListeners() {
+		mBtnLoadUnload = (Button) findViewById(R.id.btnLoadUnload);
+		mBtnLoadUnload.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (mState == PlayerCore2.STATE_IDLE) {
+					String url = new String("http://54.201.170.111/assets/001-270p-686kb.mp4");
+					mCore2.load(new String[] { url });
+					mTxtFileName.setText("URL: " + url);
+					/*
+					 * loadFileList(); showDialog(DIALOG_LOAD_FILE);
+					 */
+				} else {
+					mCore2.unload();
+				}
+			}
+		});
+
+		mBtnPlayPause = (Button) findViewById(R.id.btnPlayPause);
+		mBtnPlayPause.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (mState == PlayerCore2.STATE_PLAYING) {
+					mCore2.pause();
+				} else {
+					mCore2.play();
+				}
+			}
+		});
+
+		mBtnStop = (Button) findViewById(R.id.btnStop);
+		mBtnStop.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				mCore2.stop();
 			}
 		});
-        
-        mBtnSeekLeft = (Button) findViewById(R.id.btnSeekLeft);
-        mBtnSeekLeft.setOnClickListener(new OnClickListener() {				
+
+		mBtnSeekLeft = (Button) findViewById(R.id.btnSeekLeft);
+		mBtnSeekLeft.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				mCore2.setPosition(mPosition - 10 * 1000 * 1000, 0, mPosition);
 			}
-		});	        
-        
-        mBtnSeekRight = (Button) findViewById(R.id.btnSeekRight);
-        mBtnSeekRight.setOnClickListener(new OnClickListener() {				
-			public void onClick(View v) {
-				mCore2.setPosition(mPosition + 10 * 1000 * 1000, mPosition, mDuration); 
-			}
-		});  
+		});
 
-        mBtnToggleAudio = (Button) findViewById(R.id.btnToggleAudio);
-        mBtnToggleAudio.setOnClickListener(new OnClickListener() {				
+		mBtnSeekRight = (Button) findViewById(R.id.btnSeekRight);
+		mBtnSeekRight.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if(mAudioTrackCount < 2){
+				mCore2.setPosition(mPosition + 10 * 1000 * 1000, mPosition, mDuration);
+			}
+		});
+
+		mBtnToggleAudio = (Button) findViewById(R.id.btnToggleAudio);
+		mBtnToggleAudio.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (mAudioTrackCount < 2) {
 					return;
 				}
 
 				int nextTrack = mActiveAudioTrack + 1;
 
-				if(nextTrack >= mAudioTrackCount){
+				if (nextTrack >= mAudioTrackCount) {
 					nextTrack = 0;
 				}
 
-				mCore2.activateTrack(PlayerCore2.TRACK_TYPE_AUDIO, nextTrack);				
+				mCore2.activateTrack(PlayerCore2.TRACK_TYPE_AUDIO, nextTrack);
 			}
-		});  
+		});
 
-        mBtnToggleVideo = (Button) findViewById(R.id.btnToggleVideo);
-        mBtnToggleVideo.setOnClickListener(new OnClickListener() {				
+		mBtnToggleVideo = (Button) findViewById(R.id.btnToggleVideo);
+		mBtnToggleVideo.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if(mVideoTrackCount < 2){
+				if (mVideoTrackCount < 2) {
 					return;
 				}
 
 				int nextTrack = mActiveVideoTrack + 1;
 
-				if(nextTrack >= mVideoTrackCount){
+				if (nextTrack >= mVideoTrackCount) {
 					nextTrack = 0;
 				}
 
-				mCore2.activateTrack(PlayerCore2.TRACK_TYPE_VIDEO, nextTrack);				
+				mCore2.activateTrack(PlayerCore2.TRACK_TYPE_VIDEO, nextTrack);
 			}
-		});  
+		});
 
-        mBtnToggleSubtitle = (Button) findViewById(R.id.btnToggleSubtitle);
-        mBtnToggleSubtitle.setOnClickListener(new OnClickListener() {			
+		mBtnToggleSubtitle = (Button) findViewById(R.id.btnToggleSubtitle);
+		mBtnToggleSubtitle.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if(mSubtitleTrackCount < 1){
+				if (mSubtitleTrackCount < 1) {
 					return;
 				}
 
-				if(mSubtitleState == false){
+				if (mSubtitleState == false) {
 					mCore2.setSubtitleState(true);
-				}else{
+				} else {
 					int nextTrack = mActiveSubtitleTrack + 1;
 
-					if(nextTrack >= mSubtitleTrackCount){
+					if (nextTrack >= mSubtitleTrackCount) {
 						nextTrack = 0;
 						mCore2.setSubtitleState(false);
 					}
@@ -312,38 +312,36 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 					mCore2.activateTrack(PlayerCore2.TRACK_TYPE_SUBTITLE, nextTrack);
 				}
 			}
-		});  
-        
-        mTxtFileName = (TextView) findViewById(R.id.txtFilePath);
-        mTxtPlaybackStats = (TextView) findViewById(R.id.txtFilePosition);
-    }
-    
-    @Override
-    protected void onResume() 
-    {
-        super.onResume();
-        if(mCore2 != null && mState == PlayerCore2.STATE_PAUSED){
-        	mCore2.play();
-        }
-    }
+		});
 
-    @Override
-    protected void onPause() 
-    {
-    	if(mCore2 != null && mState == PlayerCore2.STATE_PLAYING){
-    		mCore2.pause();
-       	}
-        super.onPause();
+		mTxtFileName = (TextView) findViewById(R.id.txtFilePath);
+		mTxtPlaybackStats = (TextView) findViewById(R.id.txtFilePosition);
 	}
-    
-    public void onGetConfigurationComplete(int status, Configuration configuration) {
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (mCore2 != null && mState == PlayerCore2.STATE_PAUSED) {
+			mCore2.play();
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		if (mCore2 != null && mState == PlayerCore2.STATE_PLAYING) {
+			mCore2.pause();
+		}
+		super.onPause();
+	}
+
+	public void onGetConfigurationComplete(int status, Configuration configuration) {
 		Log.d(TAG, getMethodName(1) + ": " + status);
 	}
-	
+
 	public void onSetConfigurationComplete(int status) {
 		Log.d(TAG, getMethodName(1) + ": " + status);
 	}
-	
+
 	public void onGetStateComplete(int state) {
 		Log.d(TAG, getMethodName(1) + ": " + state);
 		updateState(state);
@@ -374,10 +372,11 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 		mDuration = duration;
 
 		mStatusView.post(new Runnable() {
-	        public void run() {
-	        	mTxtPlaybackStats.setText(String.format("%.02f/%.02f %.02f/%.02f", (float )mL1Length / 1000000.0, (float )mL2Length / 1000000.0, (float )mPosition / 1000000.0, (float )mDuration / 1000000.0));
-	        }
-	    });
+			public void run() {
+				mTxtPlaybackStats.setText(String.format("%.02f/%.02f %.02f/%.02f", (float) mL1Length / 1000000.0,
+						(float) mL2Length / 1000000.0, (float) mPosition / 1000000.0, (float) mDuration / 1000000.0));
+			}
+		});
 	}
 
 	public void onGetPositionComplete(int status, long position) {
@@ -454,45 +453,47 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 	public void onGetMediaCountComplete(int status, int mediaCount) {
 		Log.d(TAG, getMethodName(1) + ": " + status + " " + mediaCount);
 	}
-	
+
 	public void onGetActiveMediaComplete(int status, int media) {
 		Log.d(TAG, getMethodName(1) + ": " + status + " " + media);
 	}
-	
+
 	public void onActivateMediaComplete(int status, int newMedia) {
 		Log.d(TAG, getMethodName(1) + ": " + status + " " + newMedia);
 	}
-	
+
 	public void onStateChange(final int newState, int oldState) {
 		Log.d(TAG, getMethodName(1) + ": " + oldState + " => " + newState);
 		mControlView.post(new Runnable() {
-	        public void run() {
-	    		updateState(newState);
-	        }
-	    });
-	}		
+			public void run() {
+				updateState(newState);
+			}
+		});
+	}
 
 	public void onPositionChange(final long position) {
 		mPosition = position;
-		
+
 		mStatusView.post(new Runnable() {
-	        public void run() {
-	        	mTxtPlaybackStats.setText(String.format("%.02f/%.02f %.02f/%.02f", (float )mL1Length / 1000000.0, (float )mL2Length / 1000000.0, (float )mPosition / 1000000.0, (float )mDuration / 1000000.0));
-	        }
-	    });
+			public void run() {
+				mTxtPlaybackStats.setText(String.format("%.02f/%.02f %.02f/%.02f", (float) mL1Length / 1000000.0,
+						(float) mL2Length / 1000000.0, (float) mPosition / 1000000.0, (float) mDuration / 1000000.0));
+			}
+		});
 	}
 
 	public void onBufferingProgress(long bufferL1, long bufferL2) {
 		mL1Length = bufferL1;
 		mL2Length = bufferL2;
-		
+
 		mStatusView.post(new Runnable() {
-	        public void run() {
-	        	mTxtPlaybackStats.setText(String.format("%.02f/%.02f %.02f/%.02f", (float )mL1Length / 1000000.0, (float )mL2Length / 1000000.0, (float )mPosition / 1000000.0, (float )mDuration / 1000000.0));
-	        }
-	    });
+			public void run() {
+				mTxtPlaybackStats.setText(String.format("%.02f/%.02f %.02f/%.02f", (float) mL1Length / 1000000.0,
+						(float) mL2Length / 1000000.0, (float) mPosition / 1000000.0, (float) mDuration / 1000000.0));
+			}
+		});
 	}
-	
+
 	private void loadFileList() {
 		try {
 			browsePath.mkdirs();
@@ -503,12 +504,11 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 		// Checks whether path exists
 		if (browsePath.exists()) {
 			FilenameFilter filter = new FilenameFilter() {
-				
+
 				public boolean accept(File dir, String filename) {
 					File sel = new File(dir, filename);
 					// Filters based on whether the file is hidden or not
-					return (sel.isFile() || sel.isDirectory())
-							&& !sel.isHidden();
+					return (sel.isFile() || sel.isDirectory()) && !sel.isHidden();
 
 				}
 			};
@@ -542,18 +542,15 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 			Log.e(TAG, "path does not exist");
 		}
 
-		listAdapter = new ArrayAdapter<Item>(this,
-				android.R.layout.select_dialog_item, android.R.id.text1, fileList) {
+		listAdapter = new ArrayAdapter<Item>(this, android.R.layout.select_dialog_item, android.R.id.text1, fileList) {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				// creates view
 				View view = super.getView(position, convertView, parent);
-				TextView textView = (TextView) view
-						.findViewById(android.R.id.text1);
+				TextView textView = (TextView) view.findViewById(android.R.id.text1);
 
 				// put the image on the text view
-				textView.setCompoundDrawablesWithIntrinsicBounds(
-						fileList[position].icon, 0, 0, 0);
+				textView.setCompoundDrawablesWithIntrinsicBounds(fileList[position].icon, 0, 0, 0);
 
 				// add margin between image and text (support various screen
 				// densities)
@@ -563,7 +560,6 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 				return view;
 			}
 		};
-
 	}
 
 	private class Item {
@@ -620,8 +616,7 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 						String s = directories.remove(directories.size() - 1);
 
 						// path modified to exclude present directory
-						browsePath = new File(browsePath.toString().substring(0,
-								browsePath.toString().lastIndexOf(s)));
+						browsePath = new File(browsePath.toString().substring(0, browsePath.toString().lastIndexOf(s)));
 						fileList = null;
 
 						// if there are no more directories in the list, then
@@ -635,9 +630,9 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 						showDialog(DIALOG_LOAD_FILE);
 						Log.d(TAG, browsePath.getAbsolutePath());
 
-					}else{
-        				 mCore2.load(new String[]{sel.getAbsolutePath()});
-        				 mTxtFileName.setText("File: " + sel.getName());//sel.getAbsolutePath());
+					} else {
+						mCore2.load(new String[] { sel.getAbsolutePath() });
+						mTxtFileName.setText("File: " + sel.getName());// sel.getAbsolutePath());
 					}
 				}
 			});
@@ -645,5 +640,5 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 		}
 		dialog = builder.show();
 		return dialog;
-	}	
+	}
 }

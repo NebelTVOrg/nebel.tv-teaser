@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2014 Nebel TV (http://nebel.tv)
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.nebel_tv.ui.dialog;
 
 import android.app.AlertDialog;
@@ -19,49 +35,46 @@ import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper;
 import com.nebel_tv.utils.DownloadManagerHelper;
 
 public class PrivacyDialogFragment extends DialogFragment {
-	
+
 	private static final String TAG = PrivacyDialogFragment.class.getName();
 	private static final String POLICY_URL = "file:///android_asset/privacy_policy.html";
-	
+
 	public static void showPrivacyDialog(FragmentManager fm) {
 		PrivacyDialogFragment privacyDialog = new PrivacyDialogFragment();
 		privacyDialog.setCancelable(false);
-		
+
 		privacyDialog.show(fm, TAG);
 	}
-	
+
 	private WebView policyWebView;
 	private ProgressBar progressBar;
-	
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final LayoutInflater inflater = getActivity().getLayoutInflater();
+		final LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        builder
-        	.setTitle(R.string.policy_title)
-        	.setView(inflater.inflate(R.layout.fragment_webview, null))
-            .setPositiveButton(R.string.policy_btn_accept, new DialogInterface.OnClickListener() {
-            	@Override
-                public void onClick(final DialogInterface dialog, final int id) {
-                     LocalStorage.from(getActivity()).setPolicyAccepted();
-                     //TODO temp disable video files loading
-//                     DownloadManagerHelper.startVideoDownload(getActivity());
-                     new FrontendUpdateTask(getActivity()).execute();
-                     dismiss();
-                }
-            })
-            .setNegativeButton(R.string.policy_btn_decline, new DialogInterface.OnClickListener() {
-            	@Override
-                public void onClick(final DialogInterface dialog, final int id) {
-            		 dismiss();
-                     getActivity().finish();
-                }
-            });
+		builder.setTitle(R.string.policy_title).setView(inflater.inflate(R.layout.fragment_webview, null))
+				.setPositiveButton(R.string.policy_btn_accept, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(final DialogInterface dialog, final int id) {
+						LocalStorage.from(getActivity()).setPolicyAccepted();
+						// TODO temp disable video files loading
+						// DownloadManagerHelper.startVideoDownload(getActivity());
+						new FrontendUpdateTask(getActivity()).execute();
+						dismiss();
+					}
+				}).setNegativeButton(R.string.policy_btn_decline, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(final DialogInterface dialog, final int id) {
+						dismiss();
+						getActivity().finish();
+					}
+				});
 
-        return builder.create();
+		return builder.create();
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -71,7 +84,7 @@ public class PrivacyDialogFragment extends DialogFragment {
 		WebViewUILoaderHelper helper = new WebViewUILoaderHelper(policyWebView, progressBar);
 		policyWebView.setWebViewClient(new BaseWebViewClient(helper));
 		policyWebView.setWebChromeClient(new WebChromeClient());
-		
+
 		policyWebView.loadUrl(POLICY_URL);
 	}
 
@@ -80,5 +93,4 @@ public class PrivacyDialogFragment extends DialogFragment {
 		policyWebView.stopLoading();
 		super.onDismiss(dialog);
 	}
-
 }

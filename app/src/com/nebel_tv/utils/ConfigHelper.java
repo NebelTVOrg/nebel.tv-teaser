@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2014 Nebel TV (http://nebel.tv)
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.nebel_tv.utils;
 
 import java.io.File;
@@ -92,15 +108,13 @@ public class ConfigHelper {
 		return configModel;
 	}
 
-	public synchronized void registerOnConfigUpdatedListener(
-			OnConfigUpdatedListener listener) {
+	public synchronized void registerOnConfigUpdatedListener(OnConfigUpdatedListener listener) {
 		if (!listeners.contains(listener)) {
 			listeners.add(listener);
 		}
 	}
 
-	public synchronized void unregisterOnConfigUpdatedListener(
-			OnConfigUpdatedListener listener) {
+	public synchronized void unregisterOnConfigUpdatedListener(OnConfigUpdatedListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -112,8 +126,7 @@ public class ConfigHelper {
 		}
 	}
 
-	public synchronized void updateConfigFile() throws IOException,
-			URISyntaxException {
+	public synchronized void updateConfigFile() throws IOException, URISyntaxException {
 
 		// parse front-end config and delete on completion
 		File frontEndConfigFile = getFrontEndConfigFile();
@@ -123,8 +136,7 @@ public class ConfigHelper {
 		// build merge of local config file and front-end config file
 		HashMap<Mood, HashMap<TopView, String>> configUrls = configModel.configUrls;
 		File configDirectory = getConfigDirectory();
-		URI configDirectoryUri = new URI(LOCAL_FILE_SCHEME
-				+ configDirectory.getAbsolutePath());
+		URI configDirectoryUri = new URI(LOCAL_FILE_SCHEME + configDirectory.getAbsolutePath());
 
 		XmlSerializer xmlSerializer = Xml.newSerializer();
 		OutputStream os = getConfigFileOutputStream();
@@ -133,11 +145,9 @@ public class ConfigHelper {
 		xmlSerializer.startDocument(CONFIG_FILE_ENCODING, true);
 		xmlSerializer.startTag("", CONFIG_TAG);
 
-		for (Map.Entry<Mood, HashMap<TopView, String>> entry : configUrls
-				.entrySet()) {
+		for (Map.Entry<Mood, HashMap<TopView, String>> entry : configUrls.entrySet()) {
 			xmlSerializer.startTag("", MOOD_TAG);
-			xmlSerializer.attribute("", MOOD_NAME_ATTRIBUTE,
-					getMoodTag(entry.getKey()));
+			xmlSerializer.attribute("", MOOD_NAME_ATTRIBUTE, getMoodTag(entry.getKey()));
 
 			HashMap<TopView, String> moodUrls = entry.getValue();
 			for (Map.Entry<TopView, String> moodUrlEntry : moodUrls.entrySet()) {
@@ -145,11 +155,9 @@ public class ConfigHelper {
 				// update uri with full path to external storage
 				URI uri = new URI(moodUrlEntry.getValue());
 
-				String path = configDirectoryUri.getPath() + FRONT_END_FOLDER
-						+ uri.getPath();
-				URI updatedUri = new URI(configDirectoryUri.getScheme(),
-						uri.getUserInfo(), configDirectoryUri.getHost(),
-						uri.getPort(), path, uri.getQuery(), uri.getFragment());
+				String path = configDirectoryUri.getPath() + FRONT_END_FOLDER + uri.getPath();
+				URI updatedUri = new URI(configDirectoryUri.getScheme(), uri.getUserInfo(), configDirectoryUri.getHost(), uri.getPort(), path,
+						uri.getQuery(), uri.getFragment());
 				moodUrlEntry.setValue(updatedUri.toString());
 
 				// write to xml
@@ -163,10 +171,8 @@ public class ConfigHelper {
 		}
 
 		xmlSerializer.startTag("", VIDEO_OPTIONS_TAG);
-		xmlSerializer.attribute("", JUMP_AHEAD_TAG,
-				String.valueOf(configModel.jumpAheadSecValue));
-		xmlSerializer.attribute("", JUMP_BACK_TAG,
-				String.valueOf(configModel.jumpBackSecValue));
+		xmlSerializer.attribute("", JUMP_AHEAD_TAG, String.valueOf(configModel.jumpAheadSecValue));
+		xmlSerializer.attribute("", JUMP_BACK_TAG, String.valueOf(configModel.jumpBackSecValue));
 		xmlSerializer.endTag("", VIDEO_OPTIONS_TAG);
 
 		xmlSerializer.startTag("", NEBEL_TV_HOMEPAGE_TAG);
@@ -187,8 +193,7 @@ public class ConfigHelper {
 	}
 
 	public File getConfigDirectory() {
-		return new File(Environment.getExternalStorageDirectory(),
-				CONFIG_FOLDER_NAME);
+		return new File(Environment.getExternalStorageDirectory(), CONFIG_FOLDER_NAME);
 	}
 
 	private void parseConfig() {
@@ -211,8 +216,7 @@ public class ConfigHelper {
 
 	private File getFrontEndConfigFile() {
 		File configDirectory = getConfigDirectory();
-		return new File(configDirectory, FRONTEND_CONFIG_FILE_NAME
-				+ CONFIG_FILE_EXTENSION);
+		return new File(configDirectory, FRONTEND_CONFIG_FILE_NAME + CONFIG_FILE_EXTENSION);
 	}
 
 	private OutputStream getConfigFileOutputStream() throws IOException {
@@ -226,8 +230,7 @@ public class ConfigHelper {
 
 	private File getConfigFile() {
 		final String state = Environment.getExternalStorageState();
-		if (state.equals(Environment.MEDIA_MOUNTED)
-				|| state.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
+		if (state.equals(Environment.MEDIA_MOUNTED) || state.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
 			File configDirectory = getConfigDirectory();
 			File configFile = new File(configDirectory, getConfigFilename(true));
 			if (configFile.exists()) {
@@ -259,8 +262,7 @@ public class ConfigHelper {
 	}
 
 	private void saveConfigToExternalStorage(File configFile) {
-		FileUtils.saveFileFromInputStream(getDefaultConfigFileStream(),
-				configFile);
+		FileUtils.saveFileFromInputStream(getDefaultConfigFileStream(), configFile);
 	}
 
 	/**
@@ -271,9 +273,7 @@ public class ConfigHelper {
 	 * @return config file name
 	 */
 	private String getConfigFilename(boolean withVersion) {
-		return CONFIG_FILE_NAME
-				+ (withVersion ? ("_" + CONFIG_FILE_VERSION) : "")
-				+ CONFIG_FILE_EXTENSION;
+		return CONFIG_FILE_NAME + (withVersion ? ("_" + CONFIG_FILE_VERSION) : "") + CONFIG_FILE_EXTENSION;
 	}
 
 	private void parseConfig(InputStream in) {
@@ -297,8 +297,7 @@ public class ConfigHelper {
 		}
 	}
 
-	private void readConfig(XmlPullParser parser)
-			throws XmlPullParserException, IOException {
+	private void readConfig(XmlPullParser parser) throws XmlPullParserException, IOException {
 
 		HashMap<Mood, HashMap<TopView, String>> configMap = new HashMap<Mood, HashMap<TopView, String>>();
 		HashMap<TopView, String> topViewMap = new HashMap<TopView, String>();
@@ -311,8 +310,7 @@ public class ConfigHelper {
 			if (eventType == XmlPullParser.START_TAG) {
 				name = parser.getName();
 				if (MOOD_TAG.equals(name)) {
-					String moodType = parser.getAttributeValue(null,
-							MOOD_NAME_ATTRIBUTE);
+					String moodType = parser.getAttributeValue(null, MOOD_NAME_ATTRIBUTE);
 					if (FAMILY_MOOD_TAG.equals(moodType)) {
 						currentMood = Mood.FAMILY;
 
@@ -345,14 +343,10 @@ public class ConfigHelper {
 					currentTopView = TopView.RECOMMENDED;
 
 				} else if (VIDEO_OPTIONS_TAG.equals(name)) {
-					configModel.jumpAheadSecValue = Integer.valueOf(parser
-							.getAttributeValue(null, JUMP_AHEAD_TAG));
-					configModel.jumpBackSecValue = Integer.valueOf(parser
-							.getAttributeValue(null, JUMP_BACK_TAG));
+					configModel.jumpAheadSecValue = Integer.valueOf(parser.getAttributeValue(null, JUMP_AHEAD_TAG));
+					configModel.jumpBackSecValue = Integer.valueOf(parser.getAttributeValue(null, JUMP_BACK_TAG));
 
-				} else if (CONFIG_TAG.equals(name)
-						|| NEBEL_TV_HOMEPAGE_TAG.equals(name)
-						|| FRONTEND_DOWNLOAD_LINK_TAG.equals(name)) {
+				} else if (CONFIG_TAG.equals(name) || NEBEL_TV_HOMEPAGE_TAG.equals(name) || FRONTEND_DOWNLOAD_LINK_TAG.equals(name)) {
 					// do nothing
 
 				} else {
@@ -457,5 +451,4 @@ public class ConfigHelper {
 			return frontendDownloadLink;
 		}
 	}
-
 }

@@ -8,19 +8,19 @@ import android.view.SurfaceHolder;
 
 /**
  * @author Andrew Voznytsa <andrew.voznytsa@gmail.com>
- *
+ * 
  */
 public class MediaCore {
-	
-	static{
+
+	static {
 		System.loadLibrary("ffmpeg");
 		System.loadLibrary("SystemCore");
-		try{
+		try {
 			System.loadLibrary("SystemExt" + Build.VERSION.SDK_INT);
-		}catch(UnsatisfiedLinkError e){
+		} catch (UnsatisfiedLinkError e) {
 		}
 		System.loadLibrary("PlayerCore");
 	}
-	
+
 	public native static PlayerCore2 createPlayerCore2(SurfaceHolder holder, String cachePath);
 }
