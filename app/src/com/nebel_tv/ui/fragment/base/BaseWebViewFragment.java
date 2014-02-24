@@ -90,10 +90,10 @@ public abstract class BaseWebViewFragment extends Fragment {
 		@Override
 		public void onLoadResource(WebView view, String url) {
 			super.onLoadResource(view, url);
-			if (url.startsWith(ContentWrapperManager.IVAWRAPPER_HOST)) {
+			if (url.startsWith(ContentWrapperManager.WRAPPER_HOST)) {
 				wrapperRequestUrl = url;
 				
-				//TODO Temporary code 
+				//TODO Temporary code
 				if(url.contains("getVideoAssets")){
 					MediaPlaybackActivity.launch(getActivity(), VIDEO_URLS);
 				}

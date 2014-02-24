@@ -24,7 +24,7 @@ import com.nebel_tv.content.api.WrapperResponse;
 
 public class ContentWrapperManager {
 	
-	public static final String IVAWRAPPER_HOST = "http://nebeltv.org";
+	public static final String WRAPPER_HOST = "http://nebeltv.org";
 	public static final String CALLBACK_PARAM_NAME = "callback";
 	
 	
