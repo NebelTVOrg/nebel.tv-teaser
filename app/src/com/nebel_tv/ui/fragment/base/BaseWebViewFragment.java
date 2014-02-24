@@ -32,8 +32,10 @@ import android.widget.ProgressBar;
 import com.nebel_tv.R;
 import com.nebel_tv.activity.MediaPlaybackActivity;
 import com.nebel_tv.activity.base.BaseActivity;
+import com.nebel_tv.content.api.VideoAssetsWrapper;
 import com.nebel_tv.content.api.WrapperResponse;
 import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
+import com.nebel_tv.utils.D;
 import com.nebel_tv.wrapper.ContentWrapperManager;
 
 public abstract class BaseWebViewFragment extends Fragment {
@@ -92,11 +94,6 @@ public abstract class BaseWebViewFragment extends Fragment {
 			super.onLoadResource(view, url);
 			if (url.startsWith(ContentWrapperManager.WRAPPER_HOST)) {
 				wrapperRequestUrl = url;
-				
-				//TODO Temporary code
-				if(url.contains("getVideoAssets")){
-					MediaPlaybackActivity.launch(getActivity(), VIDEO_URLS);
-				}
 			}
 		}
 
@@ -136,7 +133,6 @@ public abstract class BaseWebViewFragment extends Fragment {
 		}
 
 		protected void onPostExecute(WrapperResponse result) {
-
 			if (result.responseResult == WrapperResponse.ResponseResult.Ok) {
 				
 				switch (result.responseType) {
@@ -145,11 +141,15 @@ public abstract class BaseWebViewFragment extends Fragment {
 					webViewUILoaderHelper.switchUIState(UIState.SHOWING_DATA);
 					break;
 				case VideoAssets:
+					VideoAssetsWrapper wrapper = new VideoAssetsWrapper(result.responseData);
+					String[] urls = wrapper.getVideoURLs();
+					if(urls != null && url.length() !=0){
+						MediaPlaybackActivity.launch(getActivity(), urls);
+					}
 					break;
 				}
-				
 			}else {
-				//TODO
+				D.w("Wrapper: url: " + url + ", response: " + result.responseResult);
 			}
 		}
 
