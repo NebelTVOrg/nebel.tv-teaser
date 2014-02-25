@@ -30,7 +30,7 @@
     <string name="invalid_extenal_config">Invalid external config. Loading the default one</string>
     <string name="categories_title">Categories</string>
     <string name="category_title">Category view</string>
-    <string name="videos_are_not_downloaded">Video content isn't available</string>
+    <string name="videos_are_not_downloaded">Video content isn\'t available</string>
     <string name="policy_title">Application use policy</string>
     <string name="policy_btn_accept">Accept</string>
     <string name="policy_btn_decline">Decline</string>
