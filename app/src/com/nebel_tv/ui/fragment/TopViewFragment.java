@@ -87,5 +87,4 @@ public class TopViewFragment extends BaseWebViewFragment {
 			return true;
 		}
 	}
-
 }

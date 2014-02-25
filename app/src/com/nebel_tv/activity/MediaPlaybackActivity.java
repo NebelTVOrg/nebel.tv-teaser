@@ -64,16 +64,17 @@ import com.nebel_tv.utils.ConfigHelper;
 import com.nebel_tv.utils.ConfigHelper.ConfigModel;
 import com.nebel_tv.utils.D;
 import com.nebel_tv.utils.DateTimeUtils;
+import com.nebel_tv.utils.UIUtils;
 import com.vayavision.MediaCore.MediaCore;
 import com.vayavision.MediaCore.PlayerCore2;
 import com.vayavision.MediaCore.PlayerCore2.Configuration;
 
-public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEventListener, OnSeekBarChangeListener, OnWheelChangedListener,
-		UncaughtExceptionHandler {
+public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEventListener, OnSeekBarChangeListener,
+		OnWheelChangedListener, UncaughtExceptionHandler {
 
 	private static final String TAG = MediaPlaybackActivity.class.getName();
 	private static final String KEY_VIDEO_URLS = "KEY_VIDEO_URLS";
-
+	
 	private static final int ICS_VERSION_NUM = 14;
 	private static final int MAX_SETTINGS_BRIGHTNESS_VALUE = 255;
 	private static final int DEFAULT_CONTROLS_VISIBILITY_TIME = 3000; // 3 sec
@@ -83,11 +84,14 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	private static final int DEFAULT_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
 
 	public static void launch(Context c, String[] videoUrls) {
+
 		Intent intent = new Intent(c, MediaPlaybackActivity.class);
 		intent.putExtra(KEY_VIDEO_URLS, videoUrls);
+		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		
 		c.startActivity(intent);
 	}
-
+	
 	private SurfaceView mSurfaceView = null;
 	private PlayerCore2 mCore2 = null;
 
@@ -213,6 +217,18 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		
+		mCore2.removeListener(this);
+		mCore2.release();
+		
+//		if(webView != null){
+//			webView.goBack();
+//		}
+	}
+
 	private void updateState(int state) {
 		switch (state) {
 		case PlayerCore2.STATE_IDLE:
@@ -259,9 +275,11 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 			audiotrackWheel.setEnabled(true);
 			subtitleWheel.setEnabled(true);
 			videoQualityWheel.setEnabled(true);
+
+			UIUtils.showMessage(R.string.player_buffering);
 			break;
 		default:
-			D.e("Unknown state " + state);
+			D.e("Player: Unknown state " + state);
 			return;
 		}
 
@@ -322,7 +340,8 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	public void onSeekForwardClick(View v) {
-		D.d(getMethodName(1) + " : " + "seek forward request to pos: " + (mPositionInSeconds + seekAheadValueInSec) + " s");
+		D.d(getMethodName(1) + " : " + "seek forward request to pos: " + (mPositionInSeconds + seekAheadValueInSec)
+				+ " s");
 		mCore2.setPosition(DateTimeUtils.getSecValueInMicros(mPositionInSeconds + seekAheadValueInSec), 0,
 				DateTimeUtils.getSecValueInMicros(mDurationInSeconds));
 		mCore2.play();
@@ -395,7 +414,8 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	private void setCurrentSeekbarValues() {
-		volumeSeekBar.setProgressAndThumb(getProgressFromStreamVolume(audioManager.getStreamVolume(DEFAULT_AUDIO_STREAM)));
+		volumeSeekBar.setProgressAndThumb(getProgressFromStreamVolume(audioManager
+				.getStreamVolume(DEFAULT_AUDIO_STREAM)));
 		brightnessSeekBar.setProgressAndThumb(getBrigtnessPercentage());
 	}
 
@@ -724,7 +744,8 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		if (videoSeekBar == seekBar) {
 			videoSeekBar.setAutochange(true);
-			mCore2.setPosition(DateTimeUtils.getSecValueInMicros(seekBar.getProgress()), 0, DateTimeUtils.getSecValueInMicros(mDurationInSeconds));
+			mCore2.setPosition(DateTimeUtils.getSecValueInMicros(seekBar.getProgress()), 0,
+					DateTimeUtils.getSecValueInMicros(mDurationInSeconds));
 		}
 	}
 
@@ -770,13 +791,15 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 	private int getBrigtnessPercentage() {
 		float floatPercentValue = (float) android.provider.Settings.System.getInt(getContentResolver(),
-				android.provider.Settings.System.SCREEN_BRIGHTNESS, MAX_SETTINGS_BRIGHTNESS_VALUE) / (float) MAX_SETTINGS_BRIGHTNESS_VALUE;
+				android.provider.Settings.System.SCREEN_BRIGHTNESS, MAX_SETTINGS_BRIGHTNESS_VALUE)
+				/ (float) MAX_SETTINGS_BRIGHTNESS_VALUE;
 		return Math.round(floatPercentValue * 100);
 	}
 
 	private void setBrightnessPecentage(int percentage) {
 		float floatPercentValue = (float) percentage / 100f;
-		android.provider.Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS,
+		android.provider.Settings.System.putInt(getContentResolver(),
+				android.provider.Settings.System.SCREEN_BRIGHTNESS,
 				Math.round(floatPercentValue * MAX_SETTINGS_BRIGHTNESS_VALUE));
 	}
 

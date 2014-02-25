@@ -1,73 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/applicationLayout" xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/applicationLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="0dp">
-    
-    <RelativeLayout 
-            android:id="@+id/statusLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:padding="0dp">
+    android:padding="0dp" >
 
-		  <TextView
-		      android:id="@+id/txtFilePath"
-		      android:layout_width="wrap_content"
-		      android:layout_height="wrap_content"
-		      android:layout_alignParentLeft="true"
-		      android:layout_alignParentBottom="true" />
+    <RelativeLayout
+        android:id="@+id/statusLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="0dp" >
 
-		  <TextView
-		      android:id="@+id/txtFilePosition"
-		      android:layout_width="wrap_content"
-		      android:layout_height="wrap_content"
-		      android:layout_alignParentRight="true"
-		      android:layout_alignParentBottom="true" />
-	</RelativeLayout>
-	
-    <LinearLayout android:id="@+id/controlLayout"
-            android:orientation="horizontal"
+        <TextView
+            android:id="@+id/txtFilePath"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="fill_parent">		  
-            
-        <Button android:id="@+id/btnLoadUnload"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                     
-                     android:text="@string/btn_load"/>
-                
-        <Button android:id="@+id/btnPlayPause"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="@string/btn_play"/>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true" />
 
-        <Button android:id="@+id/btnStop"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="@string/btn_stop"/>
-        
-        <Button android:id="@+id/btnSeekLeft"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="@string/btn_seek_backward"/>
-                
-        <Button android:id="@+id/btnSeekRight"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                  
-                     android:text="@string/btn_seek_forward"/>
-        
-        <Button android:id="@+id/btnToggleAudio"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                  
-                     android:text="@string/btn_toggle_audio"/>
-        
-        <Button android:id="@+id/btnToggleVideo"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                  
-                     android:text="@string/btn_toggle_video"/>
+        <TextView
+            android:id="@+id/txtFilePosition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
 
-        <Button android:id="@+id/btnToggleSubtitle"
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"                  
-                     android:text="@string/btn_toggle_subtitle"/>
+    <LinearLayout
+        android:id="@+id/controlLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnLoadUnload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_load" />
+
+        <Button
+            android:id="@+id/btnPlayPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_play" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_stop" />
+
+        <Button
+            android:id="@+id/btnSeekLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_seek_backward" />
+
+        <Button
+            android:id="@+id/btnSeekRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_seek_forward" />
+
+        <Button
+            android:id="@+id/btnToggleAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_toggle_audio" />
+
+        <Button
+            android:id="@+id/btnToggleVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_toggle_video" />
+
+        <Button
+            android:id="@+id/btnToggleSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_toggle_subtitle" />
     </LinearLayout>
+
 </RelativeLayout>

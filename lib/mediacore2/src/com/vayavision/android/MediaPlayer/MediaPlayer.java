@@ -30,6 +30,9 @@ import android.widget.TextView;
 public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener {
 	private static final String TAG = "Player";
 
+	private static final String[] VIDEO_URLS = new String[] { "http://54.201.170.111/assets/001-180p-185kb.mp4",
+			"http://54.201.170.111/assets/001-270p-686kb.mp4", "http://54.201.170.111/assets/001-720p-2500kb.mp4" };
+
 	private static String getMethodName(final int depth) {
 		final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
 		return ste[ste.length - 1 - depth].getMethodName();
@@ -214,9 +217,8 @@ public class MediaPlayer extends Activity implements PlayerCore2.OnEventListener
 		mBtnLoadUnload.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (mState == PlayerCore2.STATE_IDLE) {
-					String url = new String("http://54.201.170.111/assets/001-270p-686kb.mp4");
-					mCore2.load(new String[] { url });
-					mTxtFileName.setText("URL: " + url);
+					mCore2.load(VIDEO_URLS);
+					mTxtFileName.setText("URL: " + VIDEO_URLS[0]);
 					/*
 					 * loadFileList(); showDialog(DIALOG_LOAD_FILE);
 					 */

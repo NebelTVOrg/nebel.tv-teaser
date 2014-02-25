@@ -16,13 +16,19 @@
  */
 package com.nebel_tv.ui.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.nebel_tv.R;
 import com.nebel_tv.activity.MediaPlaybackActivity;
+import com.nebel_tv.content.api.VideoAssetsWrapper;
+import com.nebel_tv.content.api.WrapperResponse;
 import com.nebel_tv.ui.fragment.base.BaseWebViewFragment;
-import com.nebel_tv.utils.DownloadManagerHelper;
+
+import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
+import com.nebel_tv.utils.D;
 import com.nebel_tv.utils.UIUtils;
+import com.nebel_tv.wrapper.ContentWrapperManager;
 
 public class CategoryFragment extends BaseWebViewFragment {
 
@@ -49,14 +55,16 @@ public class CategoryFragment extends BaseWebViewFragment {
 		if (args != null) {
 			url = args.getString(EXTRA_CATEGORY_URL_KEY);
 		}
-
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
 		if (url != null) {
-			webView.loadUrl(url);
+			new VideoAssetsRequestTask().execute(url);
+			url = null;
+		}else {
+			getParentActivity().onBackPressed();
 		}
 	}
 
@@ -65,14 +73,52 @@ public class CategoryFragment extends BaseWebViewFragment {
 		if (depth == 0) {
 			return false;
 		} else {
-			String[] videoUrls = DownloadManagerHelper.getVideoFiles(getActivity());
-			if (videoUrls != null) {
-				MediaPlaybackActivity.launch(getActivity(), videoUrls);
-			} else {
-				UIUtils.showMessage(R.string.videos_are_not_downloaded);
-			}
+//			String[] videoUrls = DownloadManagerHelper.getVideoFiles(getActivity());
+//			if (videoUrls != null) {
+//				MediaPlaybackActivity.launch(getActivity(), videoUrls);
+//			} else {
+//				UIUtils.showMessage(R.string.videos_are_not_downloaded);
+//			}
 			return true;
 		}
 	}
+	
+	private class VideoAssetsRequestTask extends AsyncTask<String, Void, WrapperResponse> {
+		private String url;
 
+		@Override
+		protected void onPreExecute() {
+			webViewUILoaderHelper.switchUIState(UIState.LOADING);
+		}
+
+		@Override
+		protected WrapperResponse doInBackground(String... params) {
+			url = params[0];
+			return ContentWrapperManager.getInstance().getData(url);
+		}
+
+		protected void onPostExecute(WrapperResponse result) {
+			if (result.responseResult == WrapperResponse.ResponseResult.Ok) {
+
+				switch (result.responseType) {
+				case Content:
+					break;
+				case VideoAssets:
+					VideoAssetsWrapper wrapper = new VideoAssetsWrapper(result.responseData);
+					String[] urls = wrapper.getVideoURLs();
+					if (urls != null && url.length() != 0) {
+						MediaPlaybackActivity.launch(getActivity(), urls);
+					}else {
+						UIUtils.showMessage(R.string.videos_are_not_downloaded);
+					}
+					break;
+				default:
+					D.w("Wrapper: Unknown response type: " + result.responseType);
+					break;
+				}
+			} else {
+				D.w("Wrapper: url: " + url + ", response: " + result.responseResult);
+			}
+		}
+	}
 }
