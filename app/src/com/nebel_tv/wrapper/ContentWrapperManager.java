@@ -17,6 +17,7 @@
 package com.nebel_tv.wrapper;
 
 import android.net.Uri;
+import android.support.v4.util.LruCache;
 
 import com.nebel_tv.content.api.IContentWrapper;
 import com.nebel_tv.content.api.ContentWrapper;
@@ -26,10 +27,17 @@ public class ContentWrapperManager {
 
 	public static final String WRAPPER_HOST = "http://nebeltv.org";
 	public static final String CALLBACK_PARAM_NAME = "callback";
+	
+	/**
+	 * Default cache size: 4 MiB
+	 */
+	public static final int CACHE_SIZE = 4 * 1024 * 1024;
 
 	private static ContentWrapperManager instance;
 
 	private IContentWrapper contentWrapper;
+
+	private LruCache<String, WrapperResponse> responseCache = null;
 
 	public static synchronized ContentWrapperManager getInstance() {
 		if (instance == null) {
@@ -40,10 +48,23 @@ public class ContentWrapperManager {
 
 	private ContentWrapperManager() {
 		contentWrapper = new ContentWrapper();
+		responseCache = new LruCache<String, WrapperResponse>(CACHE_SIZE);
 	}
 
 	public WrapperResponse getData(String url) {
-		return contentWrapper.getMediaData(url);
+		WrapperResponse response = null;
+		
+		synchronized (responseCache) {
+			response = responseCache.get(url);
+			if (response == null) {
+				response = contentWrapper.getMediaData(url);
+				
+				if(response != null){
+					responseCache.put(url, response);
+				}
+			}
+		}
+		return response;
 	}
 
 	public static String getCallbackFuncName(String url) {
