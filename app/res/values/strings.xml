@@ -54,6 +54,7 @@
     <string name="frontend_update_error_msg">Front-End update error: %1$s</string>
     <string name="frontend_update_success_msg">Front-End was successfully updated</string>
     <string name="mood_title">Mood Select</string>
-    <string name="player_buffering">Video buffering. Please wait</string>
+    <string name="player_loading">Video metadata is loading. Please wait</string>
+    <string name="player_buffering">Video is buffering. Please wait</string>
     
 </resources>

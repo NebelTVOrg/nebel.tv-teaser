@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (C) 2014 Nebel TV (http://nebel.tv)
  *
  * This program is free software: you can redistribute it and/or modify it under
@@ -44,6 +44,7 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -207,6 +208,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 		updateState(PlayerCore2.STATE_IDLE);
 		D.d("Try to load video urls: " + Arrays.toString(videoUrls));
 		mCore2.load(videoUrls);
+		UIUtils.showMessage(R.string.player_loading);
 
 		animFadeOut = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
 		animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
@@ -539,9 +541,9 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 		D.d(getMethodName(1) + ": " + status);
 		if (status == PlayerCore2.STATUS_OK) {
 			runOnUiThread(new Runnable() {
-
 				@Override
 				public void run() {
+					UIUtils.showMessage(R.string.player_buffering);
 					onPlayClick(playBtn);
 				}
 			});
@@ -823,7 +825,9 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 				@Override
 				public void run() {
-					controlContainer.startAnimation(animFadeOut);
+					if(mState != PlayerCore2.STATE_IDLE){
+						controlContainer.startAnimation(animFadeOut);
+					}
 				}
 			});
 		}
