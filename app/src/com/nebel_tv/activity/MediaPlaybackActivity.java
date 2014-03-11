@@ -44,7 +44,6 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -527,9 +526,8 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	public void onGetStateComplete(final int state) {
-		D.d(getMethodName(1) + ": " + state);
+		D.d(getMethodName(1) + ": " + state);		
 		runOnUiThread(new Runnable() {
-
 			@Override
 			public void run() {
 				updateState(state);
@@ -538,7 +536,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	public void onLoadComplete(int status) {
-		D.d(getMethodName(1) + ": " + status);
+		D.d(getMethodName(1) + ": " + status);		
 		if (status == PlayerCore2.STATUS_OK) {
 			runOnUiThread(new Runnable() {
 				@Override
@@ -568,6 +566,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 	public void onGetDurationComplete(int status, long duration) {
 		D.d(getMethodName(1) + ": " + status + " " + duration);
+		
 		mDurationInSeconds = DateTimeUtils.getSecValueInMicros(duration, true);
 		runOnUiThread(new Runnable() {
 
@@ -688,7 +687,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	public void onBufferingProgress(long bufferL1, long bufferL2) {
-		// empty implementation
+		D.d(getMethodName(1) + ": " + bufferL2 + " " + bufferL2);
 	}
 
 	@Override
