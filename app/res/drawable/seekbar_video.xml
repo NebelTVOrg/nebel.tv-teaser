@@ -3,6 +3,13 @@
 	<item android:id="@android:id/background">
 	    <nine-patch android:src="@drawable/seekbar_video_bg" android:dither="true"/>
 	</item>
+	<item android:id="@android:id/secondaryProgress">
+	    <clip
+        android:clipOrientation="horizontal"
+        android:gravity="left">
+        <nine-patch android:src="@drawable/seekbar_video_secondary_fill_bg" android:dither="true"/>
+   		</clip>
+	</item>	
 	<item android:id="@android:id/progress">
 	    <clip
         android:clipOrientation="horizontal"

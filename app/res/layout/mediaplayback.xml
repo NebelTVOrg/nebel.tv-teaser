@@ -8,7 +8,16 @@
     <FrameLayout
         android:id="@+id/container_video"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        
+        <ProgressBar 
+            android:id="@+id/progress_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateOnly="true"/>
+        
+   </FrameLayout>
 
     <RelativeLayout
         android:id="@+id/container_control"

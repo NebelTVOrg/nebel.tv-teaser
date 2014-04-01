@@ -49,6 +49,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -134,6 +135,8 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 	private Animation animFadeOut;
 	private Animation animFadeIn;
+	
+	private ProgressBar loadingProgressBar;
 
 	private class SurfaceHolderCallback implements SurfaceHolder.Callback {
 		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -182,6 +185,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 		subtitleSliding = (MultiDirectionSlidingDrawer) findViewById(R.id.drawer_subtitle);
 		videoQualityWheel = (WheelView) findViewById(R.id.quality_content);
 		durationText = (TextView) findViewById(R.id.txt_duration);
+		loadingProgressBar = (ProgressBar) findViewById(R.id.progress_circular);
 
 		videoUrls = getIntent().getStringArrayExtra(KEY_VIDEO_URLS);
 		if (videoUrls == null) {
@@ -192,7 +196,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 		mSurfaceView = new SurfaceView(this);
 
-		videoViewContainer.addView(mSurfaceView);
+		videoViewContainer.addView(mSurfaceView, 0);
 
 		SurfaceHolder holder = mSurfaceView.getHolder();
 		holder.addCallback(new SurfaceHolderCallback());
@@ -215,7 +219,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 		animFadeIn.setAnimationListener(controlsFadeInAnimationListener);
 		setOnSystemUIVisibilityChangeListener();
 		showControls();
-
+		showLoadingProgressBar();
 	}
 
 	@Override
@@ -258,6 +262,8 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 			audiotrackWheel.setEnabled(true);
 			subtitleWheel.setEnabled(true);
 			videoQualityWheel.setEnabled(true);
+			hideLoadingProgressBar();
+			rescheduleTimer();
 			break;
 		case PlayerCore2.STATE_PAUSED:
 			playBtn.setEnabled(true);
@@ -276,7 +282,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 			audiotrackWheel.setEnabled(true);
 			subtitleWheel.setEnabled(true);
 			videoQualityWheel.setEnabled(true);
-
+			showLoadingProgressBar();
 			UIUtils.showMessage(R.string.player_buffering);
 			break;
 		default:
@@ -688,6 +694,19 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 	public void onBufferingProgress(long bufferL1, long bufferL2) {
 		D.d(getMethodName(1) + ": " + bufferL2 + " " + bufferL2);
+		final long bufferPositionInSec = DateTimeUtils.getSecValueInMicros(bufferL2, true);
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				if(bufferPositionInSec<mDurationInSeconds) {
+					videoSeekBar.setSecondaryProgress((int) bufferPositionInSec);
+				} else {
+					videoSeekBar.setSecondaryProgress(0);
+				}
+			}
+		});
+		
 	}
 
 	@Override
@@ -767,6 +786,10 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 	private void showControls() {
 		controlContainer.startAnimation(animFadeIn);
+		rescheduleTimer();
+	}
+	
+	private void rescheduleTimer() {
 		resetTimer();
 		timer.schedule(controlVisibilityTimerTask, DEFAULT_CONTROLS_VISIBILITY_TIME);
 	}
@@ -824,7 +847,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 
 				@Override
 				public void run() {
-					if(mState != PlayerCore2.STATE_IDLE){
+					if(mState != PlayerCore2.STATE_IDLE && mState!=PlayerCore2.STATE_BUFFERING) {
 						controlContainer.startAnimation(animFadeOut);
 					}
 				}
@@ -868,4 +891,12 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 			controlContainer.setVisibility(View.VISIBLE);
 		}
 	};
+	
+	private void showLoadingProgressBar() {
+		loadingProgressBar.setVisibility(View.VISIBLE);
+	}
+	
+	private void hideLoadingProgressBar() {
+		loadingProgressBar.setVisibility(View.GONE);
+	}
 }
