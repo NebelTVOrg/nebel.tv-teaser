@@ -71,12 +71,17 @@ public class ConfigHelper {
 	private static final String VIDEO_OPTIONS_TAG = "video_options";
 	private static final String JUMP_AHEAD_TAG = "jump_ahead_sec";
 	private static final String JUMP_BACK_TAG = "jump_back_sec";
-	private static final String FRIENDS_FEED_TAG = "friends_feed";
-	private static final String WHATS_CLOSE_TAG = "whats_close";
-	private static final String RECENTLY_VIEWED_TAG = "recently_viewed";
+	
+	private static final String FEED_TAG = "friends_feed";
 	private static final String WHATS_HOT_TAG = "whats_hot";
-	private static final String PICTURES_TAG = "pictures";
-	private static final String RECOMMENDED_TAG = "recommended";
+	private static final String WHATS_CLOSE_TAG = "whats_close";
+	private static final String WATCH_LATER_TAG = "watch_later";
+	private static final String RECENTLY_VIEWED_TAG = "recently_viewed";
+	
+	private static final String WALLET_TAG = "wallet";
+	private static final String CONTENT_TAG = "content";
+	private static final String SETTINGS_TAG = "options";
+	
 	private static final String NEBEL_TV_HOMEPAGE_TAG = "nebel_tv_homepage";
 	private static final String FRONTEND_DOWNLOAD_LINK_TAG = "frontend_download_link";
 
@@ -322,25 +327,31 @@ public class ConfigHelper {
 
 					} else {
 						// invalid config file
-						throw new XmlPullParserException(INVALID_CONFIG_MSG);
+						throw new XmlPullParserException(INVALID_CONFIG_MSG + ":: name: " + name);
 					}
-				} else if (FRIENDS_FEED_TAG.equals(name)) {
-					currentTopView = TopView.FRIENDS_FEED;
-
-				} else if (WHATS_CLOSE_TAG.equals(name)) {
-					currentTopView = TopView.WHATS_CLOSE;
-
-				} else if (RECENTLY_VIEWED_TAG.equals(name)) {
-					currentTopView = TopView.RECENTLY_VIEWED;
+				} else if (FEED_TAG.equals(name)) {
+					currentTopView = TopView.FEED;
 
 				} else if (WHATS_HOT_TAG.equals(name)) {
 					currentTopView = TopView.WHATS_HOT;
 
-				} else if (PICTURES_TAG.equals(name)) {
-					currentTopView = TopView.PICTURES;
+				} else if (WHATS_CLOSE_TAG.equals(name)) {
+					currentTopView = TopView.WHATS_CLOSE;
+					
+				} else if (WATCH_LATER_TAG.equals(name)) {
+					currentTopView = TopView.WATCH_LATER;
 
-				} else if (RECOMMENDED_TAG.equals(name)) {
-					currentTopView = TopView.RECOMMENDED;
+				} else if (RECENTLY_VIEWED_TAG.equals(name)) {
+					currentTopView = TopView.RECENTLY_VIEWED;
+
+				} else if (CONTENT_TAG.equals(name)) {
+					currentTopView = TopView.CONTENT;
+					
+				} else if (WALLET_TAG.equals(name)) {
+					currentTopView = TopView.WALLET;
+
+				} else if (SETTINGS_TAG.equals(name)) {
+					currentTopView = TopView.SETTINGS;
 
 				} else if (VIDEO_OPTIONS_TAG.equals(name)) {
 					configModel.jumpAheadSecValue = Integer.valueOf(parser.getAttributeValue(null, JUMP_AHEAD_TAG));
@@ -400,18 +411,23 @@ public class ConfigHelper {
 			return null;
 		}
 		switch (topView) {
-		case FRIENDS_FEED:
-			return FRIENDS_FEED_TAG;
-		case WHATS_CLOSE:
-			return WHATS_CLOSE_TAG;
-		case RECENTLY_VIEWED:
-			return RECENTLY_VIEWED_TAG;
+		case FEED:
+			return FEED_TAG;
 		case WHATS_HOT:
 			return WHATS_HOT_TAG;
-		case PICTURES:
-			return PICTURES_TAG;
-		case RECOMMENDED:
-			return RECOMMENDED_TAG;
+		case WHATS_CLOSE:
+			return WHATS_CLOSE_TAG;
+		case WATCH_LATER:
+			return WATCH_LATER_TAG;
+		case RECENTLY_VIEWED:
+			return RECENTLY_VIEWED_TAG;
+
+		case CONTENT:
+			return CONTENT_TAG;
+		case WALLET:
+			return WALLET_TAG;
+		case SETTINGS:
+			return SETTINGS_TAG;
 		default:
 			return null;
 		}

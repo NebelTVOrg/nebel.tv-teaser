@@ -16,8 +16,9 @@
  */
 package com.nebel_tv.ui.fragment.base;
 
+import java.io.File;
+
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,7 @@ import com.nebel_tv.activity.base.BaseActivity;
 import com.nebel_tv.content.api.VideoAssetsWrapper;
 import com.nebel_tv.content.api.WrapperResponse;
 import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper.UIState;
+import com.nebel_tv.utils.ConfigHelper;
 import com.nebel_tv.utils.D;
 import com.nebel_tv.wrapper.ContentWrapperManager;
 
@@ -49,13 +51,17 @@ public abstract class BaseWebViewFragment extends Fragment {
 		return (BaseActivity) getActivity();
 	}
 
+	private static final String[] VIDEO_URLS = new String[] { 
+		ConfigHelper.getInstance().getConfigDirectory() + File.separator + "big_buck_bunny_480p_h264.mov",
+		ConfigHelper.getInstance().getConfigDirectory() + File.separator + "big_buck_bunny_1080p_h264.mov" };
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_webview, container, false);
 		webView = (WebView) view.findViewById(R.id.webview);
 		progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 		webViewUILoaderHelper = new WebViewUILoaderHelper(webView, progressBar);
-
+		
 		return view;
 	}
 
@@ -74,11 +80,13 @@ public abstract class BaseWebViewFragment extends Fragment {
 		});
 	}
 
-	protected abstract boolean shouldOverrideUrlLoading(String url, int depth);
-
+	protected abstract boolean shouldOverrideUrlLoading(String url);
+	
 	private class NebelTVWebViewClient extends BaseWebViewClient {
 
-		int counter = 0;
+		/**
+		 * @warning: Wrapper temporary isn't used
+		 */
 		private String wrapperRequestUrl = null;
 
 		public NebelTVWebViewClient(WebViewUILoaderHelper webViewUILoaderHelper) {
@@ -88,17 +96,16 @@ public abstract class BaseWebViewFragment extends Fragment {
 		@Override
 		public void onLoadResource(WebView view, String url) {
 			super.onLoadResource(view, url);
-			if (url.startsWith(ContentWrapperManager.WRAPPER_HOST)) {
-				wrapperRequestUrl = url;
-			}
 		}
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			boolean override = BaseWebViewFragment.this.shouldOverrideUrlLoading(url, counter);
-			
-			if (override) {
-				//TODO:
+			boolean override  = false;
+			if (url.endsWith("#play")) {
+				MediaPlaybackActivity.launch(getActivity(), VIDEO_URLS);
+				override = true;
+			}else{
+				override = BaseWebViewFragment.this.shouldOverrideUrlLoading(url);
 			}
 			return override;
 		}
@@ -106,7 +113,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
-			counter++;
+			
 			if (wrapperRequestUrl != null) {
 				new WrapperRequestTask().execute(wrapperRequestUrl);
 				wrapperRequestUrl = null;
@@ -138,11 +145,11 @@ public abstract class BaseWebViewFragment extends Fragment {
 					webViewUILoaderHelper.switchUIState(UIState.SHOWING_DATA);
 					break;
 				case VideoAssets:
-//					VideoAssetsWrapper wrapper = new VideoAssetsWrapper(result.responseData);
-//					String[] urls = wrapper.getVideoURLs();
-//					if (urls != null && url.length() != 0) {
-//						MediaPlaybackActivity.launch(getActivity(), webView, urls);
-//					}
+					VideoAssetsWrapper wrapper = new VideoAssetsWrapper(result.responseData);
+					String[] urls = wrapper.getVideoURLs();
+					if (urls != null && url.length() != 0) {
+						MediaPlaybackActivity.launch(getActivity(), urls);
+					}
 					break;
 				default:
 					D.w("Wrapper: Unknown response type: " + result.responseType);

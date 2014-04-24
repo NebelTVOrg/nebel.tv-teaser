@@ -20,8 +20,15 @@ import com.nebel_tv.NebelTVApp;
 import com.nebel_tv.R;
 
 public enum TopView {
-	FRIENDS_FEED(R.string.top_friends_feed), WHATS_CLOSE(R.string.top_whats_close), RECENTLY_VIEWED(R.string.top_recently_viewed), WHATS_HOT(
-			R.string.top_whats_hot), PICTURES(R.string.top_pictures), RECOMMENDED(R.string.top_recommended);
+	FEED(R.string.top_friends_feed), 
+	WHATS_HOT(R.string.top_whats_hot), 
+	WHATS_CLOSE(R.string.top_whats_close), 
+	WATCH_LATER(R.string.top_watch_later), 
+	RECENTLY_VIEWED(R.string.top_recently_viewed), 
+	SPACE(R.string.top_space), 
+	CONTENT(R.string.top_content), 
+	WALLET(R.string.top_wallet), 
+	SETTINGS(R.string.top_settings); 
 
 	private int stringRes;
 

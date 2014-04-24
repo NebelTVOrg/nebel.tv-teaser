@@ -20,7 +20,6 @@ import java.util.HashMap;
 
 import android.os.Bundle;
 
-import com.nebel_tv.activity.CategoryActivity;
 import com.nebel_tv.model.Mood;
 import com.nebel_tv.model.TopView;
 import com.nebel_tv.storage.LocalStorage;
@@ -53,7 +52,7 @@ public class TopViewFragment extends BaseWebViewFragment {
 		if (args != null) {
 			topView = TopView.values()[args.getInt(EXTRA_TOP_VIEW_KEY, 0)];
 		} else {
-			topView = TopView.FRIENDS_FEED;
+			topView = TopView.FEED;
 		}
 	}
 
@@ -79,12 +78,7 @@ public class TopViewFragment extends BaseWebViewFragment {
 	}
 
 	@Override
-	protected boolean shouldOverrideUrlLoading(String url, int depth) {
-		if (depth == 0) {
-			return false;
-		} else {
-			CategoryActivity.launch(getActivity(), url);
-			return true;
-		}
+	protected boolean shouldOverrideUrlLoading(String url) {
+		return false;
 	}
 }

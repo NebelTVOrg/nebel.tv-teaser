@@ -32,7 +32,6 @@ import com.nebel_tv.frontend.FrontendUpdateTask;
 import com.nebel_tv.storage.LocalStorage;
 import com.nebel_tv.ui.fragment.base.BaseWebViewClient;
 import com.nebel_tv.ui.fragment.base.WebViewUILoaderHelper;
-import com.nebel_tv.utils.DownloadManagerHelper;
 
 public class PrivacyDialogFragment extends DialogFragment {
 

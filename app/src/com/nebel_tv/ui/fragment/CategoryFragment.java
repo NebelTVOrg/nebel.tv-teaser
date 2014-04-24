@@ -69,18 +69,8 @@ public class CategoryFragment extends BaseWebViewFragment {
 	}
 
 	@Override
-	protected boolean shouldOverrideUrlLoading(String url, int depth) {
-		if (depth == 0) {
-			return false;
-		} else {
-//			String[] videoUrls = DownloadManagerHelper.getVideoFiles(getActivity());
-//			if (videoUrls != null) {
-//				MediaPlaybackActivity.launch(getActivity(), videoUrls);
-//			} else {
-//				UIUtils.showMessage(R.string.videos_are_not_downloaded);
-//			}
-			return true;
-		}
+	protected boolean shouldOverrideUrlLoading(String url) {
+		return false;
 	}
 	
 	private class VideoAssetsRequestTask extends AsyncTask<String, Void, WrapperResponse> {

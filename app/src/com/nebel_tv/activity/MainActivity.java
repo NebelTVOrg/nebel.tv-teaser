@@ -103,6 +103,7 @@ public class MainActivity extends BaseActivity implements OnChildClickListener, 
 		drawerList.setOnChildClickListener(this);
 		drawerList.setOnGroupCollapseListener(this);
 		drawerList.setOnGroupExpandListener(this);
+
 		Iterator<GroupType> it = drawerData.keySet().iterator();
 		int i = 0;
 		while (it.hasNext()) {
@@ -123,7 +124,7 @@ public class MainActivity extends BaseActivity implements OnChildClickListener, 
 			}
 		};
 		drawerLayout.setDrawerListener(drawerToggle);
-
+		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setTitle(currentTitle);
