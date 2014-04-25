@@ -76,6 +76,8 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	private static final String TAG = MediaPlaybackActivity.class.getName();
 	private static final String KEY_VIDEO_URLS = "KEY_VIDEO_URLS";
 	
+	private static final String REMOTE_FILE_SCHEME = "http://";
+	
 	private static final int ICS_VERSION_NUM = 14;
 	private static final int MAX_SETTINGS_BRIGHTNESS_VALUE = 255;
 	private static final int DEFAULT_CONTROLS_VISIBILITY_TIME = 3000; // 3 sec
@@ -211,8 +213,9 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 		updateState(PlayerCore2.STATE_IDLE);
 		D.d("Try to load video urls: " + Arrays.toString(videoUrls));
 		mCore2.load(videoUrls);
-		UIUtils.showMessage(R.string.player_loading);
-
+		if(isRemoteURL()){
+			UIUtils.showMessage(R.string.player_loading);
+		}
 		animFadeOut = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
 		animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
 		animFadeOut.setAnimationListener(controlsFadeOutAnimationListener);
@@ -532,7 +535,7 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	public void onGetStateComplete(final int state) {
-		D.d(getMethodName(1) + ": " + state);		
+		D.d(getMethodName(1) + ": " + state);
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -542,16 +545,26 @@ public class MediaPlaybackActivity extends Activity implements PlayerCore2.OnEve
 	}
 
 	public void onLoadComplete(int status) {
-		D.d(getMethodName(1) + ": " + status);		
+		D.d(getMethodName(1) + ": " + status);
 		if (status == PlayerCore2.STATUS_OK) {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					UIUtils.showMessage(R.string.player_buffering);
+					if(isRemoteURL()){
+						UIUtils.showMessage(R.string.player_buffering);
+					}
 					onPlayClick(playBtn);
 				}
 			});
 		}
+	}
+	
+	private boolean isRemoteURL(){
+		int mediaIndex = mCore2.getActiveMedia();
+		if(mediaIndex >=0 && mediaIndex <videoUrls.length){
+			return  videoUrls[mediaIndex].startsWith(REMOTE_FILE_SCHEME);
+		}
+		return false;
 	}
 
 	public void onUnloadComplete(int status) {
