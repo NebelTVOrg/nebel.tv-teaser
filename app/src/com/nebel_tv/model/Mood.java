@@ -19,8 +19,9 @@ package com.nebel_tv.model;
 import com.nebel_tv.R;
 
 public enum Mood {
-	FAMILY(R.string.mood_family, R.drawable.ic_mood_family), KIDS(R.string.mood_kids, R.drawable.ic_mood_kids), ROMANCE(R.string.mood_romance,
-			R.drawable.ic_mood_romance);
+	FAMILY(R.string.mood_family, R.drawable.ic_mood_family), 
+	KIDS(R.string.mood_kids, R.drawable.ic_mood_kids), 
+	ROMANCE(R.string.mood_romance, R.drawable.ic_mood_romance);
 
 	private int stringRes;
 	private int iconRes;
