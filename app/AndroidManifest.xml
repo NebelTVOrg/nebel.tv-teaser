@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nebel_tv"
     android:versionCode="10005003"
-    android:versionName="2.0.2.9" >
+    android:versionName="2.0.2.10" >
 
     <uses-sdk
-        android:minSdkVersion="10"
+        android:minSdkVersion="14"
         android:targetSdkVersion="18"/>
 
     <uses-permission android:name="android.permission.INTERNET" />
