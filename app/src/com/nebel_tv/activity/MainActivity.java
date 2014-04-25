@@ -197,11 +197,16 @@ public class MainActivity extends BaseActivity implements OnChildClickListener, 
 				drawerLayout.closeDrawer(drawerList);
 				return true;
 			}
-			currentPosition = childPosition;
 			currentTitle = menuTitles[childPosition];
-			drawerLayout.closeDrawer(drawerList);
-			if (topViewPagerFragment != null) {
-				topViewPagerFragment.setCurrentTopView(childPosition);
+			
+			
+			if(!currentTitle.toString().isEmpty()){
+				currentPosition = childPosition;
+				
+				drawerLayout.closeDrawer(drawerList);
+				if (topViewPagerFragment != null) {
+					topViewPagerFragment.setCurrentTopView(childPosition);
+				}
 			}
 		}
 		return true;

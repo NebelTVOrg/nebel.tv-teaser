@@ -42,6 +42,8 @@ import com.nebel_tv.utils.D;
 import com.nebel_tv.wrapper.ContentWrapperManager;
 
 public abstract class BaseWebViewFragment extends Fragment {
+	
+	private static final String PLAY_TAG = "#play";
 
 	protected WebViewUILoaderHelper webViewUILoaderHelper;
 	protected WebView webView;
@@ -101,7 +103,7 @@ public abstract class BaseWebViewFragment extends Fragment {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			boolean override  = false;
-			if (url.endsWith("#play")) {
+			if (url.endsWith(PLAY_TAG)) {
 				MediaPlaybackActivity.launch(getActivity(), VIDEO_URLS);
 				override = true;
 			}else{
