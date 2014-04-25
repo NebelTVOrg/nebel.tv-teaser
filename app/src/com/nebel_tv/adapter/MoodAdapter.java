@@ -75,7 +75,7 @@ public class MoodAdapter extends BaseAdapter {
 
 		public void populateView(Mood mood) {
 			moodIcon.setImageResource(mood.getIconRes());
-			moodTitle.setText(NebelTVApp.getContext().getString(mood.getStringRes()).toUpperCase());
+			moodTitle.setText(NebelTVApp.getContext().getString(mood.getStringRes()));
 		}
 	}
 }

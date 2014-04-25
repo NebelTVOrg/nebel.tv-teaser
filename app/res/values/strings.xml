@@ -20,9 +20,10 @@
     <string name="top_space"></string>
     <string name="top_pictures">Pictures</string>
     <string name="top_recommended">Recommended</string>
+    
     <string name="mood_family">Family</string>
-    <string name="mood_kids">Kids</string>
-    <string name="mood_romance">Romance</string>
+    <string name="mood_sport">Sports</string>
+    
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="version">Version: %1$s</string>
@@ -58,7 +59,7 @@
     <string name="frontend_update_msg">Updating Front-End HTML package &#8230;</string>
     <string name="frontend_update_error_msg">Front-End update error: %1$s</string>
     <string name="frontend_update_success_msg">Front-End was successfully updated</string>
-    <string name="mood_title">Mood Select</string>
+    <string name="mood_title">Faces</string>
     <string name="player_loading">Video metadata is loading. Please wait</string>
     <string name="player_buffering">Video is buffering. Please wait</string>
 

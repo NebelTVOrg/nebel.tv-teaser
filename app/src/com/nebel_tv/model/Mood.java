@@ -20,8 +20,7 @@ import com.nebel_tv.R;
 
 public enum Mood {
 	FAMILY(R.string.mood_family, R.drawable.ic_mood_family), 
-	KIDS(R.string.mood_kids, R.drawable.ic_mood_kids), 
-	ROMANCE(R.string.mood_romance, R.drawable.ic_mood_romance);
+	SPORT(R.string.mood_sport, R.drawable.ic_mood_sport);
 
 	private int stringRes;
 	private int iconRes;

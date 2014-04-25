@@ -15,7 +15,7 @@
         android:id="@+id/txt_mood_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Text.Mini"
+        style="@style/Text.Small"
         android:textColor="@android:color/white"/>
 
 </LinearLayout>

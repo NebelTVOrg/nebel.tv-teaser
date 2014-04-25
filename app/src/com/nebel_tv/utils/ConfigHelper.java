@@ -65,8 +65,8 @@ public class ConfigHelper {
 	private static final String MOOD_TAG = "mood";
 	private static final String MOOD_NAME_ATTRIBUTE = "name";
 	private static final String FAMILY_MOOD_TAG = "family";
-	private static final String KIDS_MOOD_TAG = "kids";
-	private static final String ROMANCE_MOOD_TAG = "romance";
+	private static final String SPORT_MOOD_TAG = "sport";
+
 	private static final String CONFIG_TAG = "config";
 	private static final String VIDEO_OPTIONS_TAG = "video_options";
 	private static final String JUMP_AHEAD_TAG = "jump_ahead_sec";
@@ -319,15 +319,11 @@ public class ConfigHelper {
 					if (FAMILY_MOOD_TAG.equals(moodType)) {
 						currentMood = Mood.FAMILY;
 
-					} else if (KIDS_MOOD_TAG.equals(moodType)) {
-						currentMood = Mood.KIDS;
-
-					} else if (ROMANCE_MOOD_TAG.equals(moodType)) {
-						currentMood = Mood.ROMANCE;
-
+					} else if (SPORT_MOOD_TAG.equals(moodType)) {
+						currentMood = Mood.SPORT;
 					} else {
 						// invalid config file
-						throw new XmlPullParserException(INVALID_CONFIG_MSG + ":: name: " + name);
+						throw new XmlPullParserException(INVALID_CONFIG_MSG + ", name: " + name);
 					}
 				} else if (FEED_TAG.equals(name)) {
 					currentTopView = TopView.FEED;
@@ -397,10 +393,8 @@ public class ConfigHelper {
 		switch (mood) {
 		case FAMILY:
 			return FAMILY_MOOD_TAG;
-		case KIDS:
-			return KIDS_MOOD_TAG;
-		case ROMANCE:
-			return ROMANCE_MOOD_TAG;
+		case SPORT:
+			return SPORT_MOOD_TAG;
 		default:
 			return null;
 		}
