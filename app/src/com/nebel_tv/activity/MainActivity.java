@@ -273,4 +273,11 @@ public class MainActivity extends BaseActivity implements OnChildClickListener, 
 			startActivity(externalBrowserIntent);
 		}
 	}
+	
+	@Override
+	public void onBackPressed(){
+		if(!topViewPagerFragment.onBackPressed()){
+			super.onBackPressed();
+		}
+	}
 }

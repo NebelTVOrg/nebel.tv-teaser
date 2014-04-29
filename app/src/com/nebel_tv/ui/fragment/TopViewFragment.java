@@ -81,4 +81,12 @@ public class TopViewFragment extends BaseWebViewFragment {
 	protected boolean shouldOverrideUrlLoading(String url) {
 		return false;
 	}
+	
+	public boolean onBackPressed(){
+		if(webView.canGoBack()){
+			webView.goBack();
+		}
+		
+		return true;
+	}
 }

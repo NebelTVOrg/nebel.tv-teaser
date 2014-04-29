@@ -41,6 +41,8 @@ public class TopViewPagerFragment extends Fragment {
 	private ViewPager topViewPager;
 	private PagerAdapter topViewPagerAdapter;
 	private OnPageChangeListenerWrapper onTopViewChangeListener;
+	
+	private TopViewFragment mCurrentFragment;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -79,6 +81,13 @@ public class TopViewPagerFragment extends Fragment {
 		topViewPager.setCurrentItem(localStorage.getLastScreen().ordinal());
 	}
 
+	public boolean onBackPressed(){
+		if(mCurrentFragment != null)
+			return mCurrentFragment.onBackPressed();
+		
+		return false;
+	}
+	
 	private class TopViewPagerAdapter extends FragmentStatePagerAdapter {
 
 		private TopView[] topViewValues;
@@ -90,12 +99,17 @@ public class TopViewPagerFragment extends Fragment {
 
 		@Override
 		public Fragment getItem(int position) {
-			return TopViewFragment.newInstance(topViewValues[position]);
+			return   TopViewFragment.newInstance(topViewValues[position]);
 		}
 
 		@Override
 		public int getCount() {
 			return topViewValues.length;
+		}
+		
+		@Override
+		public void setPrimaryItem(ViewGroup container, int position, Object object) {
+			mCurrentFragment = (TopViewFragment)object;
 		}
 	}
 

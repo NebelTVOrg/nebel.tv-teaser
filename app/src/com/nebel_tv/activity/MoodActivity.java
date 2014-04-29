@@ -89,7 +89,6 @@ public class MoodActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		// do nothing
-		// block default back functionality
+		finish();
 	}
 }
